@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Nullable>disable</Nullable>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>disable</ImplicitUsings>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFrameworks>
+			net451; 
+			netcoreapp3.1;
+			net6.0-windows; 
+		</TargetFrameworks>
+
+
+		<Description>Including FileSelector, FileNameselector, FolderSelector, EnumSelector, EventBinding, etc</Description>
+
+	</PropertyGroup>
+
+	<Import Project="$(SolutionDir)\GlobalCompileSettings.Targets" />
+
+	<ItemGroup> 
+		<ProjectReference Include="..\Tiny.Toolkits\Tiny.Toolkits.csproj" />
+	</ItemGroup>
+
+
+
+</Project>

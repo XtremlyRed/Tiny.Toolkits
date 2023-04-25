@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>
+			net451; 
+			netstandard2.0;
+			netstandard2.1;
+			net6.0; 
+		</TargetFrameworks>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<Description>some methods aimed at reducing code input, including a simple implementation of Command and ViewModelBase in MVVM, a relay for event forwarding EventRepeater, an EasyFolder for simple folder processing, and an extension method for collection operations</Description>
+
+	</PropertyGroup>
+
+	<Import Project="$(SolutionDir)\GlobalCompileSettings.Targets" />
+
+
+
+</Project>
