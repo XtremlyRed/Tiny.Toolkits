@@ -11,9 +11,14 @@ namespace Tiny.Toolkits
     /// </summary>
     public abstract class PaginationViewModelBase : ViewModelBase
     {
-        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string oldSearchCondition = string.Empty;
 
+        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private string oldSearchCondition = string.Empty;
+        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync searchCommand;
+        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync gotoCommand;
+        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync nextPageCommand;
+        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync lastPageCommand;
+        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync previousPageCommand;
+        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync firstPageCommand;
         /// <summary>
         /// total page
         /// </summary>
@@ -66,10 +71,11 @@ namespace Tiny.Toolkits
             get => GetValue(false);
             set => SetValue(value);
         }
+
         /// <summary>
         /// SearchCommand
         /// </summary>
-        public virtual RelayCommandAsync SearchCommand => RelayCommand.Bind(async () =>
+        public virtual RelayCommandAsync SearchCommand => searchCommand ??= RelayCommand.Bind(async () =>
         {
             try
             {
@@ -100,7 +106,7 @@ namespace Tiny.Toolkits
         /// <summary>
         /// GotoCommand
         /// </summary>
-        public virtual RelayCommandAsync GotoCommand => RelayCommand.Bind(async () =>
+        public virtual RelayCommandAsync GotoCommand => gotoCommand ??= RelayCommand.Bind(async () =>
         {
 
             if (TargetPage > TotalPage || CurrentPage == TargetPage)
@@ -120,11 +126,10 @@ namespace Tiny.Toolkits
 
         });
 
-
         /// <summary>
         /// FirstPageCommand
         /// </summary>
-        public virtual RelayCommandAsync FirstPageCommand => RelayCommand.Bind(async () =>
+        public virtual RelayCommandAsync FirstPageCommand => firstPageCommand ??= RelayCommand.Bind(async () =>
         {
 
             CurrentPage = 1;
@@ -135,7 +140,7 @@ namespace Tiny.Toolkits
         /// <summary>
         /// PreviousPageCommand
         /// </summary>
-        public virtual RelayCommandAsync PreviousPageCommand => RelayCommand.Bind(async () =>
+        public virtual RelayCommandAsync PreviousPageCommand => previousPageCommand ??= RelayCommand.Bind(async () =>
         {
             if (CurrentPage == 1)
             {
@@ -150,7 +155,7 @@ namespace Tiny.Toolkits
         /// <summary>
         /// LastPageCommand
         /// </summary>
-        public virtual RelayCommandAsync LastPageCommand => RelayCommand.Bind(async () =>
+        public virtual RelayCommandAsync LastPageCommand => lastPageCommand ??= RelayCommand.Bind(async () =>
         {
             CurrentPage = TotalPage;
             await SearchCommand?.ExecuteAsync();
@@ -159,7 +164,7 @@ namespace Tiny.Toolkits
         /// <summary>
         /// NextPageCommand
         /// </summary>
-        public virtual RelayCommandAsync NextPageCommand => RelayCommand.Bind(async () =>
+        public virtual RelayCommandAsync NextPageCommand => nextPageCommand ??= RelayCommand.Bind(async () =>
         {
             if (CurrentPage == TotalPage)
             {

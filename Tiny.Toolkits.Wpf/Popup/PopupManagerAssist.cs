@@ -12,7 +12,7 @@ using System.Windows.Media;
 
 using Tiny.Toolkits.Wpf.Popup.PopupView;
 
-namespace Tiny.Toolkits.Wpf.Popup.Assist
+namespace Tiny.Toolkits.Popup.Assist
 {
 
     [EditorBrowsable(EditorBrowsableState.Never)]

@@ -190,7 +190,8 @@ for example
             Background="Gray"
             Loaded="{wpf:EventBinding BorderLoaded 
                                       $self,
-                                      $eventArgs}" />
+                                      $eventArgs,
+                                      #FF00FF:b}" />
 
         <Border
             Width="120"

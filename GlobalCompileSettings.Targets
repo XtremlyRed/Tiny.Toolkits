@@ -14,10 +14,10 @@
 	</ItemGroup>
 
 	<PropertyGroup> 
-		<Version>3.5.1</Version>
-		<AssemblyVersion>3.5.1</AssemblyVersion>
+		<Version>3.6</Version>
+		<AssemblyVersion>3.6</AssemblyVersion>
 		<LangVersion>11.0</LangVersion>
-		<PackageProjectUrl>https://github.com/XtremlyRed/Tiny.Toolkits</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/xtremlyred/tiny.toolkits</PackageProjectUrl>
 	</PropertyGroup>
  
 	<PropertyGroup>

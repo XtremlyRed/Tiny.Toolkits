@@ -10,7 +10,7 @@ using System.Windows.Markup;
 
 using Tiny.Toolkits.Wpf.Extension;
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
     /// <summary>
     /// {e:EventBinding Click}
@@ -47,7 +47,7 @@ namespace Tiny.Toolkits.Wpf
             }
 
             @objects.ForEach((item, index) =>
-            { 
+            {
                 if (item is Binding binding)
                 {
                     PropertyAttache.SetBinding(targetObject, binding, index);
@@ -70,7 +70,7 @@ namespace Tiny.Toolkits.Wpf
         private Delegate CreateDelegate(EventInfo eventInfo, out string token)
         {
             token = $"Token_{Guid.NewGuid()}".Replace("-", "");
-             
+
             Type eventHandlerType = eventInfo.EventHandlerType;
 
             MethodInfo methodInfo = eventHandlerType.GetMethod("Invoke");

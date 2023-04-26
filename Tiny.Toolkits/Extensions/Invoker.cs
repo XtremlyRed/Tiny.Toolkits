@@ -146,7 +146,7 @@ namespace Tiny.Toolkits
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <param name="creationOptions"><see cref="TaskContinuationOptions"/></param>
         /// <returns></returns>
-        public static Task InvokeAsync(Action action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
+        public static Task InvokeAsync(this Action action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
         {
             return action is null
                 ? Task.FromResult(false)
@@ -161,7 +161,7 @@ namespace Tiny.Toolkits
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <param name="creationOptions"><see cref="TaskCreationOptions"/></param>
         /// <returns></returns>
-        public static Task<TResult> InvokeAsync<TResult>(Func<TResult> action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
+        public static Task<TResult> InvokeAsync<TResult>(this Func<TResult> action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
         {
             return action is null
                 ? Task.FromResult<TResult>(default!)
@@ -262,7 +262,7 @@ namespace Tiny.Toolkits
         /// <param name="action"> The action to be invoked.</param>
         /// <param name="destroyTokenAfterInvoke">destroyTokenAfterInvoke If set to true, the token will be destroyed after the action is invoked.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static void InvokeOnce(object token, Action action, bool destroyTokenAfterInvoke = false)
+        public static void InvokeOnce(this Action action, object token, bool destroyTokenAfterInvoke = false)
         {
             if (token is null)
             {
@@ -311,7 +311,7 @@ namespace Tiny.Toolkits
         /// <param name="funCallback"> The action to be invoked.</param>
         /// <param name="destroyTokenAfterInvoke">destroyTokenAfterInvoke If set to true, the token will be destroyed after the action is invoked.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static async Task InvokeOnce(object token, Func<Task> funCallback, bool destroyTokenAfterInvoke = false)
+        public static async Task InvokeOnce(this Func<Task> funCallback, object token, bool destroyTokenAfterInvoke = false)
         {
             if (token is null)
             {

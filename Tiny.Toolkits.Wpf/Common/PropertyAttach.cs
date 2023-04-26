@@ -1,16 +1,16 @@
-﻿ 
+﻿
 
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
     /// <summary>
     ///  dependency property attach
     /// </summary>
-    public static  class PropertyAttache 
+    public static class PropertyAttache
     {
         /// <summary>
         /// dependency property Property0 Property
@@ -5206,7 +5206,7 @@ namespace Tiny.Toolkits.Wpf
             BindingOperations.SetBinding(target, dependencyProperty, binding);
         }
 
-         
+
         /// <summary> 
         /// 
         /// </summary>

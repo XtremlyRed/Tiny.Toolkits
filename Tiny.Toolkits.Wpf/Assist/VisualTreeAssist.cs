@@ -5,24 +5,24 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
     /// <summary>
     /// visual tree assist
     /// </summary>
-    public static partial class AssistFactory
+    public static partial class WpfAssist
     {
         /// <summary>
-        /// 查找元素的子元素
+        /// Find child elements of an element
         /// </summary>
-        /// <typeparam name="Target">子元素类型</typeparam>
-        /// <param name="obj"></param>
+        /// <typeparam name="Target">Child element type</typeparam>
+        /// <param name="dependencyObject"></param>
         /// <returns></returns>
-        public static Target FindVisualChild<Target>(DependencyObject obj) where Target : DependencyObject
+        public static Target FindVisualChild<Target>(DependencyObject dependencyObject) where Target : DependencyObject
         {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
             {
-                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                DependencyObject child = VisualTreeHelper.GetChild(dependencyObject, i);
                 if (child is not null and Target)
                 {
                     return (Target)child;
@@ -40,18 +40,18 @@ namespace Tiny.Toolkits.Wpf
         }
 
         /// <summary>
-        /// find visual children from <paramref name="depObj"/>
+        /// find visual children from <paramref name="dependencyObject"/>
         /// </summary>
         /// <typeparam name="Target"></typeparam>
-        /// <param name="depObj"></param>
+        /// <param name="dependencyObject"></param>
         /// <returns></returns>
-        public static IEnumerable<Target> FindVisualChildren<Target>(DependencyObject depObj) where Target : DependencyObject
+        public static IEnumerable<Target> FindVisualChildren<Target>(DependencyObject dependencyObject) where Target : DependencyObject
         {
-            if (depObj != null)
+            if (dependencyObject != null)
             {
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
                 {
-                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    DependencyObject child = VisualTreeHelper.GetChild(dependencyObject, i);
                     if (child is not null and Target)
                     {
                         yield return (Target)child;
@@ -66,19 +66,19 @@ namespace Tiny.Toolkits.Wpf
         }
 
         /// <summary>
-        /// find visual children from <paramref name="dependency"/>
+        /// find visual children from <paramref name="dependencyObject"/>
         /// </summary>
         /// <typeparam name="Target"></typeparam>
-        /// <param name="dependency"></param>
+        /// <param name="dependencyObject"></param>
         /// <returns></returns>
-        public static List<Target> FindVisualChildrenEx<Target>(DependencyObject dependency) where Target : DependencyObject
+        public static List<Target> FindVisualChildrenEx<Target>(DependencyObject dependencyObject) where Target : DependencyObject
         {
             try
             {
                 List<Target> TList = new() { };
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependency); i++)
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
                 {
-                    DependencyObject child = VisualTreeHelper.GetChild(dependency, i);
+                    DependencyObject child = VisualTreeHelper.GetChild(dependencyObject, i);
                     if (child is not null and Target)
                     {
                         TList.Add((Target)child);
@@ -106,16 +106,16 @@ namespace Tiny.Toolkits.Wpf
         }
 
         /// <summary>
-        /// find visual parent from <paramref name="dependency"/>
+        /// find visual parent from <paramref name="dependencyObject"/>
         /// </summary>
         /// <typeparam name="Target"></typeparam>
-        /// <param name="dependency"></param>
+        /// <param name="dependencyObject"></param>
         /// <returns></returns>
-        public static Target FindParent<Target>(DependencyObject dependency) where Target : DependencyObject
+        public static Target FindParent<Target>(DependencyObject dependencyObject) where Target : DependencyObject
         {
             while (true)
             {
-                DependencyObject dobj = VisualTreeHelper.GetParent(dependency);
+                DependencyObject dobj = VisualTreeHelper.GetParent(dependencyObject);
                 if (dobj is null)
                 {
                     return default;
@@ -126,30 +126,25 @@ namespace Tiny.Toolkits.Wpf
                     return target;
                 }
 
-                dependency = dobj;
+                dependencyObject = dobj;
             }
         }
 
         /// <summary>
-        /// find visual parent from <paramref name="dependency"/>
+        /// find visual parent from <paramref name="dependencyObject"/>
         /// </summary>
         /// <typeparam name="Target"></typeparam>
-        /// <param name="dependency"></param>
+        /// <param name="dependencyObject"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public static Target FindParent<Target>(DependencyObject dependency, string elementName) where Target : DependencyObject
+        public static Target FindParent<Target>(DependencyObject dependencyObject, string elementName) where Target : DependencyObject
         {
-            DependencyObject dobj = VisualTreeHelper.GetParent(dependency);
-            if (dobj != null)
-            {
-                if (dobj is Target && ((System.Windows.FrameworkElement)dobj).Name.Equals(elementName))
-                {
-                    return (Target)dobj;
-                }
-
-                return FindParent<Target>(dobj, elementName);
-            }
-            return null;
+            DependencyObject dobj = VisualTreeHelper.GetParent(dependencyObject);
+            return dobj != null
+                ? dobj is Target && ((System.Windows.FrameworkElement)dobj).Name.Equals(elementName)
+                    ? (Target)dobj
+                    : FindParent<Target>(dobj, elementName)
+                : null;
         }
 
         /// <summary>
@@ -163,17 +158,17 @@ namespace Tiny.Toolkits.Wpf
         }
 
         /// <summary>
-        /// 查找指定名称的元素
+        /// Find an element with a specified name
         /// </summary>
-        /// <typeparam name="Target">元素类型</typeparam>
-        /// <param name="obj"></param>
-        /// <param name="elementName">元素名称，及xaml中的Name</param>
+        /// <typeparam name="Target">Element Type</typeparam>
+        /// <param name="dependencyObject"></param>
+        /// <param name="elementName">Element name in xaml</param>
         /// <returns></returns>
-        public static Target FindVisualElement<Target>(DependencyObject obj, string elementName) where Target : DependencyObject
+        public static Target FindVisualElement<Target>(DependencyObject dependencyObject, string elementName) where Target : DependencyObject
         {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
             {
-                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                DependencyObject child = VisualTreeHelper.GetChild(dependencyObject, i);
                 if (child != null && child is Target && ((System.Windows.FrameworkElement)child).Name.Equals(elementName))
                 {
                     return (Target)child;
@@ -200,29 +195,29 @@ namespace Tiny.Toolkits.Wpf
         }
 
         /// <summary>
-        /// 命中测试。根据当前选中元素，查找视觉树父节点与子节点，看是否存在指定类型的元素
+        /// Hit test. Find the parent and child nodes of the visual tree based on the currently selected element to see if there are elements of the specified type
         /// </summary>
-        /// <typeparam name="Target">想命中的元素类型</typeparam>
-        /// <param name="dp">当前选中元素</param>
-        /// <returns>true：命中成功</returns>
-        public static bool HitTest<Target>(DependencyObject dp) where Target : DependencyObject
+        /// <typeparam name="Target">The type of element you want to hit</typeparam>
+        /// <param name="dependencyObject">Currently selected element</param>
+        /// <returns>true：Successfully hit</returns>
+        public static bool HitTest<Target>(DependencyObject dependencyObject) where Target : DependencyObject
         {
-            return FindParent<Target>(dp) != null || FindVisualChild<Target>(dp) != null;
+            return FindParent<Target>(dependencyObject) != null || FindVisualChild<Target>(dependencyObject) != null;
         }
 
         /// <summary>
-        /// find equal element
+        /// find equal dependencyObjectRight
         /// </summary>
         /// <typeparam name="Target"></typeparam>
-        /// <param name="source"></param>
-        /// <param name="element"></param>
+        /// <param name="dependencyObjectLeft"></param>
+        /// <param name="dependencyObjectRight"></param>
         /// <returns></returns>
-        public static Target FindEqualElement<Target>(DependencyObject source, DependencyObject element) where Target : DependencyObject
+        public static Target FindEqualElement<Target>(DependencyObject dependencyObjectLeft, DependencyObject dependencyObjectRight) where Target : DependencyObject
         {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(source); i++)
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObjectLeft); i++)
             {
-                DependencyObject child = VisualTreeHelper.GetChild(source, i);
-                if (child != null && child is Target && child == element)
+                DependencyObject child = VisualTreeHelper.GetChild(dependencyObjectLeft, i);
+                if (child != null && child is Target && child == dependencyObjectRight)
                 {
                     return (Target)child;
                 }

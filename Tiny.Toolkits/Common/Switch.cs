@@ -213,7 +213,7 @@ namespace Tiny.Toolkits
         }
 
         #region hide base function
-         
+
         /// <summary>
         /// Determines whether the specified object is equal to the current object.
         /// </summary>

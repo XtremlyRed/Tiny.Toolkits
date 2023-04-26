@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
     /// <summary>
     /// a class of <see cref="IPopupManager"/>

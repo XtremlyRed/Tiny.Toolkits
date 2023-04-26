@@ -22,17 +22,17 @@ namespace Tiny.Toolkits
         /// </summary>
         /// <typeparam name="TAttribute"></typeparam>
         /// <param name="type"></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static TAttribute GetAttribute<TAttribute>(this Type type, bool inherit = false) where TAttribute : Attribute
+        public static TAttribute GetAttribute<TAttribute>(this Type type) where TAttribute : Attribute
         {
             if (type is null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            ICollection<Attribute> attributes = GetAttributes(type, inherit);
+            ICollection<Attribute> attributes = GetAttributes(type);
 
             return attributes?.OfType<TAttribute>().FirstOrDefault()!;
         }
@@ -42,16 +42,16 @@ namespace Tiny.Toolkits
         /// </summary>
         /// <typeparam name="TAttribute"></typeparam>
         /// <param name="property"></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static TAttribute GetAttribute<TAttribute>(this PropertyInfo property, bool inherit = false) where TAttribute : Attribute
+        public static TAttribute GetAttribute<TAttribute>(this PropertyInfo property) where TAttribute : Attribute
         {
             if (property is null)
             {
                 throw new ArgumentNullException(nameof(property));
             }
-            ICollection<Attribute> attributes = GetAttributes(property, inherit);
+            ICollection<Attribute> attributes = GetAttributes(property);
 
             return attributes?.OfType<TAttribute>().FirstOrDefault()!;
         }
@@ -61,17 +61,17 @@ namespace Tiny.Toolkits
         /// </summary>
         /// <typeparam name="TAttribute"></typeparam>
         /// <param name="field"></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static TAttribute GetAttribute<TAttribute>(this FieldInfo field, bool inherit = false) where TAttribute : Attribute
+        public static TAttribute GetAttribute<TAttribute>(this FieldInfo field) where TAttribute : Attribute
         {
             if (field is null)
             {
                 throw new ArgumentNullException(nameof(field));
             }
 
-            ICollection<Attribute> attributes = GetAttributes(field, inherit);
+            ICollection<Attribute> attributes = GetAttributes(field);
 
             return attributes?.OfType<TAttribute>().FirstOrDefault()!;
         }
@@ -81,17 +81,17 @@ namespace Tiny.Toolkits
         /// </summary>
         /// <typeparam name="TAttribute"></typeparam>
         /// <param name="member"></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static TAttribute GetAttribute<TAttribute>(this MemberInfo member, bool inherit = false) where TAttribute : Attribute
+        public static TAttribute GetAttribute<TAttribute>(this MemberInfo member) where TAttribute : Attribute
         {
             if (member is null)
             {
                 throw new ArgumentNullException(nameof(member));
             }
 
-            ICollection<Attribute> attributes = GetAttributes(member, inherit);
+            ICollection<Attribute> attributes = GetAttributes(member);
 
             return attributes?.OfType<TAttribute>().FirstOrDefault()!;
         }
@@ -102,16 +102,16 @@ namespace Tiny.Toolkits
         /// </summary>
         /// <typeparam name="TAttribute"></typeparam>
         /// <param name="enumValue"><see cref="Enum"/></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
-        public static TAttribute GetAttribute<TAttribute>(this Enum enumValue, bool inherit = false) where TAttribute : Attribute
+        public static TAttribute GetAttribute<TAttribute>(this Enum enumValue) where TAttribute : Attribute
         {
             if (enumValue is null)
             {
                 throw new ArgumentNullException(nameof(enumValue));
             }
 
-            ICollection<Attribute> attributes = GetAttributes(enumValue, inherit);
+            ICollection<Attribute> attributes = GetAttributes(enumValue);
 
             return attributes?.OfType<TAttribute>().FirstOrDefault()!;
         }
@@ -120,10 +120,10 @@ namespace Tiny.Toolkits
         /// get all attributes from <see cref="Type"/>
         /// </summary>
         /// <param name="type"><see cref="Type"/></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static Attribute[] GetAttributes(this Type type, bool inherit = false)
+        public static Attribute[] GetAttributes(this Type type)
         {
             if (type is null)
             {
@@ -132,7 +132,7 @@ namespace Tiny.Toolkits
 
             if (attributeMapper.TryGetValue(type, out Attribute[] attributes) == false)
             {
-                attributeMapper[type] = attributes = type.GetCustomAttributes(inherit).OfType<Attribute>().ToArray();
+                attributeMapper[type] = attributes = type.GetCustomAttributes().OfType<Attribute>().ToArray();
             }
 
             return attributes;
@@ -142,10 +142,10 @@ namespace Tiny.Toolkits
         /// get all attributes from <see cref="PropertyInfo"/>
         /// </summary>
         /// <param name="property"><see cref="PropertyInfo"/></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static Attribute[] GetAttributes(this PropertyInfo property, bool inherit = false)
+        public static Attribute[] GetAttributes(this PropertyInfo property)
         {
             if (property is null)
             {
@@ -154,7 +154,7 @@ namespace Tiny.Toolkits
 
             if (attributeMapper.TryGetValue(property, out Attribute[] attributes) == false)
             {
-                attributeMapper[property] = attributes = property.GetCustomAttributes(inherit).OfType<Attribute>().ToArray();
+                attributeMapper[property] = attributes = property.GetCustomAttributes().OfType<Attribute>().ToArray();
             }
 
             return attributes;
@@ -163,10 +163,10 @@ namespace Tiny.Toolkits
         /// get all attributes from <see cref="FieldInfo"/>
         /// </summary>
         /// <param name="field"><see cref="FieldInfo"/></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static Attribute[] GetAttributes(this FieldInfo field, bool inherit = false)
+        public static Attribute[] GetAttributes(this FieldInfo field)
         {
             if (field is null)
             {
@@ -175,7 +175,7 @@ namespace Tiny.Toolkits
 
             if (attributeMapper.TryGetValue(field, out Attribute[] attributes) == false)
             {
-                attributeMapper[field] = attributes = field.GetCustomAttributes(inherit).OfType<Attribute>().ToArray();
+                attributeMapper[field] = attributes = field.GetCustomAttributes().OfType<Attribute>().ToArray();
             }
 
             return attributes;
@@ -187,10 +187,10 @@ namespace Tiny.Toolkits
         /// get all attributes from <see cref="MemberInfo"/>
         /// </summary>
         /// <param name="member"><see cref="MemberInfo"/></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static Attribute[] GetAttributes(this MemberInfo member, bool inherit = false)
+        public static Attribute[] GetAttributes(this MemberInfo member)
         {
             if (member is null)
             {
@@ -199,7 +199,7 @@ namespace Tiny.Toolkits
 
             if (attributeMapper.TryGetValue(member, out Attribute[] attributes) == false)
             {
-                attributeMapper[member] = attributes = member.GetCustomAttributes(inherit).OfType<Attribute>().ToArray();
+                attributeMapper[member] = attributes = member.GetCustomAttributes().OfType<Attribute>().ToArray();
             }
 
             return attributes;
@@ -210,10 +210,10 @@ namespace Tiny.Toolkits
         /// get all attributes from <see cref="Enum"/>
         /// </summary>
         /// <param name="enumValue"><see cref="Enum"/></param>
-        /// <param name="inherit"></param>
+
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static Attribute[] GetAttributes(this Enum enumValue, bool inherit = false)
+        public static Attribute[] GetAttributes(this Enum enumValue)
         {
             if (enumValue is null)
             {
@@ -227,7 +227,7 @@ namespace Tiny.Toolkits
                 string enumName = Enum.GetName(type, enumValue);
                 FieldInfo field = type.GetField(enumName);
 
-                attributeMapper[enumValue] = attributes = field.GetCustomAttributes(inherit).OfType<Attribute>().ToArray();
+                attributeMapper[enumValue] = attributes = field.GetCustomAttributes().OfType<Attribute>().ToArray();
             }
 
             return attributes;

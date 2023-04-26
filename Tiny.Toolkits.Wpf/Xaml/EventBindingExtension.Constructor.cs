@@ -1,4 +1,4 @@
-﻿namespace Tiny.Toolkits.Wpf
+﻿namespace Tiny.Toolkits
 {
     public partial class EventBindingExtension
     {

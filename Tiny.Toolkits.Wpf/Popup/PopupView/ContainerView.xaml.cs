@@ -1,6 +1,6 @@
 ﻿
 
- 
+
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 
-using Tiny.Toolkits.Wpf.Popup.Assist;
+using Tiny.Toolkits.Popup.Assist;
 
 namespace Tiny.Toolkits.Wpf.Popup.PopupView
 {
@@ -21,7 +21,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
     {
         private object currentClickResult, currentPopupResult;
         private IPopupAware popupAware;
-        Parameters parameters;
+        private Parameters parameters;
         private Action popupContentCloseCallback;
         private readonly SemaphoreSlim messageSemaphoreSlim = new(0, 1);
         private readonly SemaphoreSlim contentSemaphoreSlim = new(0, 1);
@@ -48,7 +48,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
         {
 
             if (popupMessage == PopupType.Message)
-            { 
+            {
                 DisplayVisual(messageContainer, durationAnimation);
                 await messageSemaphoreSlim.WaitAsync();
                 RemoveVisual(messageContainer, durationAnimation, animationCompleteCallback);
@@ -80,7 +80,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
 
             Storyboard storyboard = new();
             storyboard.Children.Add(doubleAnimation);
-            storyboard.Completed += (s, e) => 
+            storyboard.Completed += (s, e) =>
             {
                 @object.Visibility = Visibility.Collapsed;
                 animationCompleteCallback?.Invoke();
@@ -91,7 +91,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
 
         private void DisplayVisual(FrameworkElement @object, TimeSpan durationAnimation)
         {
-         
+
             DoubleAnimation doubleAnimation = new();
             doubleAnimation.From = 0;
             doubleAnimation.To = 1;
@@ -128,7 +128,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
         internal void SetContent(FrameworkElement popupContent, Parameters parameters = null)
         {
             popupContentCloseCallback = () =>
-            { 
+            {
                 popupContent.DataContextChanged -= PopupContent_DataContextChanged;
                 if (popupContent is IPopupAware popupAware)
                 {
@@ -158,7 +158,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
                 contentSemaphoreSlim.Release();
             }
         }
-         
+
 
         private void PopupContent_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -176,7 +176,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
                 return;
             }
             this.popupAware = popupAware;
-            this.popupAware.OnPopupOpened(this.parameters);
+            this.popupAware.OnPopupOpened(parameters);
             popupAware.RequestCloseEvent += PopupAware_RequestCloseEvent;
 
         }

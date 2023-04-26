@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
     /// <summary>
     /// An extended combobox that is enumerating Enum values. 
@@ -20,75 +21,64 @@ namespace Tiny.Toolkits.Wpf
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class EnumSelector : ComboBox
     {
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private static readonly IDictionary<Type, ICollection<EnumInfo>> EnumInfos = new ConcurrentDictionary<Type, ICollection<EnumInfo>>();
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private bool isTriggerSelectedChengedEvent = true;
         static EnumSelector()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(EnumSelector),
-                new FrameworkPropertyMetadata(typeof(ComboBox)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(EnumSelector), new FrameworkPropertyMetadata(typeof(ComboBox)));
         }
-        /// <summary>
-        /// IsEditable
-        /// </summary>
-        public new bool IsEditable { get => false; set => base.IsEditable = false; }
 
-        #region Type property
+        private enum EmptyEnumMode { None }
 
-        /// <summary>
-        /// CornerRadiusProperty
-        /// </summary>
-        public static readonly DependencyProperty CornerRadiusProperty =
-            AssistFactory.PropertyRegister<EnumSelector, CornerRadius>(i => i.CornerRadius, new CornerRadius(0));
-
-        /// <summary>
-        /// CornerRadius
-        /// </summary>
-        [Bindable(true), Category("CornerRadius")]
-        [Localizability(LocalizationCategory.None, Readability = Readability.Unreadable)]
-        public CornerRadius CornerRadius
+        [DebuggerDisplay("{Value}")]
+        [DebuggerNonUserCode]
+        private struct EnumInfo
         {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
+            public object Value;
+            public int HashCode;
+            public string Name;
+            public string DisplayName;
         }
 
         /// <summary>
-        /// IgnoreItemsProperty
+        /// create a new <see cref="EnumSelector"/>
         /// </summary>
-        public static DependencyProperty IgnoreItemsProperty =
-            AssistFactory.PropertyRegister<EnumSelector, IEnumerable>(i => i.IgnoreItems, (s, e) =>
+        public EnumSelector()
         {
-            s.SetType(s.EnumType, e.NewValue);
-        });
-
-        /// <summary>
-        /// IgnoreItems
-        /// </summary>
-        [Bindable(true)]
-        [Category("EnumMode")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Localizability(LocalizationCategory.NeverLocalize)]
-        public IEnumerable IgnoreItems
-        {
-            get => (IEnumerable)GetValue(IgnoreItemsProperty);
-            set => SetValue(IgnoreItemsProperty, value);
+            Loaded += (s, e) => IsEditable = false;
         }
 
+
+
         /// <summary>
-        /// EnumTypeProperty
+        /// enum type
         /// </summary>
         public static DependencyProperty EnumTypeProperty =
-            AssistFactory.PropertyRegister<EnumSelector, Type>(i => i.EnumType, (s, e) =>
-        {
-            s.SetType(e.NewValue, s.IgnoreItems);
-        });
+            DependencyProperty.Register(nameof(EnumType), typeof(Type), typeof(EnumSelector), new FrameworkPropertyMetadata(null, (s, e) =>
+            {
+                if (s is EnumSelector @enum)
+                {
+                    if (e.NewValue is Type type && type.IsEnum && EnumInfos.TryGetValue(type, out _) == false)
+                    {
+                        EnumInfos[type] = type.GetFields()
+                    .Where(i => i.IsStatic)
+                    .Select(i => new EnumInfo
+                    {
+                        Value = i.GetValue(null),
+                        HashCode = i.GetValue(null).GetHashCode(),
+                        Name = i.Name,
+                        DisplayName = i.GetCustomAttribute<DescriptionAttribute>()?.Description ?? i.Name
+                    }).ToArray();
+                    }
+
+                    @enum.UpdateVisual();
+                }
+            }));
 
         /// <summary>
-        /// EnumType
+        /// enum type must be <see cref="Enum"/> type
         /// </summary>
-        [Bindable(true)]
-        [Category("EnumMode")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Localizability(LocalizationCategory.NeverLocalize)]
         public Type EnumType
         {
             get => (Type)GetValue(EnumTypeProperty);
@@ -96,144 +86,163 @@ namespace Tiny.Toolkits.Wpf
         }
 
         /// <summary>
-        /// EnumValueProperty
+        /// enum type must be <see cref="Enum"/> type
         /// </summary>
         public static DependencyProperty EnumValueProperty =
-            AssistFactory.PropertyRegister<EnumSelector, object>(i => i.EnumValue, default, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Inherits, System.Windows.Data.UpdateSourceTrigger.PropertyChanged, (s, e) =>
-        {
-            s.SetEnumValue(e.NewValue);
-        });
+            DependencyProperty.Register(nameof(EnumValue), typeof(object), typeof(EnumSelector), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (s, e) =>
+            {
+                if (s is EnumSelector @enum)
+                {
+                    if (e.OldValue is null || (e.NewValue != null && e.OldValue != null && e.OldValue.GetHashCode() != e.NewValue.GetHashCode()))
+                    {
+                        @enum.UpdateVisual(false);
+                    }
+                }
+            }));
 
         /// <summary>
-        /// EnumValue
+        /// selected enum value ,can be null
         /// </summary>
-        [Bindable(true)]
-        [Category("EnumMode")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Localizability(LocalizationCategory.NeverLocalize)]
         public object EnumValue
         {
             get => GetValue(EnumValueProperty);
             set => SetValue(EnumValueProperty, value);
         }
 
-        #endregion
+        /// <summary>
+        /// has default empty value
+        /// </summary>
+        public static DependencyProperty HasEmptyValueProperty =
+              DependencyProperty.Register(nameof(HasEmptyValue), typeof(bool), typeof(EnumSelector), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (s, e) =>
+              {
+                  if (s is EnumSelector @enum)
+                  {
+                      @enum.UpdateVisual();
+                  }
+              }));
+
+        /// <summary>
+        ///  has default empty value
+        /// </summary>
+        public bool HasEmptyValue
+        {
+            get => (bool)GetValue(HasEmptyValueProperty);
+            set => SetValue(HasEmptyValueProperty, value);
+        }
+
+        /// <summary>
+        /// default empty value
+        /// </summary>
+        public static DependencyProperty EmptyValueProperty =
+           DependencyProperty.Register(nameof(EmptyValue), typeof(object), typeof(EnumSelector), new FrameworkPropertyMetadata("None", FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (s, e) =>
+           {
+               if (s is EnumSelector @enum)
+               {
+                   @enum.UpdateVisual();
+               }
+           }));
+
+        /// <summary>
+        /// default empty value
+        /// </summary>
+        public object EmptyValue
+        {
+            get => GetValue(EmptyValueProperty);
+            set => SetValue(EmptyValueProperty, value);
+        }
+
+        /// <summary>
+        /// ignore values
+        /// </summary>
+        public static DependencyProperty IgnoreValuesProperty =
+            DependencyProperty.Register(nameof(IgnoreValues), typeof(IEnumerable), typeof(EnumSelector), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (s, e) =>
+            {
+                if (s is EnumSelector @enum)
+                {
+                    @enum.UpdateVisual();
+                }
+            }));
+
+        /// <summary>
+        /// ignore values
+        /// </summary>
+        public IEnumerable IgnoreValues
+        {
+            get => (IEnumerable)GetValue(IgnoreValuesProperty);
+            set => SetValue(IgnoreValuesProperty, value);
+        }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly Dictionary<Type, Dictionary<string, object>> EnumMapper = new();
+        private List<EnumInfo> ValidEnumValues;
 
 
-        private void SetType(Type enumType, IEnumerable removeArray = null)
+
+        private void UpdateVisual(bool effectVisual = true)
         {
-            try
+            if (EnumType is null || EnumInfos.TryGetValue(EnumType, out ICollection<EnumInfo> enumInfos) == false)
             {
-                if (EnumMapper.TryGetValue(enumType, out Dictionary<string, object> enumTypeMapper) == false)
+                return;
+            }
+
+
+            if (effectVisual == true)
+            {
+                List<EnumInfo> validInfos = enumInfos.ToList();
+
+                if (HasEmptyValue)
                 {
-                    List<FieldInfo> list = enumType.GetFields().Where(i => i.IsStatic && !i.IsSpecialName).ToList();
-
-                    EnumMapper[enumType] = enumTypeMapper = new Dictionary<string, object>();
-
-                    foreach (FieldInfo fieldInfo in list)
+                    validInfos.Insert(0, new EnumInfo()
                     {
-                        object[] attributes = fieldInfo.GetCustomAttributes(false);
+                        DisplayName = EmptyValue as string,
+                        Name = EmptyValue as string,
+                        Value = null,
+                    });
+                }
 
-                        BrowsableAttribute browsable = attributes.OfType<BrowsableAttribute>().FirstOrDefault();
-
-                        if (browsable != null && browsable.Browsable == false)
-                        {
-                            continue;
-                        }
-
-                        string displayName = attributes.OfType<DescriptionAttribute>().FirstOrDefault()?.Description;
-
-                        if (string.IsNullOrWhiteSpace(displayName))
-                        {
-                            displayName = fieldInfo.Name;
-                        }
-
-                        enumTypeMapper[displayName] = fieldInfo.GetValue(null);
+                if (IgnoreValues != null)
+                {
+                    int[] ignoreValues = IgnoreValues.Cast<object>().Where(i => i != null).Select(i => i.GetHashCode()).ToArray();
+                    if (ignoreValues.Length > 0)
+                    {
+                        validInfos = validInfos.Where(i => ignoreValues.Contains(i.HashCode) == false).ToList();
                     }
                 }
 
-                object[] removeArray2 = removeArray?.Cast<object>().Where(i => i != null).ToArray();
+                ValidEnumValues = validInfos;
 
-                string[] keys = enumTypeMapper.Keys.ToArray();
-
-                if (removeArray2 != null && removeArray2.Length > 0)
-                {
-                    keys = enumTypeMapper.Where(i => removeArray2.Contains(i.Value) == false).Select(i => i.Key).ToArray();
-                }
-
-                ItemsSource = keys.ToArray();
-
-                if (EnumValue != null && SelectedItem is null)
-                {
-                    SetEnumValue(EnumValue);
-                }
+                ItemsSource = ValidEnumValues.Select(i => i.DisplayName).ToArray();
             }
-            catch
+            if (EnumValue is null)
             {
-                // ignore
-            }
-        }
-
-        private void SetEnumValue(object enumValue)
-        {
-
-            if (enumValue is null || EnumType is null)
-            {
+                SelectedIndex = 0;
                 return;
             }
 
-            base.IsEditable = false;
+            int hashCode = EnumValue.GetHashCode();
+            int index = System.Linq.CollectionExtensions.IndexOf(ValidEnumValues, i => i.HashCode == hashCode);
 
-            Dictionary<string, object> enumTyper = EnumMapper[EnumType];
-
-            KeyValuePair<string, object> existResult = enumTyper.FirstOrDefault(i => i.Value.GetHashCode() == enumValue.GetHashCode());
-
-            if (existResult.Key is null || existResult.Value is null)
+            if ((EnumValue != null && SelectedIndex == -1) || index != SelectedIndex)
             {
-                return;
-            }
-
-            if ((SelectedItem as string) == existResult.Key)
-            {
-                return;
-            }
-
-            try
-            {
-                isTriggerSelectedChengedEvent = false;
-
-                SelectedItem = existResult.Key;
-            }
-            finally
-            {
-                isTriggerSelectedChengedEvent = true;
+                SelectedIndex = index;
             }
         }
 
         /// <summary>
-        /// OnSelectionChanged
+        /// Responds to a <see cref="EnumSelector"/> selection change by raising a <see cref="System.Windows.Controls.Primitives.Selector.SelectionChanged"/> event.
         /// </summary>
-        /// <param name="e"></param>
+        /// <param name="e">Provides data for <see cref="SelectionChangedEventArgs"/>.</param>
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
             base.OnSelectionChanged(e);
 
-            if (ItemsSource is not string[] s || SelectedIndex < 0 || SelectedIndex >= s.Length)
+            object updateValue = null;
+
+            if (SelectedIndex >= 0 && SelectedIndex < ValidEnumValues.Count)
             {
-                return;
+                updateValue = ValidEnumValues[SelectedIndex].Value;
             }
 
-            string key = SelectedItem as string;
-
-            Dictionary<string, object> enumTyper = EnumMapper[EnumType];
-
-            if (enumTyper.TryGetValue(key, out object value))
-            {
-                SetCurrentValue(EnumValueProperty, value);
-            }
+            SetCurrentValue(EnumValueProperty, updateValue);
         }
     }
 }

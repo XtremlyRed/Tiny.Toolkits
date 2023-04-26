@@ -8,7 +8,7 @@ namespace Tiny.Toolkits
     /// </summary>
     /// <typeparam name="TRef"></typeparam>
 
-    [DebuggerDisplay("{Array}")]
+    [DebuggerDisplay("{value}")]
     public partial struct Ref<TRef>
     {
         /// <summary>

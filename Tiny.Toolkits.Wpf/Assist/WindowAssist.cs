@@ -3,12 +3,12 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
     /// <summary>
     /// window assist
     /// </summary>
-    public static partial class AssistFactory
+    public static partial class WpfAssist
     {
 
         #region Win32 API functions

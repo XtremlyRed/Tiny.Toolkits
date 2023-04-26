@@ -1,36 +1,30 @@
-﻿using System.Collections.Concurrent;
+﻿ 
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-
 
 namespace Tiny.Toolkits
 {
     /// <summary>
-    /// <para> class of  <see cref="EasyTimer"/></para>
-    /// <para> a timer helper class of the execute time</para>
+    /// <para> class of  <see cref="TinyChrono"/></para>
+    /// <para> a chrono helper class of the execute time</para>
     /// </summary>
     [DebuggerDisplay("{GetTimeSpan()}")]
-    public sealed class EasyTimer : IDisposable
+    public sealed class TinyChrono : IDisposable
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private long currentTickCount;
 
         /// <summary>
-        /// carete a new timer
+        /// carete a new chrono 
         /// </summary>
-        public EasyTimer()
+        public TinyChrono()
         {
             currentTickCount = Environment.TickCount;
         }
 
         /// <summary>
-        /// dispose this timer
+        /// dispose this chrono
         /// </summary>
         public void Dispose()
         {
@@ -39,17 +33,17 @@ namespace Tiny.Toolkits
 
 
         /// <summary>
-        /// create a new time and start timer
+        /// create a new chrono and start
         /// </summary>
         /// <returns></returns>
-        public static EasyTimer BeginTimer()
+        public static TinyChrono BeginTimer()
         {
-            return new EasyTimer();
+            return new TinyChrono();
         }
 
 
         /// <summary>
-        /// stop this timer and return  execute  use time
+        /// stop this chrono and return execute use time
         /// </summary>
         /// <returns></returns>
         public TimeSpan GetTimeSpan()
@@ -59,7 +53,7 @@ namespace Tiny.Toolkits
         }
 
         /// <summary>
-        ///  stop this timer and return  execute  use time
+        ///  stop this chrono and return execute use time
         /// </summary>
         /// <returns></returns>
         public long GetTotalMilliseconds()
@@ -70,7 +64,7 @@ namespace Tiny.Toolkits
 
 
         /// <summary>
-        /// reset timer
+        /// reset chrono
         /// </summary>
         public void ResetTimer()
         {

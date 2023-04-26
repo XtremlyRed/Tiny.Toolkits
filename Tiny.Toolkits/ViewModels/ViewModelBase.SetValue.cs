@@ -1,16 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Linq.Expressions;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace Tiny.Toolkits
@@ -18,8 +9,7 @@ namespace Tiny.Toolkits
     public abstract partial class ViewModelBase
     {
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never), EditorBrowsable(EditorBrowsableState.Never)]
         private readonly Dictionary<string, object> PropertyValueMapper = new();
 
         /// <summary>
@@ -134,12 +124,7 @@ namespace Tiny.Toolkits
                 return defaultValue;
             }
 
-            if (value is TType tValue)
-            {
-                return tValue;
-            }
-
-            return defaultValue;
+            return value is TType tValue ? tValue : defaultValue;
         }
     }
 }

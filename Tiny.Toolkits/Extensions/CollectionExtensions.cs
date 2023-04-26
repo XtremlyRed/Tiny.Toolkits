@@ -307,7 +307,7 @@ namespace System.Linq
             {
                 return default;
             }
-             
+
 
             Target first = collection.First();
             TComparable firstCompa = minComparer(first);
@@ -345,7 +345,7 @@ namespace System.Linq
             {
                 yield break;
             }
-             
+
             int totalCount = targets.Count();
 
             int segmentCount = totalCount / segmentCapacity;

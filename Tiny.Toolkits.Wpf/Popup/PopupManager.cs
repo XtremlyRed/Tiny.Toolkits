@@ -1,6 +1,6 @@
 ﻿
 
- 
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,9 +11,9 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-using Tiny.Toolkits.Wpf.Popup.Assist;
+using Tiny.Toolkits.Popup.Assist;
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
     /// <summary>
     /// a class of <see cref="PopupManager"/>
@@ -369,5 +369,21 @@ namespace Tiny.Toolkits.Wpf
 
 
         #endregion
+
+        #region hide base function
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
+
+        #endregion
+
     }
 }

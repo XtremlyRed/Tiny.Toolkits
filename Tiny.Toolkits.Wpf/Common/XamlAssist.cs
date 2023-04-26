@@ -7,13 +7,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
 
     /// <summary>
     /// xaml attache 
     /// </summary>
-    public static class XamlAttache 
+    public static class XamlAttache
     {
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]

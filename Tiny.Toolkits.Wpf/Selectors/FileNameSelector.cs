@@ -1,18 +1,13 @@
-﻿using System;
-using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Markup;
 using System.Windows.Media;
 
- 
 
 
-namespace Tiny.Toolkits.Wpf
+
+namespace Tiny.Toolkits
 {
     /// <summary>
     /// FileNameSelectionChanged
@@ -25,7 +20,7 @@ namespace Tiny.Toolkits.Wpf
     /// <summary>
     /// FileNameSelector
     /// </summary> 
-    public class FileNameSelector : UserControl 
+    public class FileNameSelector : UserControl
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -90,7 +85,7 @@ namespace Tiny.Toolkits.Wpf
         /// FileNameSelectionChangedCommandProperty
         /// </summary>
         public static readonly DependencyProperty FileNameSelectionChangedCommandProperty =
-                 AssistFactory.PropertyRegister<FileNameSelector, IRelayCommand<string>>(i => i.FileNameSelectionChangedCommand, null, FrameworkPropertyMetadataOptions.Inherits, (s, e) => { });
+                 WpfAssist.PropertyRegister<FileNameSelector, IRelayCommand<string>>(i => i.FileNameSelectionChangedCommand, null, FrameworkPropertyMetadataOptions.Inherits, (s, e) => { });
 
         /// <summary>
         /// FileNameSelectionChangedCommand
@@ -110,7 +105,7 @@ namespace Tiny.Toolkits.Wpf
         /// TitleProperty
         /// </summary>
         public static readonly DependencyProperty TitleProperty =
-            AssistFactory.PropertyRegister<FileNameSelector, string>(i => i.Title, "", defaultOptions, (s, e) =>
+            WpfAssist.PropertyRegister<FileNameSelector, string>(i => i.Title, "", defaultOptions, (s, e) =>
             {
                 s.saveFileDialog.Title = e.NewValue;
             });
@@ -130,7 +125,7 @@ namespace Tiny.Toolkits.Wpf
         /// FileNameProperty
         /// </summary>
         public static readonly DependencyProperty FileNameProperty =
-          AssistFactory.PropertyRegister<FileNameSelector, string>(i => i.FileName, "", defaultOptions, (s, e) =>
+          WpfAssist.PropertyRegister<FileNameSelector, string>(i => i.FileName, "", defaultOptions, (s, e) =>
           {
               s.saveFileDialog.FileName = e.NewValue;
           });
@@ -151,7 +146,7 @@ namespace Tiny.Toolkits.Wpf
         /// FileNamesProperty
         /// </summary>
         public static readonly DependencyProperty FileNamesProperty =
-        AssistFactory.PropertyRegister<FileNameSelector, string[]>(i => i.FileNames, null, defaultOptions, (s, e) => { });
+        WpfAssist.PropertyRegister<FileNameSelector, string[]>(i => i.FileNames, null, defaultOptions, (s, e) => { });
 
         /// <summary>
         /// FileNames
@@ -169,7 +164,7 @@ namespace Tiny.Toolkits.Wpf
         /// DefaultExtProperty
         /// </summary>
         public static readonly DependencyProperty DefaultExtProperty =
-          AssistFactory.PropertyRegister<FileNameSelector, string>(i => i.DefaultExt, "", defaultOptions, (s, e) =>
+          WpfAssist.PropertyRegister<FileNameSelector, string>(i => i.DefaultExt, "", defaultOptions, (s, e) =>
           {
               s.saveFileDialog.DefaultExt = e.NewValue;
           });
@@ -188,7 +183,7 @@ namespace Tiny.Toolkits.Wpf
         /// FilterProperty
         /// </summary>
         public static readonly DependencyProperty FilterProperty =
-          AssistFactory.PropertyRegister<FileNameSelector, string>(i => i.Filter, "", defaultOptions, (s, e) =>
+          WpfAssist.PropertyRegister<FileNameSelector, string>(i => i.Filter, "", defaultOptions, (s, e) =>
           {
               s.saveFileDialog.Filter = e.NewValue;
           });
@@ -207,7 +202,7 @@ namespace Tiny.Toolkits.Wpf
         /// InitialDirectoryProperty
         /// </summary>
         public static readonly DependencyProperty InitialDirectoryProperty =
-          AssistFactory.PropertyRegister<FileNameSelector, string>(i => i.InitialDirectory, null, defaultOptions, (s, e) =>
+          WpfAssist.PropertyRegister<FileNameSelector, string>(i => i.InitialDirectory, null, defaultOptions, (s, e) =>
           {
               s.saveFileDialog.InitialDirectory = e.NewValue;
           });
@@ -216,7 +211,7 @@ namespace Tiny.Toolkits.Wpf
         /// InitialDirectory
         /// </summary>
         [Bindable(true), Category("InitialDirectory")]
-        [Localizability(LocalizationCategory.None, Readability = Readability.Unreadable)] 
+        [Localizability(LocalizationCategory.None, Readability = Readability.Unreadable)]
         public string InitialDirectory
         {
             get => (string)GetValue(InitialDirectoryProperty);
@@ -227,7 +222,7 @@ namespace Tiny.Toolkits.Wpf
         /// FilterIndexProperty
         /// </summary>
         public static readonly DependencyProperty FilterIndexProperty =
-          AssistFactory.PropertyRegister<FileNameSelector, int>(i => i.FilterIndex, default, defaultOptions, (s, e) =>
+          WpfAssist.PropertyRegister<FileNameSelector, int>(i => i.FilterIndex, default, defaultOptions, (s, e) =>
           {
               s.saveFileDialog.FilterIndex = e.NewValue;
           });
@@ -247,7 +242,7 @@ namespace Tiny.Toolkits.Wpf
         /// <summary>
         /// CornerRadiusProperty
         /// </summary> 
-        public static readonly DependencyProperty CornerRadiusProperty = AssistFactory.PropertyRegister<FileNameSelector, CornerRadius>(i => i.CornerRadius, new CornerRadius(0));
+        public static readonly DependencyProperty CornerRadiusProperty = WpfAssist.PropertyRegister<FileNameSelector, CornerRadius>(i => i.CornerRadius, new CornerRadius(0));
 
         /// <summary>
         /// CornerRadius
@@ -259,7 +254,5 @@ namespace Tiny.Toolkits.Wpf
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
         }
-
-         
     }
 }

@@ -1,18 +1,18 @@
-﻿ 
+﻿
 using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
 
 
     /// <summary>
     /// dependency property assist
     /// </summary>
-    public static partial class AssistFactory
+    public static partial class WpfAssist
     {
         #region  binding
 

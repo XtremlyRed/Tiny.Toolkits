@@ -47,17 +47,7 @@ namespace Tiny.Toolkits
 
         bool ICommand.CanExecute(object parameter)
         {
-            if (isExecuting)
-            {
-                return false;
-            }
-
-            if (parameter is TParameter parameter1)
-            {
-                return CanExecute(parameter1);
-            }
-
-            return true;
+            return isExecuting ? false : parameter is TParameter parameter1 ? CanExecute(parameter1) : true;
         }
 
         async void ICommand.Execute(object parameter)
@@ -101,7 +91,7 @@ namespace Tiny.Toolkits
                 .ContinueWith(t =>
                 {
                     RaiseCanExecuteChanged();
-                    isExecuting = false; 
+                    isExecuting = false;
                     t.Wait();
                 });
 
@@ -122,5 +112,41 @@ namespace Tiny.Toolkits
         {
             return new RelayCommandAsync<TParameter>(commandAction);
         }
+        #region hide base function
+
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object.
+        /// </summary>
+        /// <param name="obj"> The object to compare with the current object.</param>
+        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        /// <summary>
+        ///  Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
+
+        #endregion
+
     }
 }

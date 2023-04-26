@@ -1,13 +1,11 @@
-﻿ 
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
 
     /// <summary>
@@ -81,7 +79,7 @@ namespace Tiny.Toolkits.Wpf
         /// FolderSelectionChangedCommandProperty
         /// </summary>
         public static readonly DependencyProperty FolderSelectionChangedCommandProperty =
-                AssistFactory.PropertyRegister<FolderSelector, IRelayCommand<string>>(i => i.FolderSelectionChangedCommand, null, FrameworkPropertyMetadataOptions.Inherits, (s, e) => { });
+                WpfAssist.PropertyRegister<FolderSelector, IRelayCommand<string>>(i => i.FolderSelectionChangedCommand, null, FrameworkPropertyMetadataOptions.Inherits, (s, e) => { });
 
 
         /// <summary>
@@ -99,7 +97,7 @@ namespace Tiny.Toolkits.Wpf
         /// DescriptionProperty
         /// </summary>
         public static readonly DependencyProperty DescriptionProperty =
-          AssistFactory.PropertyRegister<FolderSelector, string>(i => i.Description, "", defaultOptions, (s, e) =>
+          WpfAssist.PropertyRegister<FolderSelector, string>(i => i.Description, "", defaultOptions, (s, e) =>
           {
               s.folderBrowserDialog.Description = e.NewValue;
           });
@@ -120,7 +118,7 @@ namespace Tiny.Toolkits.Wpf
         /// ShowNewFolderButtonProperty
         /// </summary>
         public static readonly DependencyProperty ShowNewFolderButtonProperty =
-          AssistFactory.PropertyRegister<FolderSelector, bool>(i => i.ShowNewFolderButton, false, defaultOptions, (s, e) =>
+          WpfAssist.PropertyRegister<FolderSelector, bool>(i => i.ShowNewFolderButton, false, defaultOptions, (s, e) =>
           {
               s.folderBrowserDialog.ShowNewFolderButton = e.NewValue;
           });
@@ -140,7 +138,7 @@ namespace Tiny.Toolkits.Wpf
         /// SelectedPathProperty
         /// </summary>
         public static readonly DependencyProperty SelectedPathProperty =
-       AssistFactory.PropertyRegister<FolderSelector, string>(i => i.SelectedPath, "", defaultOptions, (s, e) =>
+       WpfAssist.PropertyRegister<FolderSelector, string>(i => i.SelectedPath, "", defaultOptions, (s, e) =>
        {
            s.folderBrowserDialog.SelectedPath = e.NewValue;
        });
@@ -160,7 +158,7 @@ namespace Tiny.Toolkits.Wpf
         /// RootFolderProperty
         /// </summary>
         public static readonly DependencyProperty RootFolderProperty =
-            AssistFactory.PropertyRegister<FolderSelector, Environment.SpecialFolder>(i => i.RootFolder, Environment.SpecialFolder.Desktop, defaultOptions, (s, e) =>
+            WpfAssist.PropertyRegister<FolderSelector, Environment.SpecialFolder>(i => i.RootFolder, Environment.SpecialFolder.Desktop, defaultOptions, (s, e) =>
             {
                 s.folderBrowserDialog.RootFolder = e.NewValue;
             });
@@ -182,7 +180,7 @@ namespace Tiny.Toolkits.Wpf
         /// UseDescriptionForTitleProperty
         /// </summary>
         public static readonly DependencyProperty UseDescriptionForTitleProperty =
-          AssistFactory.PropertyRegister<FolderSelector, bool>(i => i.UseDescriptionForTitle, false, defaultOptions, (s, e) =>
+          WpfAssist.PropertyRegister<FolderSelector, bool>(i => i.UseDescriptionForTitle, false, defaultOptions, (s, e) =>
           {
               s.folderBrowserDialog.ShowNewFolderButton = e.NewValue;
           });
@@ -211,7 +209,7 @@ namespace Tiny.Toolkits.Wpf
         /// CornerRadiusProperty
         /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
-            AssistFactory.PropertyRegister<FolderSelector, CornerRadius>(i => i.CornerRadius, new CornerRadius(0));
+            WpfAssist.PropertyRegister<FolderSelector, CornerRadius>(i => i.CornerRadius, new CornerRadius(0));
 
         /// <summary>
         /// CornerRadius
@@ -222,6 +220,6 @@ namespace Tiny.Toolkits.Wpf
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
-        } 
+        }
     }
 }

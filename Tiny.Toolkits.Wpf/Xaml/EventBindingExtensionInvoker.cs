@@ -14,6 +14,7 @@ namespace Tiny.Toolkits.Wpf.Extension
     /// <summary>
     /// Invoker
     /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class EventBindingExtensionInvoker
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -55,7 +56,7 @@ namespace Tiny.Toolkits.Wpf.Extension
 
             if (bindingMapper.TargetObject is not FrameworkElement frameworkElement)
             {
-                frameworkElement = AssistFactory.FindParent<FrameworkElement>(bindingMapper.TargetObject);
+                frameworkElement = WpfAssist.FindParent<FrameworkElement>(bindingMapper.TargetObject);
             }
 
             if (frameworkElement.DataContext is null)
@@ -157,8 +158,6 @@ namespace Tiny.Toolkits.Wpf.Extension
             return arguments;
 
         }
-
-
     }
 
 

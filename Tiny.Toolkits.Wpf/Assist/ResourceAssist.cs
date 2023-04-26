@@ -1,11 +1,11 @@
 ﻿using System.Windows;
 
-namespace Tiny.Toolkits.Wpf
+namespace Tiny.Toolkits
 {
     /// <summary>
     /// resource assist
     /// </summary>
-    public static partial class AssistFactory
+    public static partial class WpfAssist
     {
 
         /// <summary>
@@ -16,17 +16,9 @@ namespace Tiny.Toolkits.Wpf
         /// <returns></returns>
         public static Target GetResource<Target>(string key)
         {
-            if (string.IsNullOrEmpty(key) || Application.Current is null)
-            {
-                return default(Target);
-            }
-
-            if (Application.Current?.TryFindResource(key) is Target resource)
-            {
-                return resource;
-            }
-
-            return default;
+            return string.IsNullOrEmpty(key) || Application.Current is null
+                ? default(Target)
+                : Application.Current?.TryFindResource(key) is Target resource ? resource : default;
         }
 
 
@@ -34,22 +26,14 @@ namespace Tiny.Toolkits.Wpf
         ///  GetResource
         /// </summary>
         /// <typeparam name="Target"></typeparam>
-        /// <param name="element"></param>
+        /// <param name="_"></param>
         /// <param name="key"> Resource Key </param>
         /// <returns></returns>
-        public static Target GetResource<Target>(this DependencyObject element, string key)
+        public static Target GetResource<Target>(this DependencyObject _, string key)
         {
-            if (string.IsNullOrEmpty(key) || Application.Current is null)
-            {
-                return default(Target);
-            }
-
-            if (Application.Current?.TryFindResource(key) is Target resource)
-            {
-                return resource;
-            }
-
-            return default;
+            return string.IsNullOrEmpty(key) || Application.Current is null
+                ? default(Target)
+                : Application.Current?.TryFindResource(key) is Target resource ? resource : default;
         }
     }
 }
