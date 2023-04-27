@@ -281,3 +281,8 @@ public partial class MainWindow : Window
     }
 }
 ```
+
+- Show
+
+![SHOW](https://github.com/XtremlyRed/Tiny.Toolkits/tree/main/images/20230427224339.png)
+
