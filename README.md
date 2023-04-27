@@ -282,7 +282,6 @@ public partial class MainWindow : Window
 }
 ```
 
-- Show
+- Show 
 
-![SHOW](https://github.com/XtremlyRed/Tiny.Toolkits/images/20230427224339.png)
-
+![Landing](images/20230427224339.png)
