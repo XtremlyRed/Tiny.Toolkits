@@ -4,8 +4,8 @@ This project a simple extension of some methods aimed at reducing code input, in
 
 The project is structured as follows:
 
-- `Tiny.Toolkits`£ºContains some basic simple implementations and extensions of methods 
-- `Tiny.Toolkits.Wpf`£ºIncluding file selector, file save selector, folder selector, enum selector, EventBinding, etc
+- `Tiny.Toolkits`: Contains some basic simple implementations and extensions of methods 
+- `Tiny.Toolkits.Wpf`: Including file selector, file save selector, folder selector, enum selector, EventBinding, etc
 
 
 ## 1. Tiny.Toolkits

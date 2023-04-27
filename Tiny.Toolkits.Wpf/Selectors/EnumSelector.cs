@@ -16,9 +16,7 @@ namespace Tiny.Toolkits
     /// An extended combobox that is enumerating Enum values. 
     ///  <para>Use the <see cref="DescriptionAttribute" /> to display entries.</para>
     /// <para>Use the <see cref="BrowsableAttribute" /> to hide specific entries.</para>
-    /// </summary>
-
-    [EditorBrowsable(EditorBrowsableState.Never)]
+    /// </summary> 
     public class EnumSelector : ComboBox
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -62,14 +60,15 @@ namespace Tiny.Toolkits
                     if (e.NewValue is Type type && type.IsEnum && EnumInfos.TryGetValue(type, out _) == false)
                     {
                         EnumInfos[type] = type.GetFields()
-                    .Where(i => i.IsStatic)
-                    .Select(i => new EnumInfo
-                    {
-                        Value = i.GetValue(null),
-                        HashCode = i.GetValue(null).GetHashCode(),
-                        Name = i.Name,
-                        DisplayName = i.GetCustomAttribute<DescriptionAttribute>()?.Description ?? i.Name
-                    }).ToArray();
+                        .Where(i => i.IsStatic)
+                        .Where(i => i.GetAttribute<BrowsableAttribute>()?.Browsable != false)
+                        .Select(i => new EnumInfo
+                        {
+                            Value = i.GetValue(null),
+                            HashCode = i.GetValue(null).GetHashCode(),
+                            Name = i.Name,
+                            DisplayName = i.GetCustomAttribute<DescriptionAttribute>()?.Description ?? i.Name
+                        }).ToArray();
                     }
 
                     @enum.UpdateVisual();
@@ -219,7 +218,7 @@ namespace Tiny.Toolkits
             }
 
             int hashCode = EnumValue.GetHashCode();
-            int index = System.Linq.CollectionExtensions.IndexOf(ValidEnumValues, i => i.HashCode == hashCode);
+            int index = System.Linq.TinyTools.IndexOf(ValidEnumValues, i => i.HashCode == hashCode);
 
             if ((EnumValue != null && SelectedIndex == -1) || index != SelectedIndex)
             {

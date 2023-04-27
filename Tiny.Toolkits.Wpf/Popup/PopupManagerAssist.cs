@@ -10,8 +10,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-using Tiny.Toolkits.Wpf.Popup.PopupView;
-
+using BF = System.Reflection.BindingFlags;
 namespace Tiny.Toolkits.Popup.Assist
 {
 
@@ -39,7 +38,7 @@ namespace Tiny.Toolkits.Popup.Assist
                 {
                     adornerLayer.Add(popupAdornet);
                 }
-                string popupResult = await popupAdornet.WaitMessageResultAsync(PopupType.Message, waitTimeSpan, () =>
+                string popupResult = await popupAdornet.WaitMessageResultAsync(waitTimeSpan, () =>
                 {
                     if (displayed.Aggregate(false, (s, e) => s || e) == false)
                     {
@@ -80,7 +79,7 @@ namespace Tiny.Toolkits.Popup.Assist
                 {
                     adornerLayer.Add(popupAdornet);
                 }
-                object popupResult = await popupAdornet.WaitContentResultAsync(PopupType.Content, waitTimeSpan, () =>
+                object popupResult = await popupAdornet.WaitContentResultAsync(waitTimeSpan, () =>
                 {
                     if (displayed.Aggregate(false, (s, e) => s || e) == false)
                     {
@@ -103,95 +102,92 @@ namespace Tiny.Toolkits.Popup.Assist
         }
     }
 
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    internal enum PopupType
-    {
-        Message,
-        Content
-    }
-
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-
     internal class PopupAdorner : Adorner
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] private bool isLoad;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly _________ContainerView containerView;
-        public PopupAdorner(UIElement adornedElement) : base(adornedElement)
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private readonly PopupViewBase popupView;
+        public PopupAdorner(Type messageContainerType, UIElement adornedElement) : base(adornedElement)
         {
-            containerView = new _________ContainerView();
+            System.Reflection.ConstructorInfo[] cs = messageContainerType.GetConstructors(BF.Instance | BF.Public | BF.NonPublic);
+
+            popupView = cs.FirstOrDefault()?.Invoke(null) as PopupViewBase;
+
+            popupView.InitializeView();
         }
 
-        protected override int VisualChildrenCount => containerView != null ? 1 : 0;
+        protected override int VisualChildrenCount => popupView != null ? 1 : 0;
 
         public void SetMaskBrush(Brush brush)
         {
-            if (containerView != null)
+            if (popupView != null)
             {
-                containerView.Background = brush;
+                popupView.Background = brush;
             }
         }
 
         public void SetMessage(string message, string title, string[] btnContents)
         {
-            containerView.SetBtnContent(message, title, btnContents);
+            popupView.SetMessageInfo(message, title, btnContents);
         }
 
 
         public async Task<string> WaitMessageResultAsync(
-            PopupType popupType,
             TimeSpan durationAnimation,
-            Action animationCompleteCallback = null)
+            Action popupCloseCallback = null)
         {
 
             if (isLoad == false)
             {
-                AddVisualChild(containerView);
+                AddVisualChild(popupView);
                 isLoad = true;
             }
 
-            PopupManagerAssist.displayed[popupType == PopupType.Message ? 0 : 1] = true;
+            PopupManagerAssist.displayed[0] = true;
 
-            object result = await containerView.WaitResultAsync(popupType, durationAnimation, animationCompleteCallback);
+            string result = await popupView.WaitMessageResultAsync(durationAnimation, popupCloseCallback);
 
-            PopupManagerAssist.displayed[popupType == PopupType.Message ? 0 : 1] = false;
+            PopupManagerAssist.displayed[0] = false;
 
-            return result as string;
+            return result;
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            containerView?.Arrange(new Rect(finalSize));
+            popupView?.Arrange(new Rect(finalSize));
             return finalSize;
         }
 
         protected override Visual GetVisualChild(int index)
         {
             return
-                index == 0 && containerView != null
-                ? containerView
+                index == 0 && popupView != null
+                ? popupView
                 : base.GetVisualChild(index);
         }
 
         internal void SetContent(FrameworkElement popupContent, Parameters parameters = null)
         {
-            containerView.SetContent(popupContent, parameters);
+            popupView.SetContent(popupContent, parameters);
         }
 
-        internal async Task<object> WaitContentResultAsync(PopupType popupType, TimeSpan durationAnimation, Action animationCompleteCallback = null)
+        internal async Task<object> WaitContentResultAsync(
+            TimeSpan durationAnimation,
+            Action popupCloseCallback = null)
         {
             if (isLoad == false)
             {
-                AddVisualChild(containerView);
+                AddVisualChild(popupView);
                 isLoad = true;
             }
 
-            PopupManagerAssist.displayed[popupType == PopupType.Message ? 0 : 1] = true;
+            PopupManagerAssist.displayed[1] = true;
 
-            object result = await containerView.WaitResultAsync(popupType, durationAnimation, animationCompleteCallback);
+            object result = await popupView.WaitContentResultAsync(durationAnimation, popupCloseCallback);
 
-            PopupManagerAssist.displayed[popupType == PopupType.Message ? 0 : 1] = false;
+            PopupManagerAssist.displayed[1] = false;
 
             return result;
         }

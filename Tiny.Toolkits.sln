@@ -10,7 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决�
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Toolkits", "Tiny.Toolkits\Tiny.Toolkits.csproj", "{0CED9C86-B274-4857-81B4-81F0D70E453A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiny.Toolkits.Wpf", "Tiny.Toolkits.Wpf\Tiny.Toolkits.Wpf.csproj", "{7D27AA2E-FFF6-401B-A187-48B100E76CDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Toolkits.Wpf", "Tiny.Toolkits.Wpf\Tiny.Toolkits.Wpf.csproj", "{7D27AA2E-FFF6-401B-A187-48B100E76CDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1.Test", "WpfApp1.Test\WpfApp1.Test.csproj", "{5F93F74A-450C-41EE-B1C1-268F593C3C04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{7D27AA2E-FFF6-401B-A187-48B100E76CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D27AA2E-FFF6-401B-A187-48B100E76CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D27AA2E-FFF6-401B-A187-48B100E76CDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F93F74A-450C-41EE-B1C1-268F593C3C04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F93F74A-450C-41EE-B1C1-268F593C3C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F93F74A-450C-41EE-B1C1-268F593C3C04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F93F74A-450C-41EE-B1C1-268F593C3C04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

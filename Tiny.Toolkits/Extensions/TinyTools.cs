@@ -7,7 +7,7 @@ namespace System.Linq
     /// <summary>
     /// Collection Extensions
     /// </summary>
-    public static class CollectionExtensions
+    public static class TinyTools
     {
         private static class EmptyImpls<T>
         {
