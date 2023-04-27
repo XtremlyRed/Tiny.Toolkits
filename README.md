@@ -228,4 +228,56 @@ class TinyViewModel:ViewModelBase
     }
 }
 ```
- 
+
+### 2.3. `Popup` for WPF
+
+Use decorator to popup content and message in wpf
+
+- View (XAML):
+
+```xml
+<Window
+    x:Class="WpfApp1.Test.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:WpfApp1.Test"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tiny="https://github.com/xtremlyred/tiny.toolkits"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <Grid tiny:PopupManager.ContainerName="123" tiny:PopupManager.IsMainContainer="True">
+
+        <TextBlock FontSize="20" Text="messageInfo" />
+
+        <Button
+            Width="150"
+            Height="25"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Click="Button_Click"
+            Content="click and popup" />
+    </Grid>
+</Window>
+
+```
+
+- MainWindow (\*.cs):
+
+```csharp
+public partial class MainWindow : Window
+{
+    public MainWindow()
+    {
+        InitializeComponent();
+    }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        PopupManager popupManager = new PopupManager();
+        popupManager.ShowAsync("test message", "tips", new[] {"OK","NO","Cancel" });
+    }
+}
+```
