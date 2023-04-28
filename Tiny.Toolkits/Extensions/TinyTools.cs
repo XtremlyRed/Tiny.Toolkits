@@ -1,13 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
-namespace System.Linq
+namespace Tiny.Toolkits
 {
     /// <summary>
     /// Collection Extensions
     /// </summary>
-    public static class TinyTools
+    public  static partial class TinyTools
     {
         private static class EmptyImpls<T>
         {

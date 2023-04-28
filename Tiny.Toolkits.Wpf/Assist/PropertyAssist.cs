@@ -26,7 +26,7 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public static DependencyProperty PropertyRegister<TDependencyObject, TPropertyType>(Expression<Func<TDependencyObject, TPropertyType>> propertyNameSelector, Action<TDependencyObject, PropertyChangedEventArgs<TPropertyType>> propertyChangedCallback = null) where TDependencyObject : DependencyObject
         {
-            string propertyName = Reflections.GetPropertyName(propertyNameSelector);
+            string propertyName = TinyTools.GetPropertyName(propertyNameSelector);
             DependencyProperty property = DependencyProperty.Register(propertyName, typeof(TPropertyType), typeof(TDependencyObject), new PropertyMetadata(default(TPropertyType), (s, e) =>
             {
                 if (propertyChangedCallback is null)
@@ -53,7 +53,7 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public static DependencyProperty PropertyRegister<TDependencyObject, TPropertyType>(Expression<Func<TDependencyObject, TPropertyType>> propertyNameSelector, TPropertyType defaultValue, Action<TDependencyObject, PropertyChangedEventArgs<TPropertyType>> propertyChangedCallback = null) where TDependencyObject : DependencyObject
         {
-            string propertyName = Reflections.GetPropertyName(propertyNameSelector);
+            string propertyName = TinyTools.GetPropertyName(propertyNameSelector);
             DependencyProperty property = DependencyProperty.Register(propertyName, typeof(TPropertyType), typeof(TDependencyObject), new PropertyMetadata(defaultValue, (s, e) =>
             {
                 if (propertyChangedCallback is null)
@@ -82,7 +82,7 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public static DependencyProperty PropertyRegister<TDependencyObject, TPropertyType>(Expression<Func<TDependencyObject, TPropertyType>> propertyNameSelector, TPropertyType defaultValue, UpdateSourceTrigger updateSourceTrigger, Action<TDependencyObject, PropertyChangedEventArgs<TPropertyType>> propertyChangedCallback = null) where TDependencyObject : DependencyObject
         {
-            string propertyName = Reflections.GetPropertyName(propertyNameSelector);
+            string propertyName = TinyTools.GetPropertyName(propertyNameSelector);
             FrameworkPropertyMetadataOptions flags = FrameworkPropertyMetadataOptions.BindsTwoWayByDefault;
             DependencyProperty property = DependencyProperty.Register(propertyName, typeof(TPropertyType), typeof(TDependencyObject), new FrameworkPropertyMetadata(defaultValue, flags, (s, e) =>
             {
@@ -112,7 +112,7 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public static DependencyProperty PropertyRegister<TDependencyObject, TPropertyType>(Expression<Func<TDependencyObject, TPropertyType>> propertyNameSelector, TPropertyType defaultValue, FrameworkPropertyMetadataOptions flags, UpdateSourceTrigger updateSourceTrigger, Action<TDependencyObject, PropertyChangedEventArgs<TPropertyType>> propertyChangedCallback = null) where TDependencyObject : DependencyObject
         {
-            string propertyName = Reflections.GetPropertyName(propertyNameSelector);
+            string propertyName = TinyTools.GetPropertyName(propertyNameSelector);
             DependencyProperty property = DependencyProperty.Register(propertyName, typeof(TPropertyType), typeof(TDependencyObject), new FrameworkPropertyMetadata(defaultValue, flags, (s, e) =>
             {
                 if (propertyChangedCallback is null)
@@ -140,7 +140,7 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public static DependencyProperty PropertyRegister<TDependencyObject, TPropertyType>(Expression<Func<TDependencyObject, TPropertyType>> propertyNameSelector, TPropertyType defaultValue, FrameworkPropertyMetadataOptions flags, Action<TDependencyObject, PropertyChangedEventArgs<TPropertyType>> propertyChangedCallback = null) where TDependencyObject : DependencyObject
         {
-            string propertyName = Reflections.GetPropertyName(propertyNameSelector);
+            string propertyName = TinyTools.GetPropertyName(propertyNameSelector);
 
             DependencyProperty property = DependencyProperty.Register(propertyName, typeof(TPropertyType), typeof(TDependencyObject), new FrameworkPropertyMetadata(defaultValue, flags, (s, e) =>
             {
@@ -168,7 +168,7 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public static DependencyProperty PropertyRegister<TDependencyObject, TPropertyType>(Expression<Func<TDependencyObject, TPropertyType>> propertyNameSelector, FrameworkPropertyMetadataOptions flags, Action<TDependencyObject, PropertyChangedEventArgs<TPropertyType>> propertyChangedCallback = null) where TDependencyObject : DependencyObject
         {
-            string propertyName = Reflections.GetPropertyName(propertyNameSelector);
+            string propertyName = TinyTools.GetPropertyName(propertyNameSelector);
             TPropertyType defaultValue = default;
             DependencyProperty property = DependencyProperty.Register(propertyName, typeof(TPropertyType), typeof(TDependencyObject), new FrameworkPropertyMetadata(defaultValue, flags, (s, e) =>
             {

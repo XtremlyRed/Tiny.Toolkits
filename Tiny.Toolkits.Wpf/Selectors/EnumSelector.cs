@@ -211,6 +211,7 @@ namespace Tiny.Toolkits
 
                 ItemsSource = ValidEnumValues.Select(i => i.DisplayName).ToArray();
             }
+
             if (EnumValue is null)
             {
                 SelectedIndex = 0;
@@ -218,7 +219,7 @@ namespace Tiny.Toolkits
             }
 
             int hashCode = EnumValue.GetHashCode();
-            int index = System.Linq.TinyTools.IndexOf(ValidEnumValues, i => i.HashCode == hashCode);
+            int index = TinyTools.IndexOf(ValidEnumValues, i => i.HashCode == hashCode);
 
             if ((EnumValue != null && SelectedIndex == -1) || index != SelectedIndex)
             {

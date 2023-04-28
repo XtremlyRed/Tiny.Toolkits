@@ -15,7 +15,7 @@
 		</TargetFrameworks>
 
 
-		<Description>Including FileSelector, FileNameselector, FolderSelector, EnumSelector, EventBinding, etc</Description>
+		<Description>Including PopupManager, FileSelector, FileNameselector, FolderSelector, EnumSelector, EventBinding, etc</Description>
 
 	</PropertyGroup>
 

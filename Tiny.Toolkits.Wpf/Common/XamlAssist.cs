@@ -18,7 +18,7 @@ namespace Tiny.Toolkits
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        private static readonly ConcurrentDictionary<object, bool> bindingAssistCached = new();
+        private static readonly ConcurrentDictionary<int, bool> bindingAssistCached = new();
 
         /// <summary>
         /// password
@@ -53,11 +53,11 @@ namespace Tiny.Toolkits
         {
             if (obj is PasswordBox passwordBox)
             {
-                if (bindingAssistCached.TryGetValue(passwordBox, out bool result) == false)
+                if (bindingAssistCached.TryGetValue(passwordBox.GetHashCode(), out bool result) == false)
                 {
                     passwordBox.Unloaded += PasswordBox_Unloaded;
                     passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
-                    bindingAssistCached[passwordBox] = true;
+                    bindingAssistCached[passwordBox.GetHashCode()] = true;
                 }
 
                 string newValue = e.NewValue?.ToString() ?? string.Empty;
@@ -75,7 +75,7 @@ namespace Tiny.Toolkits
             {
                 passwordBox.Unloaded -= PasswordBox_Unloaded;
                 passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
-                bindingAssistCached.TryRemove(passwordBox, out bool _);
+                bindingAssistCached.TryRemove(passwordBox.GetHashCode(), out bool _);
             }
 
             void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)

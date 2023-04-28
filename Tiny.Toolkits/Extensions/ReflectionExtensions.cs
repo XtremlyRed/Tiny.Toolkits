@@ -8,7 +8,7 @@ namespace Tiny.Toolkits
     /// <summary>
     /// ref 
     /// </summary>
-    public static class Reflections
+    public static partial class TinyTools
     {
         /// <summary>
         /// get proprety name from expression

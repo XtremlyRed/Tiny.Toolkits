@@ -236,6 +236,7 @@ namespace Tiny.Toolkits
             Storyboard.SetTarget(doubleAnimation, @object);
             Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath(nameof(FrameworkElement.Opacity)));
 
+
             Storyboard storyboard = new();
             storyboard.Children.Add(doubleAnimation);
 

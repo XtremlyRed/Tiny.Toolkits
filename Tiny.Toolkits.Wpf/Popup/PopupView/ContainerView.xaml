@@ -24,47 +24,18 @@
             VerticalAlignment="Center"
             Panel.ZIndex="2"
             Background="Transparent"
-            Visibility="Visible">
-
-            <!--<Border
-                Width="360"
-                Height="222"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="White"
-                CornerRadius="5">
-                <Border.Effect>
-                    <DropShadowEffect
-                        BlurRadius="3"
-                        Direction="0"
-                        ShadowDepth="0"
-                        Color="LightGray" />
-                </Border.Effect>
-            </Border>
+            Visibility="Collapsed">
 
             <Border
-                Width="360"
-                Height="222"
+                MinWidth="450"
+                MinHeight="240"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Background="White"
-                CornerRadius="5">
-                <Border.Effect>
-                    <DropShadowEffect
-                        BlurRadius="3"
-                        Direction="180"
-                        ShadowDepth="0"
-                        Color="LightGray" />
-                </Border.Effect>
-            </Border>-->
-
-            <Border
-                Width="360"
-                Height="222"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="White"
-                CornerRadius="5">
+                BorderBrush="#20000000"
+                BorderThickness="1"
+                CornerRadius="8"
+                SnapsToDevicePixels="True">
 
 
                 <Grid>
@@ -83,8 +54,7 @@
                         Text="" />
 
                     <Grid Grid.Row="1" ClipToBounds="True">
-
-
+                        
                         <TextBox
                             x:Name="MessageBox"
                             Margin="25,15,-20,15"
@@ -135,7 +105,7 @@
                                                         FontSize="13" />
                                                 </Grid>
                                                 <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsPressed" Value="True">
+                                                    <Trigger Property="IsMouseOver" Value="True">
                                                         <Trigger.EnterActions>
                                                             <BeginStoryboard>
                                                                 <Storyboard>
@@ -169,9 +139,9 @@
                                 <DataTemplate>
                                     <Button
                                         Height="28"
-                                        MinWidth="85"
-                                        MaxWidth="110"
-                                        Margin="8,0"
+                                        MinWidth="100"
+                                        MaxWidth="120"
+                                        Margin="5,0"
                                         Click="Click"
                                         Content="{Binding}"
                                         Style="{StaticResource _BtnKey}" />

@@ -1,10 +1,5 @@
-﻿
-
-
-using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -17,13 +12,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
     [EditorBrowsable(EditorBrowsableState.Never)]
     public partial class ContainerView : PopupViewBase
     {
-        private string currentClickResult;
-        private readonly object currentPopupResult;
-        private readonly IPopupAware popupAware;
-        private readonly Parameters parameters;
-        private readonly Action popupContentCloseCallback;
-        private readonly SemaphoreSlim messageSemaphoreSlim = new(0, 1);
-        private readonly SemaphoreSlim contentSemaphoreSlim = new(0, 1);
+
         internal ContainerView()
         {
             InitializeComponent();
@@ -38,7 +27,6 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
         /// <param name="buttonContents"></param>
         protected override void SetPopupMessageInfo(string message, string title, string[] buttonContents)
         {
-            currentClickResult = null;
             TitleBox.Text = title;
             MessageBox.Text = message;
 
@@ -55,6 +43,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
                     }
                     bs.Foreground = System.Windows.Media.Brushes.White;
                     bs.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 51, 119, 133));
+                    bs.Focus();
                 };
             }
         }
@@ -85,9 +74,8 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
                 return;
             }
 
-            currentClickResult = brn.Content as string;
-
-
+            string currentClickResult = brn.Content as string;
+             
             base.SetCurrentClickContent(currentClickResult);
         }
 
