@@ -8,6 +8,8 @@ namespace Tiny.Toolkits
     /// </summary>
     public static class AnimationAssist
     {
+         
+
         /// <summary>																											
         /// Attach <see cref="ThicknessAnimation"/> to dependencyObject object																											
         /// </summary>																											
