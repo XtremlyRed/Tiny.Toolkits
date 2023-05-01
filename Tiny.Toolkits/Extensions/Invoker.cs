@@ -11,7 +11,7 @@ namespace Tiny.Toolkits
     /// <summary>
     /// simple invoke class
     /// </summary>
-    public static class Invoker
+    public static partial class TinyTools
     {
         /// <summary>
         /// run delegate and ignore exception
@@ -274,14 +274,16 @@ namespace Tiny.Toolkits
                 throw new ArgumentNullException(nameof(action));
             }
 
+            var hashCode = token.GetHashCode();
+
             lock (invokeTokenCache)
             {
-                if (invokeTokenCache.TryGetValue(token.GetHashCode(), out _))
+                if (invokeTokenCache.TryGetValue(hashCode, out _))
                 {
                     return;
                 }
 
-                invokeTokenCache[token.GetHashCode()] = false;
+                invokeTokenCache[hashCode] = false;
             }
 
             try
@@ -290,14 +292,14 @@ namespace Tiny.Toolkits
 
                 if (destroyTokenAfterInvoke == false)
                 {
-                    invokeTokenCache[token.GetHashCode()] = true;
+                    invokeTokenCache[hashCode] = true;
                 }
             }
             finally
             {
                 if (destroyTokenAfterInvoke)
                 {
-                    invokeTokenCache.TryRemove(token.GetHashCode(), out _);
+                    invokeTokenCache.TryRemove(hashCode, out _);
                 }
             }
         }
@@ -323,14 +325,16 @@ namespace Tiny.Toolkits
                 throw new ArgumentNullException(nameof(funCallback));
             }
 
+            var hashCode = token.GetHashCode();
+
             lock (invokeTokenCache)
             {
-                if (invokeTokenCache.TryGetValue(token.GetHashCode(), out _))
+                if (invokeTokenCache.TryGetValue(hashCode, out _))
                 {
                     return;
                 }
 
-                invokeTokenCache[token.GetHashCode()] = false;
+                invokeTokenCache[hashCode] = false;
             }
 
             try
@@ -339,14 +343,14 @@ namespace Tiny.Toolkits
 
                 if (destroyTokenAfterInvoke == false)
                 {
-                    invokeTokenCache[token.GetHashCode()] = true;
+                    invokeTokenCache[hashCode] = true;
                 }
             }
             finally
             {
                 if (destroyTokenAfterInvoke)
                 {
-                    invokeTokenCache.TryRemove(token.GetHashCode(), out _);
+                    invokeTokenCache.TryRemove(hashCode, out _);
                 }
             }
         }

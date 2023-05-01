@@ -42,17 +42,17 @@ namespace Tiny.Toolkits
 
 
         // Map of registered types
-        private readonly Dictionary<Type, Func<ILifetime, object>> _registeredTypes = new();
+        private readonly Dictionary<Type, Func<ILifetime, object>> registeredTypes = new();
 
         // Lifetime management
-        private readonly ContainerLifetime _lifetime;
+        private readonly ContainerLifetime lifetime;
 
         /// <summary>
         /// Creates a new instance of IoC Container
         /// </summary>
         public Container()
         {
-            _lifetime = new ContainerLifetime(t => _registeredTypes[t]);
+            lifetime = new ContainerLifetime(t => registeredTypes[t]);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Tiny.Toolkits
 
         private IRegisteredType RegisterType(Type itemType, Func<ILifetime, object> factory)
         {
-            return new RegisteredType(itemType, f => _registeredTypes[itemType] = f, factory);
+            return new RegisteredType(itemType, f => registeredTypes[itemType] = f, factory);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Tiny.Toolkits
         public object GetService(Type type)
         {
 
-            return !_registeredTypes.TryGetValue(type, out Func<ILifetime, object> registeredType) ? null : registeredType(_lifetime);
+            return !registeredTypes.TryGetValue(type, out Func<ILifetime, object> registeredType) ? null : registeredType(lifetime);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Tiny.Toolkits
         /// <returns>Scope object</returns>
         public IContainerScope CreateScope()
         {
-            return new ScopeLifetime(_lifetime);
+            return new ScopeLifetime(lifetime);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Tiny.Toolkits
         /// </summary>
         public void Dispose()
         {
-            _lifetime.Dispose();
+            lifetime.Dispose();
         }
 
         #region Lifetime management

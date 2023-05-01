@@ -141,7 +141,7 @@
                                         Height="28"
                                         MinWidth="100"
                                         MaxWidth="120"
-                                        Margin="5,0"
+                                        Margin="5,0" Loaded="Button_Loaded"
                                         Click="Click"
                                         Content="{Binding}"
                                         Style="{StaticResource _BtnKey}" />

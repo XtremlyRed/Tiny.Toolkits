@@ -151,6 +151,7 @@ namespace Tiny.Toolkits
                 }
                 popupContentCloseCallback = null;
             };
+
             this.parameters = parameters;
 
             Panel popupContainer = GetPopupContentContainerElement();

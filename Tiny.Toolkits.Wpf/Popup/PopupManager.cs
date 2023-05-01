@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 
+using Tiny.Toolkits.Popup.Assist;
 
 namespace Tiny.Toolkits
 {
@@ -38,10 +39,10 @@ namespace Tiny.Toolkits
         public async Task ShowAsync(string message, string title, string[] buttonContents)
         {
             PopupContainerCheck();
-            UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i)));
+            UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i) && GetContainerName(i) != null));
 
             _ = uieleMent is null
-              ? throw new Exception("PopupManager: No popup main container found.")
+              ? throw new Exception("PopupManager: the main container was not found or the main container name is empty")
               : await Tiny.Toolkits.Popup.Assist.PopupManagerAssist.InnerMesagePopup(uieleMent, message, title, buttonContents);
         }
         /// <summary>
@@ -55,10 +56,10 @@ namespace Tiny.Toolkits
         public async Task<string> ComfirmAsync(string message, string title, string[] buttonContents)
         {
             PopupContainerCheck();
-            UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i)));
+            UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i) && GetContainerName(i)!=null));
 
             return uieleMent is null
-                ? throw new Exception("PopupManager: No popup main container found.")
+                ? throw new Exception("PopupManager: the main container was not found or the main container name is empty")
                 : await Tiny.Toolkits.Popup.Assist.PopupManagerAssist.InnerMesagePopup(uieleMent, message, title, buttonContents);
         }
 
@@ -143,8 +144,8 @@ namespace Tiny.Toolkits
 
             return view is null
                 ? throw new ArgumentException("invalid visual")
-                : (await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i)))) is not UIElement uieleMent
-                ? throw new Exception("PopupManager: No popup main container found.")
+                : (await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i) && GetContainerName(i) != null))) is not UIElement uieleMent
+                ? throw new Exception("PopupManager: the main container was not found or the main container name is empty")
                 : await Tiny.Toolkits.Popup.Assist.PopupManagerAssist.InnerContentPopup(uieleMent, view, parameters);
         }
         /// <summary>
@@ -261,8 +262,16 @@ namespace Tiny.Toolkits
                         if (sender is FrameworkElement element)
                         {
                             if (uiElements.Contains(element))
-                            {
+                            { 
+                                if(PropertyAttache.GetProperty0(element)  is PopupBridge popupBridge)
+                                {
+                                    popupBridge.Release();
+
+                                    popupBridge.IsLoaded = false;
+                                }
+                              
                                 uiElements.Remove(element);
+
                             }
                         }
                     }
@@ -295,8 +304,18 @@ namespace Tiny.Toolkits
                         Tiny.Toolkits.Popup.Assist.PopupAdorner popupAdorner = new(messageContainerType, element);
                         popupAdorner.SetMaskBrush(brush);
 
-                        PropertyAttache.SetProperty0(element, adornerLayer);
-                        PropertyAttache.SetProperty1(element, popupAdorner);
+
+                        PopupBridge popupBridge = new();
+                        popupBridge.AdornerLayer = adornerLayer;
+                        popupBridge.PopupAdornet = popupAdorner;
+                        popupBridge.IsLoaded = true;
+
+                        popupBridge.Init();
+
+                        PropertyAttache.SetProperty0(element, popupBridge);
+
+
+
                     }
                 }));
 
@@ -377,6 +396,7 @@ namespace Tiny.Toolkits
 
         /// <summary>
         /// get message container type
+        /// This type must inherit <see cref="Tiny.Toolkits.PopupViewBase"/>
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
@@ -411,6 +431,7 @@ namespace Tiny.Toolkits
 
         /// <summary>
         /// message container type
+        /// This type must inherit <see cref="Tiny.Toolkits.PopupViewBase"/>
         /// </summary>
         public static readonly DependencyProperty MessageContainerTypeProperty =
             DependencyProperty.RegisterAttached("MessageContainerType", typeof(Type), typeof(PopupManager),

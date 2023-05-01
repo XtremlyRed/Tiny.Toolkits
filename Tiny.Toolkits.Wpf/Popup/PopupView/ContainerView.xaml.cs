@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -12,6 +11,8 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
     [EditorBrowsable(EditorBrowsableState.Never)]
     public partial class ContainerView : PopupViewBase
     {
+
+        private string[] buttonContents;
 
         internal ContainerView()
         {
@@ -30,21 +31,23 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
             TitleBox.Text = title;
             MessageBox.Text = message;
 
-            ButtonBoxs.ItemsSource = buttonContents;
+            ButtonBoxs.ItemsSource = this.buttonContents = buttonContents;
+             
+        }
 
-            if (buttonContents != null && buttonContents.Length > 0)
+        private void Button_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            if (sender is not Button btn)
             {
-                ButtonBoxs.Loaded += (s, e) =>
-                {
-                    Button bs = WpfAssist.FindVisualChildren<Button>(ButtonBoxs)?.FirstOrDefault(i => i.Content?.ToString() == buttonContents[0]);
-                    if (bs is null)
-                    {
-                        return;
-                    }
-                    bs.Foreground = System.Windows.Media.Brushes.White;
-                    bs.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 51, 119, 133));
-                    bs.Focus();
-                };
+                return;
+            }
+
+            if (btn.Content as string == buttonContents[0])
+            {
+                btn.Foreground = System.Windows.Media.Brushes.White;
+                btn.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 51, 119, 133));
+                btn.Focus();
             }
         }
 
@@ -75,133 +78,8 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
             }
 
             string currentClickResult = brn.Content as string;
-             
+
             base.SetCurrentClickContent(currentClickResult);
         }
-
-        //internal async Task<object> WaitResultAsync(
-        //  PopupType popupMessage,
-        //    TimeSpan durationAnimation,
-        //    Action animationCompleteCallback = null)
-        //{
-
-        //    if (popupMessage == PopupType.Message)
-        //    {
-        //        DisplayVisual(messageContainer, durationAnimation);
-        //        await messageSemaphoreSlim.WaitAsync();
-        //        RemoveVisual(messageContainer, durationAnimation, animationCompleteCallback);
-        //        return currentClickResult;
-        //    }
-
-        //    DisplayVisual(popupContainer, durationAnimation);
-        //    await contentSemaphoreSlim.WaitAsync();
-        //    RemoveVisual(popupContainer, durationAnimation, () =>
-        //    {
-        //        popupContentCloseCallback?.Invoke();
-        //        popupContainer?.Children?.Clear();
-        //        animationCompleteCallback?.Invoke();
-        //        popupAware?.OnPopupClosed();
-        //    });
-
-        //    return currentPopupResult;
-        //}
-
-
-        //private void RemoveVisual(FrameworkElement @object, TimeSpan durationAnimation, Action animationCompleteCallback = null)
-        //{
-
-        //    DoubleAnimation doubleAnimation = new();
-        //    doubleAnimation.To = 0;
-        //    doubleAnimation.Duration = durationAnimation;// TimeSpan.FromMilliseconds(200);
-        //    Storyboard.SetTarget(doubleAnimation, @object);
-        //    Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath(nameof(FrameworkElement.Opacity)));
-
-        //    Storyboard storyboard = new();
-        //    storyboard.Children.Add(doubleAnimation);
-        //    storyboard.Completed += (s, e) =>
-        //    {
-        //        @object.Visibility = Visibility.Collapsed;
-        //        animationCompleteCallback?.Invoke();
-        //    };
-        //    storyboard.Begin();
-
-        //}
-
-        //private void DisplayVisual(FrameworkElement @object, TimeSpan durationAnimation)
-        //{
-
-        //    DoubleAnimation doubleAnimation = new();
-        //    doubleAnimation.From = 0;
-        //    doubleAnimation.To = 1;
-        //    doubleAnimation.Duration = durationAnimation;
-        //    Storyboard.SetTarget(doubleAnimation, @object);
-        //    Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath(nameof(FrameworkElement.Opacity)));
-
-        //    Storyboard storyboard = new();
-        //    storyboard.Children.Add(doubleAnimation);
-
-        //    @object.Visibility = Visibility.Visible;
-
-        //    storyboard.Begin();
-
-        //}
-
-
-
-        //internal void SetContent(FrameworkElement popupContent, Parameters parameters = null)
-        //{
-        //    popupContentCloseCallback = () =>
-        //    {
-        //        popupContent.DataContextChanged -= PopupContent_DataContextChanged;
-        //        if (popupContent is IPopupAware popupAware)
-        //        {
-        //            popupAware.RequestCloseEvent -= PopupAware_RequestCloseEvent;
-        //        }
-        //        if (popupContent.DataContext is IPopupAware popupAware1)
-        //        {
-        //            popupAware1.RequestCloseEvent -= PopupAware_RequestCloseEvent;
-        //        }
-        //        popupContentCloseCallback = null;
-        //    };
-        //    this.parameters = parameters;
-        //    popupContainer.Children.Add(popupContent);
-
-        //    AwareCallback(popupContent);
-        //    AwareCallback(popupContent.DataContext);
-
-        //    popupContent.DataContextChanged += PopupContent_DataContextChanged;
-        //}
-
-        //private void PopupAware_RequestCloseEvent(object sender, object args)
-        //{
-        //    currentPopupResult = args;
-
-        //    if (contentSemaphoreSlim.CurrentCount == 0)
-        //    {
-        //        contentSemaphoreSlim.Release();
-        //    }
-        //}
-
-
-        //private void PopupContent_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        //{
-        //    if (e.OldValue is IPopupAware popupAware)
-        //    {
-        //        popupAware.RequestCloseEvent -= PopupAware_RequestCloseEvent;
-        //    }
-        //    AwareCallback(e.NewValue);
-        //}
-
-        //private void AwareCallback(object @object)
-        //{
-        //    if (@object is not IPopupAware popupAware)
-        //    {
-        //        return;
-        //    }
-        //    this.popupAware = popupAware;
-        //    this.popupAware.OnPopupOpened(parameters);
-        //    popupAware.RequestCloseEvent += PopupAware_RequestCloseEvent;
-
-        //}
     }
 }

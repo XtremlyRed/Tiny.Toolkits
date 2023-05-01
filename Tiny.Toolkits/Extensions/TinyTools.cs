@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 
 namespace Tiny.Toolkits
 {
     /// <summary>
     /// Collection Extensions
     /// </summary>
-    public  static partial class TinyTools
+    public static partial class TinyTools
     {
         private static class EmptyImpls<T>
         {
@@ -465,6 +466,32 @@ namespace Tiny.Toolkits
             T[] copy = new T[source.Length];
             Array.Copy(source, 0, copy, 0, source.Length);
             return copy;
+        }
+
+
+
+        /// <summary>
+        /// release a <see cref="SemaphoreSlim"/> when <see cref="SemaphoreSlim.CurrentCount"/> == 0
+        /// </summary>
+        /// <param name="semaphoreSlim"></param>
+        /// <param name="releaseCount"></param>
+        public static void ReleaseWhenZero(this SemaphoreSlim semaphoreSlim, int releaseCount = 1)
+        {
+            if (semaphoreSlim is null)
+            {
+                return;
+            }
+
+
+            if (releaseCount < 1)
+            {
+                return;
+            }
+
+            if (semaphoreSlim.CurrentCount == 0)
+            {
+                semaphoreSlim.Release(releaseCount);
+            }
         }
     }
 }

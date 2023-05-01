@@ -271,17 +271,7 @@ namespace Tiny.Toolkits
         {
             return includeEquals ? (value >= minValue) && (value <= maxValue) : (value > minValue) && (value < maxValue);
         }
-
-
-
-
-
-
-
-
-
-
-
+         
         /// <summary>
         ///  get absolute value
         /// </summary>
