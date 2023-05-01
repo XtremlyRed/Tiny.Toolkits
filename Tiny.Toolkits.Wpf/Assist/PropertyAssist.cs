@@ -387,8 +387,8 @@ namespace Tiny.Toolkits
             internal PropertyChangedEventArgs(DependencyProperty property, object newValue, object oldValue)
             {
                 Property = property;
-                OldValue = Invoker.CastTo<TargetType>(oldValue);
-                NewValue = Invoker.CastTo<TargetType>(newValue);
+                OldValue = TinyTools.CastTo<TargetType>(oldValue);
+                NewValue = TinyTools.CastTo<TargetType>(newValue);
             }
 
             /// <summary>
