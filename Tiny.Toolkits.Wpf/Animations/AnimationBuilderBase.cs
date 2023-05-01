@@ -6,6 +6,8 @@ using System.Windows.Media.Animation;
 
 namespace Tiny.Toolkits
 {
+
+
     /// <summary>
     ///  a class of <see cref="AnimationBuilderBase{T, TD}"/>
     /// </summary>
@@ -203,8 +205,14 @@ namespace Tiny.Toolkits
                 timeline.FillBehavior = fillBehavior.Value;
             }
             if (completeCallback != null)
-            {
-                timeline.Completed += (s, e) => completeCallback();
+            { 
+                timeline.Completed += Timeline_Completed; 
+
+                void Timeline_Completed(object sender, EventArgs e)
+                {
+                    timeline.Completed -= Timeline_Completed;
+                    completeCallback();
+                }
             }
             if (autoReverse.HasValue)
             {

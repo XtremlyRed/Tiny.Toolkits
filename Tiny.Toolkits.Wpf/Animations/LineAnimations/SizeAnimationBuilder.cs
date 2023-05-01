@@ -1,21 +1,18 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Media3D;
 
 namespace Tiny.Toolkits
 {
     /// <summary>																											
-    /// a class of <see cref="ThicknessAnimationBuilder{T}"/>																											
+    /// a class of <see cref="SizeAnimationBuilder{T}"/>																											
     /// </summary>																											
     /// <typeparam name="T">dependencyObject type</typeparam>																											
-    public class ThicknessAnimationBuilder<T> : AnimationBuilderBase<ThicknessAnimationBuilder<T>, T> where T : DependencyObject
+    public class SizeAnimationBuilder<T> : AnimationBuilderBase<SizeAnimationBuilder<T>, T> where T : DependencyObject
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Thickness? fromValue;
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Thickness? byValue;
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Thickness? toValue;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Size? fromValue;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Size? byValue;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Size? toValue;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] private bool? boolValue;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] private IEasingFunction easingFunction;
 
@@ -24,7 +21,7 @@ namespace Tiny.Toolkits
         /// </summary>                                                                                                                           
         /// <param name="fromValue"></param>                                                                                                     
         /// <returns></returns>                                                                                                                  
-        public ThicknessAnimationBuilder<T> From(Thickness? fromValue)
+        public SizeAnimationBuilder<T> From(Size? fromValue)
         {
             this.fromValue = fromValue;
             return this;
@@ -34,7 +31,7 @@ namespace Tiny.Toolkits
         /// </summary>                                                                                                                           
         /// <param name="byValue"></param>                                                                                                       
         /// <returns></returns>                                                                                                                  
-        public ThicknessAnimationBuilder<T> By(Thickness? byValue)
+        public SizeAnimationBuilder<T> By(Size? byValue)
         {
             this.byValue = byValue;
             return this;
@@ -45,7 +42,7 @@ namespace Tiny.Toolkits
         /// </summary>                                                                                                                           
         /// <param name="toValue"></param>                                                                                                       
         /// <returns></returns>                                                                                                                  
-        public ThicknessAnimationBuilder<T> To(Thickness? toValue)
+        public SizeAnimationBuilder<T> To(Size? toValue)
         {
             this.toValue = toValue;
             return this;
@@ -57,7 +54,7 @@ namespace Tiny.Toolkits
         /// </summary>                                                                                                                           
         /// <param name="boolValue"></param>                                                                                                     
         /// <returns></returns>                                                                                                                  
-        public ThicknessAnimationBuilder<T> IsCumulative(bool boolValue)
+        public SizeAnimationBuilder<T> IsCumulative(bool boolValue)
         {
             this.boolValue = boolValue;
             return this;
@@ -69,7 +66,7 @@ namespace Tiny.Toolkits
         /// </summary>                                                                                                                           
         /// <param name="easingFunction"></param>                                                                                                
         /// <returns></returns>                                                                                                                  
-        public ThicknessAnimationBuilder<T> EasingFunction(IEasingFunction easingFunction)
+        public SizeAnimationBuilder<T> EasingFunction(IEasingFunction easingFunction)
         {
             this.easingFunction = easingFunction;
             return this;
@@ -80,7 +77,7 @@ namespace Tiny.Toolkits
         /// </summary>       																										
         public IAnimationPlayer BuildAnimation()
         {
-            ThicknessAnimation animation = new();
+            SizeAnimation animation = new();
             base.BuildAnimation(animation);
             if (fromValue.HasValue)
             {
