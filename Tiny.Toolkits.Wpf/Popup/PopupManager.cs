@@ -56,7 +56,7 @@ namespace Tiny.Toolkits
         public async Task<string> ComfirmAsync(string message, string title, string[] buttonContents)
         {
             PopupContainerCheck();
-            UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i) && GetContainerName(i)!=null));
+            UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i) && GetContainerName(i) != null));
 
             return uieleMent is null
                 ? throw new Exception("PopupManager: the main container was not found or the main container name is empty")
@@ -262,14 +262,16 @@ namespace Tiny.Toolkits
                         if (sender is FrameworkElement element)
                         {
                             if (uiElements.Contains(element))
-                            { 
-                                if(PropertyAttache.GetProperty0(element)  is PopupBridge popupBridge)
+                            {
+                                if (PropertyAttache.GetProperty0(element) is PopupBridge popupBridge)
                                 {
+                                    element.SizeChanged -= popupBridge.PopupAdornet.ContainerSizeChanged;
+
                                     popupBridge.Release();
 
                                     popupBridge.IsLoaded = false;
                                 }
-                              
+
                                 uiElements.Remove(element);
 
                             }
@@ -298,10 +300,15 @@ namespace Tiny.Toolkits
                             return;
                         }
 
+
                         Type messageContainerType = GetMessageContainerType(element);
                         Brush brush = GetMaskBrush(element);
 
-                        Tiny.Toolkits.Popup.Assist.PopupAdorner popupAdorner = new(messageContainerType, element);
+                        PopupAdorner popupAdorner = new(messageContainerType, element);
+                        popupAdorner.InitSize(element.RenderSize);
+                        element.SizeChanged += popupAdorner.ContainerSizeChanged;
+
+
                         popupAdorner.SetMaskBrush(brush);
 
 
@@ -314,10 +321,10 @@ namespace Tiny.Toolkits
 
                         PropertyAttache.SetProperty0(element, popupBridge);
 
-
-
                     }
                 }));
+
+
 
 
 

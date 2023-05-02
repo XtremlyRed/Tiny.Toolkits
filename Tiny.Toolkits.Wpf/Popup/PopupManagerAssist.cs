@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace Tiny.Toolkits.Popup.Assist
 {
@@ -19,16 +20,7 @@ namespace Tiny.Toolkits.Popup.Assist
 
             return await await uIElement.Dispatcher.InvokeAsync(async () =>
             {
-                PopupBridge popupBridge = PropertyAttache.GetProperty0(uIElement) as PopupBridge;
-
-                if (popupBridge.IsLoaded == false)
-                {
-                    string containerName = PopupManager.GetContainerName(uIElement);
-
-                    throw new Exception($"the popup:{containerName} is not loaded");
-                }
-
-                popupBridge.DisplayVisual();
+                var popupBridge = PopupInitialize(uIElement);
 
                 await popupBridge.messageSemaphoreSlim.WaitAsync();
 
@@ -37,7 +29,6 @@ namespace Tiny.Toolkits.Popup.Assist
                 string popupResult = await popupBridge.PopupAdornet?.WaitMessageResultAsync(waitTimeSpan, () =>
                 {
                     popupBridge.CloseVisual();
-
                     popupBridge.messageCloseSemaphoreSlim.ReleaseWhenZero();
                     popupBridge.messageSemaphoreSlim.ReleaseWhenZero();
                 });
@@ -56,16 +47,7 @@ namespace Tiny.Toolkits.Popup.Assist
         {
             return await await uIElement.Dispatcher.InvokeAsync(async () =>
             {
-                PopupBridge popupBridge = PropertyAttache.GetProperty0(uIElement) as PopupBridge;
-
-                if (popupBridge.IsLoaded == false)
-                {
-                    string containerName = PopupManager.GetContainerName(uIElement);
-
-                    throw new Exception($"the popup:{containerName} is not loaded");
-                }
-
-                popupBridge.DisplayVisual();
+                var popupBridge = PopupInitialize(uIElement);
 
                 await popupBridge.contentSemaphoreSlim.WaitAsync();
 
@@ -87,6 +69,22 @@ namespace Tiny.Toolkits.Popup.Assist
 
             });
 
+        }
+
+        private static PopupBridge PopupInitialize(UIElement uIElement)
+        {
+            PopupBridge popupBridge = PropertyAttache.GetProperty0(uIElement) as PopupBridge;
+
+            if (popupBridge.IsLoaded == false)
+            {
+                string containerName = PopupManager.GetContainerName(uIElement);
+
+                throw new Exception($"the popup:{containerName} not loaded");
+            }
+             
+            popupBridge.DisplayVisual();
+             
+            return popupBridge;
         }
     }
 }

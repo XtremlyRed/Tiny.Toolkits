@@ -32,7 +32,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
             MessageBox.Text = message;
 
             ButtonBoxs.ItemsSource = this.buttonContents = buttonContents;
-             
+
         }
 
         private void Button_Loaded(object sender, RoutedEventArgs e)
@@ -43,7 +43,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
                 return;
             }
 
-            if (btn.Content as string == buttonContents[0])
+            if ((btn.Content as string) == buttonContents[0])
             {
                 btn.Foreground = System.Windows.Media.Brushes.White;
                 btn.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 51, 119, 133));
@@ -68,6 +68,15 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
             return messageContainer;
         }
 
+        /// <summary> 
+        /// </summary>
+        /// <param name="size"></param>
+        protected override void ContainerSizeChanged(Size size)
+        {
+            return;
+            messageContainer.MaxWidth = (size.Width - 150).FromRange(0, 800);
+            messageContainer.MaxHeight = (size.Height - 150).FromRange(0, 480); 
+        }
 
 
         private void Click(object sender, RoutedEventArgs e)

@@ -60,9 +60,16 @@ namespace Tiny.Toolkits.Popup.Assist
             PopupAdornet = null;
 
             messageSemaphoreSlim?.Dispose();
+            messageSemaphoreSlim = null;
+
             contentSemaphoreSlim?.Dispose();
+            contentSemaphoreSlim = null;
+
             messageCloseSemaphoreSlim?.Dispose();
+            messageCloseSemaphoreSlim = null;
+
             contentCloseSemaphoreSlim?.Dispose();
+            contentCloseSemaphoreSlim = null;
         }
 
         internal void Init()

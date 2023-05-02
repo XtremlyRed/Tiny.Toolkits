@@ -493,5 +493,17 @@ namespace Tiny.Toolkits
                 semaphoreSlim.Release(releaseCount);
             }
         }
+
+
+        /// <summary>
+        /// check  <paramref name="baseType"/> <c>IsAssignableFrom</c> <paramref name="type"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="baseType"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public static bool IsInheritFrom(this Type type, Type baseType)
+        {
+            return baseType.IsAssignableFrom(type);
+        }
     }
 }

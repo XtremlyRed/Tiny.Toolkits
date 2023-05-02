@@ -90,5 +90,19 @@ namespace Tiny.Toolkits.Popup.Assist
 
             return result;
         }
+
+
+        internal void ContainerSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            popupView.InnerContainerSizeChanged(e.NewSize);
+        }
+
+        internal void InitSize(Size renderSize)
+        {
+            popupView.InnerContainerSizeChanged(renderSize);
+        }
+
+
+
     }
 }

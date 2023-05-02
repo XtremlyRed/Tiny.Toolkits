@@ -198,15 +198,6 @@ namespace Tiny.Toolkits
         }
 
 
-
-
-
-
-
-
-
-
-
         private void RemoveVisual(FrameworkElement @object, TimeSpan durationAnimation, Action popupCloseCallback = null)
         {
             DoubleAnimation doubleAnimation = new();
@@ -255,5 +246,21 @@ namespace Tiny.Toolkits
             Panel element2 = GetPopupContentContainerElement();
             element2.Visibility = Visibility.Collapsed;
         }
+
+
+        internal void InnerContainerSizeChanged(Size size)
+        {
+            ContainerSizeChanged(size);
+        }
+
+        /// <summary>
+        /// when container size changed 
+        /// </summary>
+        /// <param name="size">current size</param>
+        protected virtual void ContainerSizeChanged(Size size)
+        {
+
+        }
+
     }
 }

@@ -12,148 +12,175 @@
     <Grid>
         <Grid
             x:Name="popupContainer"
+            Width="auto"
+            Height="auto"
+            MinWidth="450"
+            MinHeight="320"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Panel.ZIndex="1"
             Background="Transparent"
             Visibility="Collapsed" />
 
-        <Grid
+
+        <Border
             x:Name="messageContainer"
+            Width="auto"
+            Height="auto"
+            MinWidth="480"
+            MinHeight="220"
+            MaxWidth="600"
+            MaxHeight="350"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Panel.ZIndex="2"
-            Background="Transparent"
+            Background="White"
+            BorderBrush="#20000000"
+            BorderThickness="1"
+            CornerRadius="5"
+            SnapsToDevicePixels="True"
             Visibility="Collapsed">
 
-            <Border
-                MinWidth="450"
-                MinHeight="240"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="White"
-                BorderBrush="#20000000"
-                BorderThickness="1"
-                CornerRadius="8"
-                SnapsToDevicePixels="True">
+
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                    <RowDefinition Height="80" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    x:Name="TitleBox"
+                    Margin="25,25,0,0"
+                    FontSize="19"
+                    FontWeight="Medium"
+                    Text="" />
+
+                <Grid
+                    Grid.Row="1"
+                    Margin="25,15,25,15"
+                    ClipToBounds="True">
+
+                    <TextBox
+                        x:Name="MessageBox"
+                        Margin="-16"
+                        Padding="16"
+                        AcceptsReturn="True"
+                        Background="{x:Null}"
+                        BorderBrush="{x:Null}"
+                        BorderThickness="0"
+                        FontSize="14"
+                        IsReadOnly="True"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        Style="{x:Null}"
+                        TextAlignment="Left"
+                        TextBlock.LineHeight="25"
+                        TextWrapping="WrapWithOverflow" />
+                </Grid>
+                <Border
+                    Grid.Row="2"
+                    Background="#f3f3f3"
+                    BorderBrush="#20000000"
+                    BorderThickness="0,01,00,0"
+                    CornerRadius="0,0,5,5"
+                    SnapsToDevicePixels="True">
+
+                    <ItemsControl
+                        x:Name="ButtonBoxs"
+                        Margin="0,0,27,0"
+                        VerticalAlignment="Center">
+                        <ItemsControl.Resources>
+                            <Style x:Key="_BtnKey" TargetType="Button">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <SolidColorBrush Opacity="1" Color="White" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Foreground" Value="Black" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+
+                                            <Border
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="#20000000"
+                                                BorderThickness="1"
+                                                CornerRadius="3"
+                                                SnapsToDevicePixels="True">
 
 
-                <Grid>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition />
-                        <RowDefinition Height="80" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock
-                        x:Name="TitleBox"
-                        Margin="25,25,0,0"
-                        FontSize="19"
-                        FontWeight="Medium"
-                        Text="" />
-
-                    <Grid Grid.Row="1" ClipToBounds="True">
-                        
-                        <TextBox
-                            x:Name="MessageBox"
-                            Margin="25,15,-20,15"
-                            Padding="0,0,035,0"
-                            Background="{x:Null}"
-                            BorderBrush="{x:Null}"
-                            BorderThickness="0"
-                            FontSize="14"
-                            IsReadOnly="True"
-                            ScrollViewer.VerticalScrollBarVisibility="Auto"
-                            Style="{x:Null}"
-                            TextWrapping="WrapWithOverflow" />
-                    </Grid>
-                    <Border
-                        Grid.Row="2"
-                        Background="#f3f3f3"
-                        BorderBrush="#20000000"
-                        BorderThickness="0,01,00,0"
-                        CornerRadius="0,0,5,5"
-                        SnapsToDevicePixels="True">
-
-                        <ItemsControl
-                            x:Name="ButtonBoxs"
-                            Margin="0,0,27,0"
-                            VerticalAlignment="Center">
-                            <ItemsControl.Resources>
-                                <Style x:Key="_BtnKey" TargetType="Button">
-                                    <Setter Property="Background">
-                                        <Setter.Value>
-                                            <SolidColorBrush Opacity="1" Color="White" />
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Setter Property="Foreground" Value="Black" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Grid>
-                                                    <Border
-                                                        Background="{TemplateBinding Background}"
-                                                        BorderBrush="#20000000"
-                                                        BorderThickness="1"
-                                                        CornerRadius="3"
-                                                        SnapsToDevicePixels="True" />
-                                                    <ContentControl
+                                                <!--<ContentControl
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        VerticalContentAlignment="Center"
                                                         Content="{TemplateBinding Content}"
-                                                        FontSize="13" />
-                                                </Grid>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Trigger.EnterActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation
-                                                                        Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Opacity)"
-                                                                        To="0.7"
-                                                                        Duration="0:0:0.1" />
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </Trigger.EnterActions>
-                                                        <Trigger.ExitActions>
-                                                            <BeginStoryboard>
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Opacity)" Duration="0:0:0.2" />
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </Trigger.ExitActions>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ItemsControl.Resources>
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <UniformGrid HorizontalAlignment="Right" Rows="1" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button
-                                        Height="28"
-                                        MinWidth="100"
-                                        MaxWidth="120"
-                                        Margin="5,0" Loaded="Button_Loaded"
-                                        Click="Click"
-                                        Content="{Binding}"
-                                        Style="{StaticResource _BtnKey}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                                                        FontSize="13" />-->
 
-                    </Border>
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="13"
+                                                    LineHeight="auto"
+                                                    Style="{x:Null}"
+                                                    Text="{TemplateBinding Content}" />
+                                            </Border>
 
-                </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Trigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation
+                                                                    Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Opacity)"
+                                                                    To="0.7"
+                                                                    Duration="0:0:0.1" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.EnterActions>
+                                                    <Trigger.ExitActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Opacity)" Duration="0:0:0.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.ExitActions>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ItemsControl.Resources>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid HorizontalAlignment="Right" Rows="1" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Height="28"
+                                    MinWidth="100"
+                                    MaxWidth="120"
+                                    Margin="5,0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Click="Click"
+                                    Content="{Binding}"
+                                    Loaded="Button_Loaded"
+                                    Style="{StaticResource _BtnKey}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-            </Border>
-        </Grid>
+                </Border>
+
+            </Grid>
+
+        </Border>
+
     </Grid>
 </wpf:PopupViewBase>
