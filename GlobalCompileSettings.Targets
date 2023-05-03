@@ -14,8 +14,8 @@
 	</ItemGroup>
 
 	<PropertyGroup> 
-		<Version>4.0</Version>
-		<AssemblyVersion>4.0</AssemblyVersion>
+		<Version>4.2</Version>
+		<AssemblyVersion>4.2</AssemblyVersion>
 		<LangVersion>11.0</LangVersion>
 		<PackageProjectUrl>https://github.com/xtremlyred/tiny.toolkits</PackageProjectUrl>
 	</PropertyGroup>
