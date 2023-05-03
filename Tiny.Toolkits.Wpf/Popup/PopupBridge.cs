@@ -1,7 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
-using System.Windows.Controls.Primitives;
+using System.Threading.Tasks;
 using System.Windows.Documents;
 namespace Tiny.Toolkits.Popup.Assist
 {
@@ -13,7 +14,8 @@ namespace Tiny.Toolkits.Popup.Assist
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal SemaphoreSlim contentSemaphoreSlim;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal SemaphoreSlim messageCloseSemaphoreSlim;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal SemaphoreSlim contentCloseSemaphoreSlim;
-
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal SemaphoreSlim visualSemaphoreSlim;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] internal SemaphoreSlim visualAnimationSemaphoreSlim;
         public AdornerLayer AdornerLayer { get; set; }
 
         public PopupAdorner PopupAdornet { get; set; }
@@ -24,32 +26,70 @@ namespace Tiny.Toolkits.Popup.Assist
 
         private int popupIndex = 0;
 
-        public void DisplayVisual()
+        public async Task DisplayVisualAsync()
         {
-            lock (this)
-            {
-                if (IsPopup == false)
-                {
-                    AdornerLayer.Add(PopupAdornet);
-                    IsPopup = true;
-                }
 
-                Interlocked.Increment(ref popupIndex);
+            await visualSemaphoreSlim.WaitAsync();
+
+            Interlocked.Increment(ref popupIndex);
+
+            if (IsPopup == false)
+            {
+                IsPopup = true;
+                 
+                PopupAdornet.Opacity = 0.001;
+                AdornerLayer.Add(PopupAdornet);
+
+                PopupAdornet.WithDoubleAnimation()
+                    .Property(x => x.Opacity)
+                    .To(1)
+                    .Duration(150)
+                    .Complete(() => visualAnimationSemaphoreSlim.ReleaseWhenZero())
+                    .BuildAnimation()
+                    .Play();
+
+                await visualAnimationSemaphoreSlim.WaitAsync();
             }
+
+            visualSemaphoreSlim.Release(1);
+
         }
 
-        public void CloseVisual()
+        public async Task CloseVisualAsync(Action closeCallback = null)
         {
-            lock (this)
-            {
-                int index = Interlocked.Decrement(ref popupIndex);
 
-                if (popupIndex == 0)
-                {
-                    AdornerLayer.Remove(PopupAdornet);
-                    IsPopup = false;
-                }
+            await visualSemaphoreSlim.WaitAsync();
+
+            Interlocked.Decrement(ref popupIndex);
+
+            if (popupIndex == 0 && IsPopup == true)
+            {
+                IsPopup = false;
+
+                PopupAdornet.Opacity = 1;
+
+                PopupAdornet.WithDoubleAnimation()
+                    .Property(x => x.Opacity)
+                    .To(0)
+                    .Duration(150)
+                    .Complete(() =>
+                    {
+                        AdornerLayer.Remove(PopupAdornet);
+                        visualAnimationSemaphoreSlim.ReleaseWhenZero();
+                        closeCallback?.Invoke();
+                    })
+                    .BuildAnimation()
+                    .Play();
+
+                await visualAnimationSemaphoreSlim.WaitAsync();
             }
+            else
+            {
+                closeCallback?.Invoke();
+            }
+
+            visualSemaphoreSlim.ReleaseWhenZero();
+
         }
 
         internal void Release()
@@ -70,10 +110,18 @@ namespace Tiny.Toolkits.Popup.Assist
 
             contentCloseSemaphoreSlim?.Dispose();
             contentCloseSemaphoreSlim = null;
+
+            visualSemaphoreSlim?.Dispose();
+            visualSemaphoreSlim = null;
+
+            visualAnimationSemaphoreSlim?.Dispose();
+            visualAnimationSemaphoreSlim = null;
         }
 
         internal void Init()
         {
+            visualAnimationSemaphoreSlim = new SemaphoreSlim(0, 1);
+            visualSemaphoreSlim = new(1, 1);
             messageSemaphoreSlim = new(1, 1);
             contentSemaphoreSlim = new(1, 1);
             messageCloseSemaphoreSlim = new(0, 1);

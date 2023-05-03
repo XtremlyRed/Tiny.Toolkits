@@ -28,6 +28,41 @@ namespace Tiny.Toolkits
         [EditorBrowsable(EditorBrowsableState.Never)]
         private static readonly List<UIElement> uiElements = new();
 
+
+        ///// <summary>
+        /////  display tips with <paramref name="message"/>,<paramref name="title"/>, in container right
+        ///// </summary>
+        ///// <param name="message">the message content of the pop-up box</param>
+        ///// <param name="title">the title of the pop-up box</param>    /// <returns></returns>
+        //public async Task TipAsync(string message, string title, int displayTime_Ms = -1)
+        //{
+        //    PopupContainerCheck();
+        //    UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i) && GetContainerName(i) != null));
+
+        //    _ = uieleMent is null
+        //      ? throw new Exception("PopupManager: the main container was not found or the main container name is empty")
+        //      : await PopupManagerAssist.InnerTipPopup(uieleMent, message, title, displayTime_Ms);
+        //}
+
+
+        ///// <summary>
+        ///// display tips with <paramref name="message"/>,<paramref name="title"/>, in  <paramref name="containerName"/> right
+        ///// </summary>
+        ///// <param name="containerName">popup <paramref name="containerName"/></param>
+        ///// <param name="message">the message content of the pop-up box</param>
+        ///// <param name="title">the title of the pop-up box</param> 
+        ///// <returns></returns>
+        //public async Task TipAsync(string containerName, string message, string title, int displayTime_Ms = -1)
+        //{
+        //    PopupContainerCheck();
+        //    UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetContainerName(i) == containerName));
+        //    _ = uieleMent is null
+        //          ? throw new Exception($"PopupManager: No popup container named:{containerName}")
+        //          : await PopupManagerAssist.InnerTipPopup(uieleMent, message, title, displayTime_Ms);
+        //}
+
+
+
         /// <summary>
         /// show message with <paramref name="message"/>,<paramref name="title"/>,<paramref name="buttonContents"/>,
         /// when using, there must be a popup container with the <see cref="PopupManager.IsMainContainerProperty"/> attribute set to true
@@ -43,7 +78,7 @@ namespace Tiny.Toolkits
 
             _ = uieleMent is null
               ? throw new Exception("PopupManager: the main container was not found or the main container name is empty")
-              : await Tiny.Toolkits.Popup.Assist.PopupManagerAssist.InnerMesagePopup(uieleMent, message, title, buttonContents);
+              : await PopupManagerAssist.InnerMessagePopup(uieleMent, message, title, buttonContents);
         }
         /// <summary>
         /// comfirm message with <paramref name="message"/>,<paramref name="title"/>,<paramref name="buttonContents"/>
@@ -60,7 +95,7 @@ namespace Tiny.Toolkits
 
             return uieleMent is null
                 ? throw new Exception("PopupManager: the main container was not found or the main container name is empty")
-                : await Tiny.Toolkits.Popup.Assist.PopupManagerAssist.InnerMesagePopup(uieleMent, message, title, buttonContents);
+                : await PopupManagerAssist.InnerMessagePopup(uieleMent, message, title, buttonContents);
         }
 
         /// <summary>
@@ -94,7 +129,7 @@ namespace Tiny.Toolkits
             UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetContainerName(i) == containerName));
             _ = uieleMent is null
                   ? throw new Exception($"PopupManager: No popup container named:{containerName}")
-                  : await Tiny.Toolkits.Popup.Assist.PopupManagerAssist.InnerMesagePopup(uieleMent, message, title, buttonContents);
+                  : await PopupManagerAssist.InnerMessagePopup(uieleMent, message, title, buttonContents);
         }
 
 
@@ -112,7 +147,7 @@ namespace Tiny.Toolkits
             UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetContainerName(i) == containerName));
             return uieleMent is null
                    ? throw new Exception($"PopupManager: No popup container named:{containerName}")
-                   : await Tiny.Toolkits.Popup.Assist.PopupManagerAssist.InnerMesagePopup(uieleMent, message, title, buttonContents);
+                   : await PopupManagerAssist.InnerMessagePopup(uieleMent, message, title, buttonContents);
         }
         /// <summary>
         /// comfirm message with <paramref name="message"/>,<paramref name="title"/>,<paramref name="buttonContents"/> from <paramref name="containerName"/>
@@ -131,8 +166,9 @@ namespace Tiny.Toolkits
         }
 
         /// <summary>
-        /// popup view with <paramref name="parameters"/> from  main container
-        /// when using, there must be a popup container with the <see cref="PopupManager.IsMainContainerProperty"/> attribute set to true
+        /// <para> popup view with <paramref name="parameters"/> from  main container</para>
+        /// <para> when using, there must be a popup container with the <see cref="PopupManager.IsMainContainerProperty"/> attribute set to true</para>
+        /// <para> The <paramref name="view"/> type or the view model type bound to it must inherit from <see cref="IPopupAware"/> to obtain support for closing popup</para>
         /// </summary>
         /// <typeparam name="TView">view type</typeparam>
         /// <param name="view">view</param>
@@ -146,11 +182,12 @@ namespace Tiny.Toolkits
                 ? throw new ArgumentException("invalid visual")
                 : (await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i) && GetContainerName(i) != null))) is not UIElement uieleMent
                 ? throw new Exception("PopupManager: the main container was not found or the main container name is empty")
-                : await Tiny.Toolkits.Popup.Assist.PopupManagerAssist.InnerContentPopup(uieleMent, view, parameters);
+                : await PopupManagerAssist.InnerContentPopup(uieleMent, view, parameters);
         }
-        /// <summary>
-        /// popup view with <paramref name="parameters"/> from  main container
-        /// when using, there must be a popup container with the <see cref="PopupManager.IsMainContainerProperty"/> attribute set to true
+        /// <summary> 
+        /// <para> popup view with <paramref name="parameters"/> from  main container</para>
+        /// <para> when using, there must be a popup container with the <see cref="PopupManager.IsMainContainerProperty"/> attribute set to true</para>
+        /// <para> The <typeparamref name="TView"/> type or the view model type bound to it must inherit from <see cref="IPopupAware"/> to obtain support for closing popup</para>
         /// </summary>
         /// <typeparam name="TView">view type</typeparam>
         /// <param name="viewCreator">view creator</param>
@@ -169,7 +206,9 @@ namespace Tiny.Toolkits
         }
 
         /// <summary>
-        /// popup view with <paramref name="parameters"/> from <paramref name="containerName"/>
+        /// popup view with <paramref name="parameters"/> from <paramref name="containerName"/> 
+        /// <para> when using, there must be a popup container with the <see cref="PopupManager.IsMainContainerProperty"/> attribute set to true</para>
+        /// <para> The <paramref name="view"/> type or the view model type bound to it must inherit from <see cref="IPopupAware"/> to obtain support for closing popup</para>
         /// </summary>
         /// <typeparam name="TView">view type</typeparam>
         /// <param name="containerName">popup <paramref name="containerName"/></param>
@@ -184,12 +223,14 @@ namespace Tiny.Toolkits
                 ? throw new ArgumentException("invalid visual")
                 : (await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetContainerName(i) == containerName))) is not UIElement uieleMent
                 ? throw new Exception("PopupManager: No popup main container found.")
-                : await Tiny.Toolkits.Popup.Assist.PopupManagerAssist.InnerContentPopup(uieleMent, view, parameters);
+                : await PopupManagerAssist.InnerContentPopup(uieleMent, view, parameters);
 
 
         }
         /// <summary>
-        /// popup view with <paramref name="parameters"/> from <paramref name="containerName"/>
+        /// popup view with <paramref name="parameters"/> from <paramref name="containerName"/> 
+        /// <para> when using, there must be a popup container with the <see cref="PopupManager.IsMainContainerProperty"/> attribute set to true</para>
+        /// <para> The <typeparamref name="TView"/>  type or the view model type bound to it must inherit from <see cref="IPopupAware"/> to obtain support for closing popup</para>
         /// </summary>
         /// <typeparam name="TView">view type</typeparam>
         /// <param name="containerName">popup <paramref name="containerName"/></param>

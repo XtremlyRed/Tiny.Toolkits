@@ -45,14 +45,11 @@ namespace Tiny.Toolkits.Popup.Assist
         }
 
 
+
         public async Task<string> WaitMessageResultAsync(TimeSpan durationAnimation, Action popupCloseCallback = null)
         {
 
-            if (isLoad == false)
-            {
-                AddVisualChild(popupView);
-                isLoad = true;
-            }
+            AddChild();
 
             string result = await popupView.WaitMessageResultAsync(durationAnimation, popupCloseCallback);
 
@@ -73,18 +70,22 @@ namespace Tiny.Toolkits.Popup.Assist
                 : base.GetVisualChild(index);
         }
 
+       
         internal void SetContent(FrameworkElement popupContent, Parameters parameters = null)
         {
             popupView.SetContent(popupContent, parameters);
         }
 
+        internal void SetTipContent(string message,string title,  TimeSpan durationAnimation, TimeSpan displayTimeSpan)
+        {
+            popupView.SetTipContent( message,title, durationAnimation, displayTimeSpan);
+        }
+
+
         internal async Task<object> WaitContentResultAsync(TimeSpan durationAnimation, Action popupCloseCallback = null)
         {
-            if (isLoad == false)
-            {
-                AddVisualChild(popupView);
-                isLoad = true;
-            }
+
+            AddChild();
 
             object result = await popupView.WaitContentResultAsync(durationAnimation, popupCloseCallback);
 
@@ -102,7 +103,15 @@ namespace Tiny.Toolkits.Popup.Assist
             popupView.InnerContainerSizeChanged(renderSize);
         }
 
+        private void AddChild()
+        {
+            if (isLoad == false)
+            {
+                AddVisualChild(popupView);
+                isLoad = true;
+            }
 
+        }
 
     }
 }

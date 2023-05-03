@@ -12,6 +12,23 @@ namespace Tiny.Toolkits
     /// </summary>
     public interface IPopupManager
     {
+
+        ///// <summary>
+        /////  display tips with <paramref name="message"/>,<paramref name="title"/>, in container right
+        ///// </summary>
+        ///// <param name="message">the message content of the pop-up box</param>
+        ///// <param name="title">the title of the pop-up box</param>    /// <returns></returns>
+        //Task TipAsync(string message, string title, int displayTime_Ms = -1);
+
+        ///// <summary>
+        ///// display tips with <paramref name="message"/>,<paramref name="title"/>, in  <paramref name="containerName"/> right
+        ///// </summary>
+        ///// <param name="containerName">popup <paramref name="containerName"/></param>
+        ///// <param name="message">the message content of the pop-up box</param>
+        ///// <param name="title">the title of the pop-up box</param> 
+        ///// <returns></returns>
+        //Task TipAsync(string containerName, string message, string title, int displayTime_Ms = -1);
+
         /// <summary>
         /// show message with <paramref name="message"/>,<paramref name="title"/>,<paramref name="buttonContents"/>,
         /// when using, there must be a popup container with the <see cref="PopupManager.IsMainContainerProperty"/> attribute set to true

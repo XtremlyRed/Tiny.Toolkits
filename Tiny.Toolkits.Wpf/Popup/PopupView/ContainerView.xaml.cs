@@ -54,7 +54,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
         /// <summary> 
         /// </summary>
         /// <returns></returns>
-        protected override Panel GetPopupContentContainer()
+        protected override Grid GetPopupContentContainer()
         {
             return popupContainer;
 
@@ -67,6 +67,15 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
         {
             return messageContainer;
         }
+
+        ///// <summary> 
+        ///// </summary>
+        ///// <returns></returns>
+        //protected override StackPanel GetTipMessageContainer()
+        //{
+        //    return tipsContainer;
+        //}
+
 
         /// <summary> 
         /// </summary>

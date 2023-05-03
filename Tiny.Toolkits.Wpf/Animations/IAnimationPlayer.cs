@@ -12,6 +12,14 @@ namespace Tiny.Toolkits
         /// play animation
         /// </summary>
         void Play();
+
+
+        /// <summary>
+        /// get current animation
+        /// </summary>
+        /// <returns></returns>
+        Timeline GetAnimation();
+
     }
 
 
@@ -28,6 +36,11 @@ namespace Tiny.Toolkits
             Storyboard storyboard = new();
             storyboard.Children.Add(timeline);
             storyboard.Begin();
+        }
+
+        Timeline IAnimationPlayer.GetAnimation()
+        {
+            return timeline;
         }
 
 
@@ -64,6 +77,7 @@ namespace Tiny.Toolkits
         {
             return base.ToString();
         }
+
 
 
         #endregion

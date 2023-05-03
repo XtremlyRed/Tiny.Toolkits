@@ -16,7 +16,7 @@ namespace Tiny.Toolkits
     public abstract class AnimationBuilderBase<T, TD> where T : AnimationBuilderBase<T, TD> where TD : DependencyObject
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] private DependencyObject dependencyObject;
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Expression<Func<TD, double>> propertySelector;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Expression<Func<TD, object>> propertySelector;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Action completeCallback;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] private FillBehavior? fillBehavior;
         [DebuggerBrowsable(DebuggerBrowsableState.Never)] private TimeSpan? timeSpanValue;
@@ -91,7 +91,7 @@ namespace Tiny.Toolkits
         /// </summary>
         /// <param name="propertySelector"></param>
         /// <returns></returns>
-        public T Property(Expression<Func<TD, double>> propertySelector)
+        public T Property(Expression<Func<TD, object>> propertySelector)
         {
             this.propertySelector = propertySelector;
             return (T)this;

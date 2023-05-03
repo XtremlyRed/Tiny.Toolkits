@@ -5,7 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Animation;
+
+using Tiny.Toolkits.Wpf.Popup.PopupView;
 
 namespace Tiny.Toolkits
 {
@@ -36,7 +37,7 @@ namespace Tiny.Toolkits
         /// Container panel for obtaining pop-up box content
         /// </summary>
         /// <returns></returns>
-        protected abstract Panel GetPopupContentContainer();
+        protected abstract Grid GetPopupContentContainer();
 
         /// <summary>
         /// Obtain container elements for pop-up message boxes
@@ -45,12 +46,18 @@ namespace Tiny.Toolkits
         protected abstract FrameworkElement GetPopupMessageContainer();
 
 
+        ///// <summary>
+        ///// get side information popup boxes
+        ///// </summary>
+        ///// <returns></returns>
+        //protected abstract StackPanel GetTipMessageContainer();
+
+
         internal void SetMessageInfo(string message, string title, string[] buttonContents)
         {
             this.buttonContents = buttonContents;
             SetPopupMessageInfo(message, title, buttonContents);
         }
-
 
         private FrameworkElement GetPopupMessageContainerElement()
         {
@@ -76,6 +83,30 @@ namespace Tiny.Toolkits
             Panel.SetZIndex(contentPanel, int.MaxValue - 1);
 
             return contentPanel;
+        }
+
+
+        //private StackPanel GetPopupTipContainerElement()
+        //{
+        //    StackPanel contentPanel = GetTipMessageContainer();
+        //    if (contentPanel == null)
+        //    {
+        //        throw new ArgumentNullException(nameof(contentPanel));
+        //    } 
+        //    contentPanel.HorizontalAlignment = HorizontalAlignment.Right;
+        //    contentPanel.VerticalAlignment = VerticalAlignment.Top; 
+        //    Panel.SetZIndex(contentPanel, int.MaxValue - 2); 
+        //    return contentPanel; 
+        //}
+
+
+        internal void SetTipContent(string message, string title, TimeSpan durationAnimation, TimeSpan displayTimeSpan)
+        {
+            //StackPanel messageContainer = GetPopupTipContainerElement();
+            //messageContainer.Visibility = Visibility.Visible; 
+            //TipView tip = new();
+            //tip.SetContent(title, message);
+            //messageContainer.Children.Add(tip); 
         }
 
 
@@ -200,20 +231,24 @@ namespace Tiny.Toolkits
 
         private void RemoveVisual(FrameworkElement @object, TimeSpan durationAnimation, Action popupCloseCallback = null)
         {
-            DoubleAnimation doubleAnimation = new();
-            doubleAnimation.To = 0;
-            doubleAnimation.Duration = durationAnimation.Add(TimeSpan.FromMilliseconds(100));
-            Storyboard.SetTarget(doubleAnimation, @object);
-            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath(nameof(FrameworkElement.Opacity)));
+            TimeSpan duration = durationAnimation.Add(TimeSpan.FromMilliseconds(100));
 
-            Storyboard storyboard = new();
-            storyboard.Children.Add(doubleAnimation);
-            storyboard.Completed += (s, e) =>
-            {
-                @object.Visibility = Visibility.Collapsed;
-                popupCloseCallback?.Invoke();
-            };
-            storyboard.Begin();
+
+            IAnimationPlayer opacityPlayer = @object.WithDoubleAnimation()
+                .Property(i => i.Opacity)
+                .From(1)
+                .To(0)
+                .Duration(duration)
+                .BuildAnimation();
+
+            IAnimationPlayer visibilityPlayer = @object.WithObjectKeyFrameAnimation()
+                .Property(i => i.Visibility)
+                .BeginTime(duration)
+                .Add(Visibility.Collapsed, TimeSpan.FromMilliseconds(10))
+                .BuildAnimation();
+
+            AnimationAssist.PlayAnimations(new[] { opacityPlayer, visibilityPlayer }, () => popupCloseCallback?.Invoke());
+
 
         }
 
@@ -221,20 +256,19 @@ namespace Tiny.Toolkits
         private void DisplayVisual(FrameworkElement @object, TimeSpan durationAnimation)
         {
 
-            DoubleAnimation doubleAnimation = new();
-            doubleAnimation.From = 0;
-            doubleAnimation.To = 1;
-            doubleAnimation.Duration = durationAnimation;
-            Storyboard.SetTarget(doubleAnimation, @object);
-            Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath(nameof(FrameworkElement.Opacity)));
+            IAnimationPlayer opacityPlayer = @object.WithDoubleAnimation()
+                .Property(i => i.Opacity)
+                .From(0.001)
+                .To(1)
+                .Duration(durationAnimation)
+                .BuildAnimation();
 
+            IAnimationPlayer visibilityPlayer = @object.WithObjectKeyFrameAnimation()
+                .Property(i => i.Visibility)
+                .Add(Visibility.Visible, TimeSpan.FromMilliseconds(0))
+                .BuildAnimation();
 
-            Storyboard storyboard = new();
-            storyboard.Children.Add(doubleAnimation);
-
-            @object.Visibility = Visibility.Visible;
-
-            storyboard.Begin();
+            AnimationAssist.PlayAnimations(opacityPlayer, visibilityPlayer);
 
         }
 
@@ -261,6 +295,5 @@ namespace Tiny.Toolkits
         {
 
         }
-
     }
 }
