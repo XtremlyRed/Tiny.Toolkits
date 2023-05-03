@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media.Animation;
 
@@ -171,7 +172,7 @@ namespace Tiny.Toolkits
 
 
         /// <summary>																											
-        /// Attach <see cref="ThicknessKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="ThicknessAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static ThicknessKeyFrameAnimationBuilder<T> WithThicknessKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -181,7 +182,7 @@ namespace Tiny.Toolkits
         }
 
         /// <summary>																											
-        /// Attach <see cref="BooleanKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="BooleanAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static BooleanKeyFrameAnimationBuilder<T> WithBooleanKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -190,7 +191,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="ByteKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="ByteAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static ByteKeyFrameAnimationBuilder<T> WithByteKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -199,7 +200,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="CharKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="CharAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static CharKeyFrameAnimationBuilder<T> WithCharKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -208,7 +209,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="ColorKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="ColorAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static ColorKeyFrameAnimationBuilder<T> WithColorKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -217,7 +218,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="DecimalKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="DecimalAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static DecimalKeyFrameAnimationBuilder<T> WithDecimalKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -226,7 +227,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="DoubleKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="DoubleAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static DoubleKeyFrameAnimationBuilder<T> WithDoubleKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -235,7 +236,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="Int16KeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="Int16AnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static Int16KeyFrameAnimationBuilder<T> WithInt16KeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -244,7 +245,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="Int32KeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="Int32AnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static Int32KeyFrameAnimationBuilder<T> WithInt32KeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -253,7 +254,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="Int64KeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="Int64AnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static Int64KeyFrameAnimationBuilder<T> WithInt64KeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -262,7 +263,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="MatrixKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="MatrixAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static MatrixKeyFrameAnimationBuilder<T> WithMatrixKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -271,7 +272,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="ObjectKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="ObjectAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static ObjectKeyFrameAnimationBuilder<T> WithObjectKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -280,7 +281,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="Point3DKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="Point3DAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static Point3DKeyFrameAnimationBuilder<T> WithPoint3DKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -289,7 +290,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="PointKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="PointAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static PointKeyFrameAnimationBuilder<T> WithPointKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -298,7 +299,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="QuaternionKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="QuaternionAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static QuaternionKeyFrameAnimationBuilder<T> WithQuaternionKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -307,7 +308,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="RectKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="RectAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static RectKeyFrameAnimationBuilder<T> WithRectKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -316,7 +317,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="Rotation3DKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="Rotation3DAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static Rotation3DKeyFrameAnimationBuilder<T> WithRotation3DKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -325,7 +326,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="SingleKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="SingleAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static SingleKeyFrameAnimationBuilder<T> WithSingleKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -334,7 +335,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="SizeKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="SizeAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static SizeKeyFrameAnimationBuilder<T> WithSizeKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -343,7 +344,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="StringKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="StringAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static StringKeyFrameAnimationBuilder<T> WithStringKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -352,7 +353,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="Vector3DKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="Vector3DAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static Vector3DKeyFrameAnimationBuilder<T> WithVector3DKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -361,7 +362,7 @@ namespace Tiny.Toolkits
             return builder.Target(target);
         }
         /// <summary>																											
-        /// Attach <see cref="VectorKeyFrameAnimationBuilder{T}"/> to dependencyObject object																											
+        /// Attach <see cref="VectorAnimationUsingKeyFrames"/> to dependencyObject object																											
         /// </summary>																											
         /// <typeparam name="T">dependencyObject type</typeparam>																											
         public static VectorKeyFrameAnimationBuilder<T> WithVectorKeyFrameAnimation<T>(this T target) where T : DependencyObject
@@ -387,7 +388,14 @@ namespace Tiny.Toolkits
         /// <param name="animationPlayers"></param>
         /// <param name="playCompleteCallback"></param>
         public static void PlayAnimations(IAnimationPlayer[] animationPlayers, Action playCompleteCallback = null)
-        {
+        { 
+            animationPlayers = animationPlayers?.Where(i => i != null).ToArray();
+
+            if (animationPlayers == null || animationPlayers.Length == 0)
+            {
+                return;
+            }
+             
             Storyboard storyboard = new();
 
             if (playCompleteCallback != null)
