@@ -46,7 +46,7 @@
             <Border
                 Width="auto"
                 Height="auto"
-                MinWidth="330"
+                MinWidth="400"
                 MinHeight="220"
                 MaxWidth="500"
                 MaxHeight="300"
@@ -111,7 +111,7 @@
 
                         <ItemsControl
                             x:Name="ButtonBoxs"
-                            Margin="0,0,27,0"
+                            Margin="27,0,27,0"
                             VerticalAlignment="Center"
                             Style="{x:Null}">
                             <ItemsControl.Resources>
@@ -144,6 +144,7 @@
                                                         FontSize="13" />-->
 
                                                     <TextBlock
+                                                        Margin="{TemplateBinding Padding}"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         FontSize="13"
@@ -180,16 +181,21 @@
                             </ItemsControl.Resources>
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <UniformGrid HorizontalAlignment="Right" Rows="1" />
+                                    <UniformGrid
+                                        x:Name="Btn_Container"
+                                        HorizontalAlignment="Right"
+                                        Loaded="Btn_Container_Loaded"
+                                        Rows="1" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button
                                         Height="28"
-                                        MinWidth="100"
+                                        MinWidth="90"
                                         MaxWidth="120"
                                         Margin="5,0"
+                                        Padding="10,0"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
                                         Click="Click"

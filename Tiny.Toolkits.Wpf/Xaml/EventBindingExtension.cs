@@ -13,7 +13,18 @@ using Tiny.Toolkits.Wpf.Extension;
 namespace Tiny.Toolkits
 {
     /// <summary>
+    /// Used to bind this method to the xaml control
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
+    public class CommandBindingAttribute : Attribute
+    {
+
+    }
+
+
+    /// <summary>
     /// {e:EventBinding Click}
+    /// <para>The binding method must be marked with <see cref="CommandBindingAttribute"/></para>
     /// </summary>
     public partial class EventBindingExtension : MarkupExtension
     {
@@ -45,31 +56,19 @@ namespace Tiny.Toolkits
             {
                 throw new InvalidOperationException();
             }
-
-            @objects.ForEach((item, index) =>
-            {
-                if (item is Binding binding)
-                {
-                    PropertyAttache.SetBinding(targetObject, binding, index);
-                    @objects[index] = PropertyAttache.GetValue(targetObject, index);
-                }
-            });
-
+             
             Delegate @delegate = CreateDelegate(eventInfo, token: out string token);
 
-            EventBindingExtensionInvoker.tokenParameters.Add(new BindingMapper()
-            {
-                Token = token,
-                Arguments = @objects,
-                TargetObject = targetObject,
-            });
+            PropertyAttache.SetProperty0(targetObject, @objects);
+
+            // EventBindingExtensionInvoker.tokenParameters.Add();
 
             return @delegate;
         }
 
         private Delegate CreateDelegate(EventInfo eventInfo, out string token)
         {
-            token = $"Token_{Guid.NewGuid()}".Replace("-", "");
+            token = string.Empty;
 
             Type eventHandlerType = eventInfo.EventHandlerType;
 
@@ -82,7 +81,7 @@ namespace Tiny.Toolkits
             gen.Emit(OpCodes.Ldarg, 1);
             gen.Emit(OpCodes.Ldstr, token);
 
-            methodInfo = typeof(EventBindingExtensionInvoker).GetMethod("MethodExecute", EventBindingExtensionInvoker.refParameterTypes);
+            methodInfo = typeof(EventBindingExtensionInvoker).GetMethod(nameof(EventBindingExtensionInvoker.MethodExecute), EventBindingExtensionInvoker.refParameterTypes);
 
             gen.Emit(OpCodes.Call, methodInfo);
             gen.Emit(OpCodes.Ret);

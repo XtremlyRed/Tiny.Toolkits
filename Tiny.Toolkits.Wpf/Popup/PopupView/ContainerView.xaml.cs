@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace Tiny.Toolkits.Wpf.Popup.PopupView
@@ -51,6 +52,20 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
             }
         }
 
+        private void Btn_Container_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is UniformGrid uniformGrid && buttonContents != null)
+            {
+                if (buttonContents.Length > 2)
+                {
+                    uniformGrid.HorizontalAlignment(HorizontalAlignment.Center);
+                    return;
+                }
+
+                uniformGrid.HorizontalAlignment(HorizontalAlignment.Right);
+            }
+        }
+
         /// <summary> 
         /// </summary>
         /// <returns></returns>
@@ -84,7 +99,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
         {
             return;
             messageContainer.MaxWidth = (size.Width - 150).FromRange(0, 800);
-            messageContainer.MaxHeight = (size.Height - 150).FromRange(0, 480); 
+            messageContainer.MaxHeight = (size.Height - 150).FromRange(0, 480);
         }
 
 

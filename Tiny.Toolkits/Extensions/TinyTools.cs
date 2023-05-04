@@ -139,12 +139,37 @@ namespace Tiny.Toolkits
             {
                 if (predicate(itor.Current))
                 {
-                    yield return currentIndex;
+                    int current = currentIndex;
+                    currentIndex++;
+                    yield return current;
                 }
 
                 currentIndex++;
             }
         }
+
+        ///// <summary>
+        ///// cast to <typeparamref name="Target"/> type
+        ///// </summary>
+        ///// <typeparam name="Target"></typeparam>
+        ///// <param name="collection">collection</param>
+        ///// <param name="removeNotMatched">forEachBody</param>
+        ///// <Exception cref="ArgumentNullException"></Exception>
+        //public static IEnumerable<Target> As<Target>(this IEnumerable collection, bool removeNotMatched = false)
+        //{ 
+        //    foreach (object item in collection)
+        //    {
+        //        if (item is Target target)
+        //        {
+        //            yield return target;
+        //        } 
+        //        if (removeNotMatched == false)
+        //        {
+        //            yield return default;
+        //        }
+        //    }
+        //}
+
 
         /// <summary>
         /// forEach   collection 
@@ -206,7 +231,7 @@ namespace Tiny.Toolkits
 
             if (collection is Target[] targets)
             {
-                Target[] array = items.AsArray();
+                Target[] array = items.ToArrayTryNonEnumerated();
                 Array.Resize(ref targets, targets.Length + array.Length);
                 Array.Copy(array, 0, targets, targets.Length, array.Length);
                 return targets;
@@ -422,7 +447,7 @@ namespace Tiny.Toolkits
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static T[] AsArray<T>(this IEnumerable<T> source)
+        public static T[] ToArrayTryNonEnumerated<T>(this IEnumerable<T> source)
         {
             return source is null
                 ? EmptyArray<T>()
@@ -437,7 +462,7 @@ namespace Tiny.Toolkits
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static IList<T> AsList<T>(this IEnumerable<T> source)
+        public static IList<T> ToListTryNonEnumerated<T>(this IEnumerable<T> source)
         {
             return source is null
                 ? EmptyArray<T>()

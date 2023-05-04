@@ -112,7 +112,7 @@ namespace Tiny.Toolkits
         /// has default empty value
         /// </summary>
         public static DependencyProperty HasEmptyValueProperty =
-              DependencyProperty.Register(nameof(HasEmptyValue), typeof(bool), typeof(EnumSelector), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (s, e) =>
+              DependencyProperty.Register(nameof(HasEmptyValue), typeof(bool), typeof(EnumSelector), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, (s, e) =>
               {
                   if (s is EnumSelector @enum)
                   {
@@ -200,7 +200,7 @@ namespace Tiny.Toolkits
 
                 if (IgnoreValues != null)
                 {
-                    int[] ignoreValues = IgnoreValues.Cast<object>().Where(i => i != null).Select(i => i.GetHashCode()).ToArray();
+                    int[] ignoreValues = IgnoreValues.OfType<object>().Where(i => i != null).Select(i => i.GetHashCode()).ToArray();
                     if (ignoreValues.Length > 0)
                     {
                         validInfos = validInfos.Where(i => ignoreValues.Contains(i.HashCode) == false).ToList();

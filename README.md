@@ -108,17 +108,17 @@ bool result = a1.InRange(200, 1000);
 //result=false
 
 
-Invoker.For(10, 100, () =>
+TinyTools.For(10, 100, () =>
 {
     Console.WriteLine("loop");
 });
 
-Invoker.For(10, 100, (item) =>
+TinyTools.For(10, 100, (item) =>
 {
     Console.WriteLine($"{item}");
 });
 
-Invoker.For(10, 100, (item,index) =>
+TinyTools.For(10, 100, (item,index) =>
 {
     Console.WriteLine($"item:{item}  index:{index}");
 });
@@ -146,6 +146,8 @@ string selectedFolder = PickFactory.FolderPicker();
 ### 2.2. `EventBinding` for WPF
 
 Using the `EventBinding` expression in XAML.     
+The bind method must be marked by `CommandBindingAttribute`.
+
 `$self` represents inserting the `sender` in the event parameter into the parameter      
 `$eventArgs` represents the `EventArgs` inserted into the event parameter in the parameter    
 #FFFFFF is converted to `System.Windows.Media.Color` by default     
@@ -163,7 +165,7 @@ for example
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wpf="https://github.com/XtremlyRed/Tiny.Toolkits"
+    xmlns:wpf="https://github.com/xtremlyted/tiny.toolkits"
     x:Name="Window1"
     Title="MainWindow"
     Width="800"
@@ -212,16 +214,19 @@ for example
 ```csharp
 class TinyViewModel:ViewModelBase
 { 
+    [CommandBindingAttribute]
     void ShowClick(Color color, Button button, RoutedEventArgs eventArgs,Window window, SolidColorBrush brush)
     {
 
     }
 
+    [CommandBindingAttribute]
     void BorderLoaded(Border border, EventArgs eventArgs,Brush brush)
     {
 
     }
 
+    [CommandBindingAttribute]
     void MouseDown(Border border, EventArgs eventArgs)
     {
 

@@ -1,5 +1,6 @@
 ﻿
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -5143,7 +5144,28 @@ namespace Tiny.Toolkits
             return element.GetValue(Property256Property);
         }
 
-        private static readonly FieldInfo[] dependencyFields = typeof(PropertyAttache).GetFields(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public);
+        private static readonly IReadOnlyDictionary<int, DependencyProperty> propertyMapper;
+
+        static PropertyAttache()
+        {
+            FieldInfo[] dependencyFields = typeof(PropertyAttache).GetFields(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public);
+
+            propertyMapper = dependencyFields.ToDictionary(i => 
+            {
+                var value=(i.Name.Replace("Property", ""));
+
+                if (int.TryParse(value, out var result))
+                {
+                    return result;
+                }
+                else
+                {
+                    return i.GetHashCode();
+                }
+
+            }, i => i.GetValue(null) as DependencyProperty);
+
+        }
 
         /// <summary>
         /// <paramref name="index"/> must be in range 0-255
@@ -5153,8 +5175,11 @@ namespace Tiny.Toolkits
         /// <param name="index">must be in range 0-255</param>
         public static void SetBinding(DependencyObject target, Binding binding, int index)
         {
-            string fieldName = $"Property{index.FromRange(0, 255)}Property";
-            DependencyProperty par = dependencyFields.FirstOrDefault(i => i.Name == fieldName)?.GetValue(null) as DependencyProperty;
+            if(propertyMapper.TryGetValue(index,out var par) == false)
+            {
+                throw new System.IndexOutOfRangeException($"{nameof(index)} within the range of 0 to 255 (inclusive)");
+            }
+             
             BindingOperations.SetBinding(target, par, binding);
         }
 
@@ -5165,10 +5190,10 @@ namespace Tiny.Toolkits
         /// <param name="index">must be in range 0-255</param>
         public static object GetValue(DependencyObject target, int index)
         {
-            string fieldName = $"Property{index.FromRange(0, 255)}Property";
-
-            DependencyProperty par = dependencyFields.FirstOrDefault(i => i.Name == fieldName)?.GetValue(null) as DependencyProperty;
-
+            if (propertyMapper.TryGetValue(index, out var par) == false)
+            {
+                throw new System.IndexOutOfRangeException($"{nameof(index)} within the range of 0 to 255 (inclusive)");
+            }
             object value = target.GetValue(par);
 
             return value;
@@ -5183,10 +5208,10 @@ namespace Tiny.Toolkits
         /// <param name="index">must be in range 0-255</param>
         public static object SetValue<T>(DependencyObject target, T value, int index)
         {
-            string fieldName = $"Property{index.FromRange(0, 255)}Property";
-
-            DependencyProperty par = dependencyFields.FirstOrDefault(i => i.Name == fieldName)?.GetValue(null) as DependencyProperty;
-
+            if (propertyMapper.TryGetValue(index, out var par) == false)
+            {
+                throw new System.IndexOutOfRangeException($"{nameof(index)} within the range of 0 to 255 (inclusive)");
+            }
             target.SetValue(par, value);
 
             return value;
