@@ -1,497 +1,361 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tiny.Toolkits
 {
     /// <summary>
-    /// Collection Extensions
+    /// simple invoke class
     /// </summary>
     public static partial class TinyTools
     {
-        private static class EmptyImpls<T>
-        {
-            public static readonly T[] Array = new T[0];
-        }
-
-
         /// <summary>
-        /// empty array
+        /// run delegate and ignore exception
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static T[] EmptyArray<T>()
+        /// <param name="action">run body</param>
+        /// <param name="exceptionCallback">exception callback</param>
+        public static void TryRun(Action action, Action<Exception> exceptionCallback = null!)
         {
-            return EmptyImpls<T>.Array;
-        }
-
-
-        /// <summary>
-        ///  collection is  null  or empty
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="coll"></param>
-        /// <returns></returns>
-        public static bool IsNullOrEmpty<TSource>(this IEnumerable<TSource> coll)
-        {
-            if (coll is null)
-            {
-                return true;
-            }
-
-            if (coll is ICollection collection)
-            {
-                return collection.Count == 0;
-            }
-
-            if (coll is IReadOnlyCollection<TSource> readonlyList)
-            {
-                return readonlyList.Count == 0;
-            }
-
-            using IEnumerator<TSource> itor = coll.GetEnumerator();
-
-            return itor.MoveNext();
-
-        }
-
-        /// <summary>
-        ///  gets the index number of an element in the collection
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="collection"></param>
-        /// <param name="source"></param> 
-        /// <returns>index number</returns>
-        public static int IndexOf<TSource>(this IEnumerable<TSource> collection, TSource source)
-        {
-            if (collection is null || source is null)
-            {
-                return -1;
-            }
-            int currentIndex = 0;
-            EqualityComparer<TSource> @default = EqualityComparer<TSource>.Default;
-            using IEnumerator<TSource> itor = collection.GetEnumerator();
-            while (itor.MoveNext())
-            {
-                if (@default.Equals(itor.Current, source))
-                {
-                    return currentIndex;
-                }
-                currentIndex++;
-            }
-            return -1;
-        }
-
-
-        /// <summary>
-        ///  gets the index number of an element in the collection
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="collection"></param>
-        /// <param name="predicate"></param> 
-        /// <returns>index number</returns>
-        public static int IndexOf<TSource>(this IEnumerable<TSource> collection, Func<TSource, bool> predicate)
-        {
-            if (collection is null || predicate is null)
-            {
-                return -1;
-            }
-
-            int currentIndex = 0;
-
-            using IEnumerator<TSource> itor = collection.GetEnumerator();
-
-            while (itor.MoveNext())
-            {
-                if (predicate(itor.Current))
-                {
-                    return currentIndex;
-                }
-
-                currentIndex++;
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        ///  gets the index number of an element in the collection
-        /// </summary>
-        /// <typeparam name="TSource"></typeparam>
-        /// <param name="collection"></param>
-        /// <param name="predicate"></param> 
-        /// <returns>index number</returns>
-        public static IEnumerable<int> IndexOfMany<TSource>(this IEnumerable<TSource> collection, Func<TSource, bool> predicate)
-        {
-            if (collection is null || predicate is null)
-            {
-                yield break;
-            }
-
-            int currentIndex = 0;
-
-            using IEnumerator<TSource> itor = collection.GetEnumerator();
-
-            while (itor.MoveNext())
-            {
-                if (predicate(itor.Current))
-                {
-                    int current = currentIndex;
-                    currentIndex++;
-                    yield return current;
-                }
-
-                currentIndex++;
-            }
-        }
-
-        ///// <summary>
-        ///// cast to <typeparamref name="Target"/> type
-        ///// </summary>
-        ///// <typeparam name="Target"></typeparam>
-        ///// <param name="collection">collection</param>
-        ///// <param name="removeNotMatched">forEachBody</param>
-        ///// <Exception cref="ArgumentNullException"></Exception>
-        //public static IEnumerable<Target> As<Target>(this IEnumerable collection, bool removeNotMatched = false)
-        //{ 
-        //    foreach (object item in collection)
-        //    {
-        //        if (item is Target target)
-        //        {
-        //            yield return target;
-        //        } 
-        //        if (removeNotMatched == false)
-        //        {
-        //            yield return default;
-        //        }
-        //    }
-        //}
-
-
-        /// <summary>
-        /// forEach   collection 
-        /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <param name="collection">collection</param>
-        /// <param name="forEachBody">forEachBody</param>
-        /// <Exception cref="ArgumentNullException"></Exception>
-        public static void ForEach<Target>(this IEnumerable<Target> collection, Action<Target> forEachBody)
-        {
-            if (collection is null || forEachBody is null)
+            if (action is null)
             {
                 return;
             }
 
-            foreach (Target item in collection)
+            try
             {
-                forEachBody(item);
+                action();
+            }
+            catch (Exception exception)
+            {
+                exceptionCallback?.Invoke(exception);
             }
         }
 
         /// <summary>
-        /// loop collection{<typeparamref name="Target"/>} by forEachBody and element RetryIndex
+        /// loop 
         /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <param name="collection">collection</param>
-        /// <param name="forEachBody">forEachBody</param>
-        /// <Exception cref="ArgumentNullException"></Exception>
-        public static void ForEach<Target>(this IEnumerable<Target> collection, Action<Target, int> forEachBody)
-        {
-            if (collection is null || forEachBody is null)
-            {
-                return;
-            }
-
-            int index = 0;
-
-            foreach (Target item in collection)
-            {
-                forEachBody(item, index);
-                index++;
-            }
-        }
-
-        /// <summary>
-        /// add items into collection
-        /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <param name="collection">collection</param>
-        /// <param name="items">items</param>
-        /// <returns></returns>
-        /// <Exception cref="ArgumentNullException"></Exception>
-        public static ICollection<Target> AddItems<Target>(this ICollection<Target> collection, IEnumerable<Target> items)
-        {
-            if (collection is null || items is null)
-            {
-                return collection;
-            }
-
-            if (collection is Target[] targets)
-            {
-                Target[] array = items.ToArrayTryNonEnumerated();
-                Array.Resize(ref targets, targets.Length + array.Length);
-                Array.Copy(array, 0, targets, targets.Length, array.Length);
-                return targets;
-            }
-
-
-            foreach (Target item in items)
-            {
-                collection.Add(item);
-            }
-
-            return collection;
-        }
-
-        /// <summary>
-        /// add items into collection
-        /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <param name="collection">collection</param>
-        /// <param name="items">items coll</param>
-        /// <returns></returns>
-        /// <Exception cref="ArgumentNullException"></Exception>
-        public static ICollection<Target> AddItems<Target>(this ICollection<Target> collection, params Target[] items)
-        {
-            if (collection is null || items is null || items.Length == 0)
-            {
-                return collection;
-            }
-
-            if (collection is Target[] targets)
-            {
-                int index = targets.Length;
-                Array.Resize(ref targets, targets.Length + items.Length);
-                Array.Copy(items, 0, targets, index, items.Length);
-                return targets;
-            }
-
-            foreach (Target item in items)
-            {
-                collection.Add(item);
-            }
-
-            return collection;
-        }
-
-
-#if !NET6_0_OR_GREATER
-
-        /// <summary>
-        /// Max items OF collection
-        /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <typeparam name="TComparable"></typeparam>
-        /// <param name="collection">collection</param>
-        /// <param name="maxComparer"></param> 
-        /// <returns></returns>
-        /// <Exception cref="ArgumentNullException"></Exception>
-        public static Target MaxBy<Target, TComparable>(this IEnumerable<Target> collection, Func<Target, TComparable> maxComparer)
-            where TComparable : IComparable<TComparable>
-            where Target : notnull
-        {
-            if (collection is null || maxComparer == null || collection.Any() == false)
-            {
-                return default;
-            }
-
-            Target first = collection.First();
-            TComparable firstCompa = maxComparer(first);
-
-            foreach (Target item in collection.Skip(1))
-            {
-                TComparable current = maxComparer(item);
-
-                int com = current.CompareTo(firstCompa);
-                if (com > 0)
-                {
-                    firstCompa = current;
-                    first = item;
-                }
-            }
-
-            return first;
-        }
-
-
-
-        /// <summary>
-        /// Min items OF collection
-        /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <typeparam name="TComparable"></typeparam>
-        /// <param name="collection">collection</param>
-        /// <param name="minComparer"></param> 
-        /// <returns></returns>
-        /// <Exception cref="ArgumentNullException"></Exception>
-        public static Target MinBy<Target, TComparable>(this IEnumerable<Target> collection, Func<Target, TComparable> minComparer)
-            where TComparable : IComparable<TComparable>
-            where Target : notnull
-        {
-            if (collection is null || minComparer == null || collection.Any() == false)
-            {
-                return default;
-            }
-
-
-            Target first = collection.First();
-            TComparable firstCompa = minComparer(first);
-            foreach (Target item in collection.Skip(1))
-            {
-                TComparable current = minComparer(item);
-
-                int com = current.CompareTo(firstCompa);
-                if (com < 0)
-                {
-                    firstCompa = current;
-                    first = item;
-                }
-            }
-
-            return first;
-        }
-
-
-
-
-        /// <summary>
-        /// segment a <typeparamref name="Target"/> collection
-        /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <param name="targets">collection</param>
-        /// <param name="segmentCapacity">the capacity of segment</param>
-        /// <returns></returns>
-        /// <Exception cref="ArgumentNullException"></Exception>
+        /// <param name="startIndex">startIndex</param>
+        /// <param name="count">count [ ? > 0]</param>
+        /// <param name="loopBody">loopBody</param>
         /// <Exception cref="ArgumentOutOfRangeException"></Exception>
-        public static IEnumerable<IEnumerable<Target>> Chunk<Target>(this IEnumerable<Target> targets, int segmentCapacity)
+        /// <Exception cref="ArgumentNullException"></Exception>
+        public static void For(int startIndex, int count, Action<int> loopBody)
         {
-
-            if (targets is null || segmentCapacity < 1)
+            if (loopBody is null)
             {
-                yield break;
+                throw new ArgumentNullException(nameof(loopBody));
             }
 
-            int totalCount = targets.Count();
-
-            int segmentCount = totalCount / segmentCapacity;
-
-            int segmentCounter = segmentCount * segmentCapacity;
-
-            int remainingCount = totalCount - segmentCounter;
-
-            for (int i = 0; i < segmentCount; i++)
+            if (count <= 0)
             {
-                yield return targets.Skip(i * segmentCapacity).Take(segmentCapacity);
+                return;
             }
 
-            if (remainingCount > 0)
+            for (int i = startIndex, j = startIndex + count; i < j; i++)
             {
-                yield return targets.Skip(segmentCounter).Take(remainingCount);
+                loopBody(i);
             }
         }
 
-#endif
-
         /// <summary>
-        /// Disrupt the order of a  collection
-        /// </summary> 
-        /// <param name="target"></param>
-        public static Target Disorder<Target>(this Target target) where Target : System.Collections.IList
-        {
-            if (target is null || target.Count == 0)
-            {
-                return target;
-            }
-
-            Random disorderRandom = new();
-
-            int currentIndex, targetIndex;
-            object tempValue;
-            int maxIndex = target.Count - 1;
-
-            for (int i = 0; i < target.Count; i++)
-            {
-                targetIndex = maxIndex - i;
-                currentIndex = disorderRandom.Next(0, target.Count - i);
-                tempValue = target[currentIndex];
-                target[currentIndex] = target[targetIndex];
-                target[targetIndex] = tempValue;
-            }
-
-            return target;
-        }
-
-
-
-        /// <summary>
-        /// collection to  <see cref="ObservableCollection{Target}"/>
+        /// loop 
         /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <param name="collection"></param>
+        /// <param name="startIndex">startIndex</param>
+        /// <param name="count">count [ ? > 0]</param>
+        /// <param name="loopBody">loopBody</param>
+        /// <Exception cref="ArgumentOutOfRangeException"></Exception>
+        /// <Exception cref="ArgumentNullException"></Exception>
+        public static void For(int startIndex, int count, Action<int, int> loopBody)
+        {
+            if (loopBody is null)
+            {
+                throw new ArgumentNullException(nameof(loopBody));
+            }
+
+            if (count <= 0)
+            {
+                return;
+            }
+
+            for (int i = startIndex, step = 0, j = startIndex + count; i < j; i++, step++)
+            {
+                loopBody(i, step);
+            }
+        }
+
+
+        /// <summary>
+        /// loop 
+        /// </summary>
+        /// <param name="startIndex">startIndex</param>
+        /// <param name="count">count [ ? > 0]</param>
+        /// <param name="loopBody">loopBody</param>
+        /// <Exception cref="ArgumentOutOfRangeException"></Exception>
+        /// <Exception cref="ArgumentNullException"></Exception>
+        public static void For(int startIndex, int count, Action loopBody)
+        {
+            if (loopBody is null)
+            {
+                throw new ArgumentNullException(nameof(loopBody));
+            }
+
+            if (count <= 0)
+            {
+                return;
+            }
+
+            for (int i = startIndex, j = startIndex + count; i < j; i++)
+            {
+                loopBody();
+            }
+        }
+
+
+        /// <summary>
+        /// loop  
+        /// </summary>
+        /// <param name="loopCondition">condition</param>
+        /// <param name="loopBody">loopBody</param> 
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static ObservableCollection<Target> ToObservableCollection<Target>(this IEnumerable<Target> collection)
+        public static void While(Func<bool> loopCondition, Action loopBody)
         {
-            return collection is null
-                ? new ObservableCollection<Target>()
-                : new ObservableCollection<Target>(collection);
-        }
-
-
-        /// <summary>
-        /// source to array or self
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static T[] ToArrayTryNonEnumerated<T>(this IEnumerable<T> source)
-        {
-            return source is null
-                ? EmptyArray<T>()
-                : source is T[] array
-                ? array
-                : source.ToArray();
-        }
-
-        /// <summary>
-        /// source to <see cref="List{T}"/> or self
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static IList<T> ToListTryNonEnumerated<T>(this IEnumerable<T> source)
-        {
-            return source is null
-                ? EmptyArray<T>()
-                : source is List<T> array
-                ? array
-                : source.ToList();
-        }
-
-        /// <summary>
-        /// copy array
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        public static T[] Copy<T>(this T[] source)
-        {
-            if (source == null)
+            if (loopCondition is null)
             {
-                return source;
+                throw new ArgumentNullException(nameof(loopCondition));
             }
-            if (source.Length == 0)
+            if (loopBody is null)
             {
-                return EmptyArray<T>();
+                throw new ArgumentNullException(nameof(loopBody));
             }
 
-            T[] copy = new T[source.Length];
-            Array.Copy(source, 0, copy, 0, source.Length);
-            return copy;
+            while (loopCondition.Invoke())
+            {
+                loopBody();
+            }
         }
+
+        /// <summary>
+        /// run delegate async
+        /// </summary>
+        /// <param name="action">delegate body</param>
+        /// <param name="token"><see cref="CancellationToken"/></param>
+        /// <param name="creationOptions"><see cref="TaskContinuationOptions"/></param>
+        /// <returns></returns>
+        public static Task InvokeAsync(this Action action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
+        {
+            return action is null
+                ? Task.FromResult(false)
+                : Task.Factory.StartNew(action, token, creationOptions, TaskScheduler.Default);
+        }
+
+        /// <summary>
+        /// run delegate async
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="action">delegate body</param>
+        /// <param name="token"><see cref="CancellationToken"/></param>
+        /// <param name="creationOptions"><see cref="TaskCreationOptions"/></param>
+        /// <returns></returns>
+        public static Task<TResult> InvokeAsync<TResult>(this Func<TResult> action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
+        {
+            return action is null
+                ? Task.FromResult<TResult>(default!)
+                : Task.Factory.StartNew(action, token, creationOptions, TaskScheduler.Default);
+        }
+
+        /// <summary>
+        /// If the <see cref="IDisposable"/> is inherited, execute
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static object TryDispose(object obj)
+        {
+
+            if (obj is IEnumerable and)
+            {
+                foreach (IDisposable item in and.OfType<IDisposable>())
+                {
+                    item?.Dispose();
+                }
+                return obj;
+            }
+
+            if (obj is IDisposable and1)
+            {
+                and1?.Dispose();
+            }
+
+            return obj;
+        }
+
+        /// <summary>
+        /// cast object value to target Type
+        /// </summary>
+        /// <typeparam name="Target"></typeparam>
+        /// <param name="value">object value</param>
+        /// <param name="outValue">target value</param>
+        /// <returns>cast success</returns>
+        public static bool TryCast<Target>(object value, out Target outValue)
+        {
+            if (value != null)
+            {
+                try
+                {
+                    if (value is Target target)
+                    {
+                        outValue = target;
+                        return true;
+                    }
+                    outValue = (Target)Convert.ChangeType(value, typeof(Target));
+                    return true;
+                }
+                catch
+                {
+                }
+            }
+            outValue = default!;
+            return false;
+        }
+
+        /// <summary>
+        /// cast object value to target Type
+        /// </summary>
+        /// <typeparam name="Target"></typeparam>
+        /// <param name="value">object value</param> 
+        /// <returns>cast success</returns>
+        public static Target CastTo<Target>(object value)
+        {
+            if (value is null)
+            {
+                return default!;
+            }
+
+            try
+            {
+                return value is Target target ? target : (Target)Convert.ChangeType(value, typeof(Target));
+            }
+            catch
+            {
+                return default!;
+            }
+        }
+
+
+
+
+
+        #region InvokeOnce
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private static readonly ConcurrentDictionary<int, bool> invokeTokenCache = new();
+
+        /// <summary>
+        /// Invokes the given action only once with the specified token.
+        /// If the same token is used again, the action will not be invoked.
+        /// </summary>
+        /// <param name="token"> The token used to identify the action.</param>
+        /// <param name="action"> The action to be invoked.</param>
+        /// <param name="destroyTokenAfterInvoke">destroyTokenAfterInvoke If set to true, the token will be destroyed after the action is invoked.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static void InvokeOnce(this Action action, object token, bool destroyTokenAfterInvoke = false)
+        {
+            if (token is null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            if (action is null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var hashCode = token.GetHashCode();
+
+            lock (invokeTokenCache)
+            {
+                if (invokeTokenCache.TryGetValue(hashCode, out _))
+                {
+                    return;
+                }
+
+                invokeTokenCache[hashCode] = false;
+            }
+
+            try
+            {
+                action();
+
+                if (destroyTokenAfterInvoke == false)
+                {
+                    invokeTokenCache[hashCode] = true;
+                }
+            }
+            finally
+            {
+                if (destroyTokenAfterInvoke)
+                {
+                    invokeTokenCache.TryRemove(hashCode, out _);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Invokes the given action only once with the specified token.
+        /// If the same token is used again, the action will not be invoked.
+        /// </summary>
+        /// <param name="token"> The token used to identify the action.</param>
+        /// <param name="funCallback"> The action to be invoked.</param>
+        /// <param name="destroyTokenAfterInvoke">destroyTokenAfterInvoke If set to true, the token will be destroyed after the action is invoked.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task InvokeOnce(this Func<Task> funCallback, object token, bool destroyTokenAfterInvoke = false)
+        {
+            if (token is null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            if (funCallback is null)
+            {
+                throw new ArgumentNullException(nameof(funCallback));
+            }
+
+            var hashCode = token.GetHashCode();
+
+            lock (invokeTokenCache)
+            {
+                if (invokeTokenCache.TryGetValue(hashCode, out _))
+                {
+                    return;
+                }
+
+                invokeTokenCache[hashCode] = false;
+            }
+
+            try
+            {
+                await funCallback();
+
+                if (destroyTokenAfterInvoke == false)
+                {
+                    invokeTokenCache[hashCode] = true;
+                }
+            }
+            finally
+            {
+                if (destroyTokenAfterInvoke)
+                {
+                    invokeTokenCache.TryRemove(hashCode, out _);
+                }
+            }
+        }
+
+        #endregion
 
 
 
@@ -530,5 +394,9 @@ namespace Tiny.Toolkits
         {
             return baseType.IsAssignableFrom(type);
         }
+
+
+
+
     }
 }

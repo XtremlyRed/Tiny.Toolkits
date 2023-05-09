@@ -40,7 +40,7 @@ namespace Tiny.Toolkits
         {
             return new TinyChrono();
         }
-
+                   
 
         /// <summary>
         /// stop this chrono and return execute use time

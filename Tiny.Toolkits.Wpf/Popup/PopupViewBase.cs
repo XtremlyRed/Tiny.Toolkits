@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-using Tiny.Toolkits.Wpf.Popup.PopupView;
-
 namespace Tiny.Toolkits
 {
     /// <summary>
@@ -247,7 +245,8 @@ namespace Tiny.Toolkits
                 .Add(Visibility.Collapsed, TimeSpan.FromMilliseconds(10))
                 .BuildAnimation();
 
-            AnimationAssist.PlayAnimations(new[] { opacityPlayer, visibilityPlayer }, () => popupCloseCallback?.Invoke());
+
+            new[] { opacityPlayer, visibilityPlayer }.PlayAnimations(() => popupCloseCallback?.Invoke());
 
 
         }

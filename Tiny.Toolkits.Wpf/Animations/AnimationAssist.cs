@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media.Animation;
@@ -381,21 +382,22 @@ namespace Tiny.Toolkits
             PlayAnimations(animationPlayers, null);
         }
 
+         
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="animationPlayers"></param>
         /// <param name="playCompleteCallback"></param>
-        public static void PlayAnimations(IAnimationPlayer[] animationPlayers, Action playCompleteCallback = null)
-        { 
+        public static void PlayAnimations(this ICollection<IAnimationPlayer>  animationPlayers, Action playCompleteCallback = null)
+        {
             animationPlayers = animationPlayers?.Where(i => i != null).ToArray();
 
-            if (animationPlayers == null || animationPlayers.Length == 0)
+            if (animationPlayers == null || animationPlayers.Count == 0)
             {
                 return;
             }
-             
+
             Storyboard storyboard = new();
 
             if (playCompleteCallback != null)

@@ -14,7 +14,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
     {
 
         private string[] buttonContents;
-
+        private bool isLoaded = false;
         internal ContainerView()
         {
             InitializeComponent();
@@ -33,16 +33,17 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
             MessageBox.Text = message;
 
             ButtonBoxs.ItemsSource = this.buttonContents = buttonContents;
-
+            isLoaded = true;
         }
 
         private void Button_Loaded(object sender, RoutedEventArgs e)
         {
-
-            if (sender is not Button btn)
+            if (sender is not Button btn || isLoaded == false)
             {
                 return;
             }
+
+            isLoaded = false;
 
             if ((btn.Content as string) == buttonContents[0])
             {
@@ -58,11 +59,11 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
             {
                 if (buttonContents.Length > 2)
                 {
-                    uniformGrid.HorizontalAlignment(HorizontalAlignment.Center);
+                    uniformGrid.HorizontalAlignment = HorizontalAlignment.Stretch;
                     return;
                 }
 
-                uniformGrid.HorizontalAlignment(HorizontalAlignment.Right);
+                uniformGrid.HorizontalAlignment = HorizontalAlignment.Right;
             }
         }
 
@@ -71,8 +72,7 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
         /// <returns></returns>
         protected override Grid GetPopupContentContainer()
         {
-            return popupContainer;
-
+            return popupContainer; 
         }
 
         /// <summary> 
@@ -97,9 +97,9 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
         /// <param name="size"></param>
         protected override void ContainerSizeChanged(Size size)
         {
-            return;
-            messageContainer.MaxWidth = (size.Width - 150).FromRange(0, 800);
-            messageContainer.MaxHeight = (size.Height - 150).FromRange(0, 480);
+            //return;
+            //messageContainer.MaxWidth = (size.Width - 150).FromRange(0, 800);
+            //messageContainer.MaxHeight = (size.Height - 150).FromRange(0, 480);
         }
 
 

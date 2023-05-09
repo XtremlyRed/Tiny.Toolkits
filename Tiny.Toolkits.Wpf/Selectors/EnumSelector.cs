@@ -219,7 +219,7 @@ namespace Tiny.Toolkits
             }
 
             int hashCode = EnumValue.GetHashCode();
-            int index = TinyTools.IndexOf(ValidEnumValues, i => i.HashCode == hashCode);
+            int index = ValidEnumValues.IndexOf(i => i.HashCode == hashCode);
 
             if ((EnumValue != null && SelectedIndex == -1) || index != SelectedIndex)
             {
