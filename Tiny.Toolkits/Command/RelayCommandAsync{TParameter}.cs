@@ -13,9 +13,6 @@ namespace Tiny.Toolkits
     /// <typeparam name="TParameter"></typeparam>
     public class RelayCommandAsync<TParameter> : ICommand, IRelayCommandAsync<TParameter>
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly SynchronizationContext synchronizationContext = SynchronizationContext.Current;
         /// <summary>
         /// can execute changed event
         /// </summary>
@@ -77,22 +74,28 @@ namespace Tiny.Toolkits
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public Task ExecuteAsync(TParameter parameter)
+        public async Task ExecuteAsync(TParameter parameter)
         {
             if (executeCallback is null)
             {
-                return Task.FromResult(false);
+                await Task.FromResult(false);
             }
 
             isExecuting = true;
             RaiseCanExecuteChanged();
-            return executeCallback
+            await executeCallback
                 .Invoke(parameter)
                 .ContinueWith(t =>
                 {
-                    RaiseCanExecuteChanged();
-                    isExecuting = false;
-                    t.Wait();
+                    try
+                    {
+                        t.Wait();
+                    }
+                    finally
+                    {
+                        RaiseCanExecuteChanged();
+                        isExecuting = false;
+                    } 
                 });
 
         }

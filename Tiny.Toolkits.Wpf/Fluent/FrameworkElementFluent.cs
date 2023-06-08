@@ -8872,6 +8872,7 @@ namespace Tiny.Toolkits
             textBlock.BaselineOffset = baselineOffset;
             return textBlock;
         }
+
         /// <summary>                                                                                                                
         /// Set the <see cref="TextBlock.Text"/> property of the current <see cref="TextBlock"/>                                 
         /// </summary>                                                                                                               

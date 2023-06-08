@@ -4,22 +4,21 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
-namespace Tiny.Toolkits.Wpf.Popup.PopupView
+namespace Tiny.Toolkits
 {
     /// <summary>
-    /// ContainerView.xaml 的交互逻辑
+    /// MessageView.xaml 的交互逻辑
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public partial class ContainerView : PopupViewBase
+    public partial class MessageView : PopupMessageViewBase
     {
 
         private string[] buttonContents;
         private bool isLoaded = false;
-        internal ContainerView()
+        internal MessageView()
         {
             InitializeComponent();
         }
-
 
 
         /// <summary> 
@@ -66,42 +65,6 @@ namespace Tiny.Toolkits.Wpf.Popup.PopupView
                 uniformGrid.HorizontalAlignment = HorizontalAlignment.Right;
             }
         }
-
-        /// <summary> 
-        /// </summary>
-        /// <returns></returns>
-        protected override Grid GetPopupContentContainer()
-        {
-            return popupContainer; 
-        }
-
-        /// <summary> 
-        /// </summary>
-        /// <returns></returns>
-        protected override FrameworkElement GetPopupMessageContainer()
-        {
-            return messageContainer;
-        }
-
-        ///// <summary> 
-        ///// </summary>
-        ///// <returns></returns>
-        //protected override StackPanel GetTipMessageContainer()
-        //{
-        //    return tipsContainer;
-        //}
-
-
-        /// <summary> 
-        /// </summary>
-        /// <param name="size"></param>
-        protected override void ContainerSizeChanged(Size size)
-        {
-            //return;
-            //messageContainer.MaxWidth = (size.Width - 150).FromRange(0, 800);
-            //messageContainer.MaxHeight = (size.Height - 150).FromRange(0, 480);
-        }
-
 
         private void Click(object sender, RoutedEventArgs e)
         {

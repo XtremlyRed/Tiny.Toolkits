@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -13,21 +14,19 @@ namespace Tiny.Toolkits
     /// <summary>
     /// xaml attache 
     /// </summary>
-    public static class XamlAttache
-    {
+    public static class WindowAttach
+    { 
+        #region window move
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private static readonly ConcurrentDictionary<int, bool> bindingAssistCached = new();
-
+        private static readonly List<int> registedWindow = new();
         /// <summary>
         /// password
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static string GetPassword(DependencyObject obj)
+        public static bool GetEnableWindowMovable(DependencyObject obj)
         {
-            return (string)obj.GetValue(PasswordProperty);
+            return (bool)obj.GetValue(EnableWindowMovableProperty);
         }
 
         /// <summary>
@@ -35,54 +34,88 @@ namespace Tiny.Toolkits
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="value"></param>
-        public static void SetPassword(DependencyObject obj, string value)
+        public static void SetEnableWindowMovable(DependencyObject obj, bool value)
         {
-            obj.SetValue(PasswordProperty, value);
+            obj.SetValue(EnableWindowMovableProperty, value);
         }
 
         /// <summary>
         /// password
         /// </summary>
-        public static readonly DependencyProperty PasswordProperty =
-            DependencyProperty.RegisterAttached("Password", typeof(string),
-            typeof(XamlAttache),
-            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnPasswordChanged));
-
-        //when the buffer changed, upate the passwordBox's password
-        private static void OnPasswordChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-        {
-            if (obj is PasswordBox passwordBox)
+        public static readonly DependencyProperty EnableWindowMovableProperty =
+            DependencyProperty.RegisterAttached("EnableWindowMovable", typeof(bool),
+            typeof(WindowAttach),
+            new FrameworkPropertyMetadata(false, (s, e) =>
             {
-                if (bindingAssistCached.TryGetValue(passwordBox.GetHashCode(), out bool result) == false)
-                {
-                    passwordBox.Unloaded += PasswordBox_Unloaded;
-                    passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
-                    bindingAssistCached[passwordBox.GetHashCode()] = true;
-                }
-
-                string newValue = e.NewValue?.ToString() ?? string.Empty;
-                string oldValue = passwordBox.Password;
-
-                if (newValue == oldValue)
+                if (s is not FrameworkElement uielement)
                 {
                     return;
                 }
 
-                passwordBox.Password = newValue;
-            }
+                if (uielement.IsLoaded)
+                {
+                    Register();
+                    return;
+                }
+                RoutedEventHandler routedEventHandler = null;
+                routedEventHandler = (s, e) =>
+                {
+                    uielement.Loaded -= routedEventHandler;
+                    Register();
+                };
+                uielement.Loaded += routedEventHandler;
+                 
+                void Register()
+                {
+                    Window window = uielement.FindParent<Window>();
+                    if (window is null)
+                    {
+                        return;
+                    }
 
-            void PasswordBox_Unloaded(object sender, RoutedEventArgs e)
-            {
-                passwordBox.Unloaded -= PasswordBox_Unloaded;
-                passwordBox.PasswordChanged -= PasswordBox_PasswordChanged;
-                bindingAssistCached.TryRemove(passwordBox.GetHashCode(), out bool _);
-            }
+                    if (registedWindow.Contains(window.GetHashCode()))
+                    {
+                        return;
+                    }
 
-            void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-            {
-                SetPassword(passwordBox, passwordBox.Password);
-            }
-        }
+                    registedWindow.Add(window.GetHashCode());
+
+                    System.Reflection.PropertyInfo property = uielement.GetType().GetProperty(nameof(Panel.Background));
+                    if (property != null)
+                    {
+                        if (property.GetValue(uielement) is null)
+                        {
+                            try
+                            {
+                                property.SetValue(uielement, System.Windows.Media.Brushes.Transparent);
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+
+                    uielement.PreviewMouseLeftButtonDown += (s, e) =>
+                    {
+                        if (e.MouseDevice.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                        {
+                            try
+                            {
+                                window.DragMove();
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    };
+                }
+            }));
+
+
+
+        #endregion
+
+
 
 
         #region window Blur
@@ -113,7 +146,7 @@ namespace Tiny.Toolkits
         /// </summary>
         public static readonly DependencyProperty EnableWindowBlurProperty =
             DependencyProperty.RegisterAttached("EnableWindowBlur", typeof(bool),
-            typeof(XamlAttache),
+            typeof(WindowAttach),
             new FrameworkPropertyMetadata(false, (s, e) =>
             {
                 if (s is Window window)
@@ -154,7 +187,6 @@ namespace Tiny.Toolkits
             AccentPolicy accent = new()
             {
                 AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND,
-                //GradientColor = (int) ((_blurOpacity << 24) | (_blurBackgroundColor & 0xFFFFFF))
             };
 
             int accentStructSize = Marshal.SizeOf(accent);

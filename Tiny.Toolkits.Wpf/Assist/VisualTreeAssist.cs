@@ -45,7 +45,7 @@ namespace Tiny.Toolkits
         /// <typeparam name="Target"></typeparam>
         /// <param name="dependencyObject"></param>
         /// <returns></returns>
-        public static IEnumerable<Target> FindVisualChildren<Target>(DependencyObject dependencyObject) where Target : DependencyObject
+        public static IEnumerable<Target> FindVisualChildren<Target>(this DependencyObject dependencyObject) where Target : DependencyObject
         {
             if (dependencyObject != null)
             {
@@ -64,54 +64,14 @@ namespace Tiny.Toolkits
                 }
             }
         }
-
-        /// <summary>
-        /// find visual children from <paramref name="dependencyObject"/>
-        /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <param name="dependencyObject"></param>
-        /// <returns></returns>
-        public static List<Target> FindVisualChildrenEx<Target>(DependencyObject dependencyObject) where Target : DependencyObject
-        {
-            try
-            {
-                List<Target> TList = new() { };
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
-                {
-                    DependencyObject child = VisualTreeHelper.GetChild(dependencyObject, i);
-                    if (child is not null and Target)
-                    {
-                        TList.Add((Target)child);
-                        List<Target> childOfChildren = FindVisualChildrenEx<Target>(child);
-                        if (childOfChildren != null)
-                        {
-                            TList.AddRange(childOfChildren);
-                        }
-                    }
-                    else
-                    {
-                        List<Target> childOfChildren = FindVisualChildrenEx<Target>(child);
-                        if (childOfChildren != null)
-                        {
-                            TList.AddRange(childOfChildren);
-                        }
-                    }
-                }
-                return TList;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
+         
         /// <summary>
         /// find visual parent from <paramref name="dependencyObject"/>
         /// </summary>
         /// <typeparam name="Target"></typeparam>
         /// <param name="dependencyObject"></param>
         /// <returns></returns>
-        public static Target FindParent<Target>(DependencyObject dependencyObject) where Target : DependencyObject
+        public static Target FindParent<Target>(this DependencyObject dependencyObject) where Target : DependencyObject
         {
             while (true)
             {
@@ -137,11 +97,11 @@ namespace Tiny.Toolkits
         /// <param name="dependencyObject"></param>
         /// <param name="elementName"></param>
         /// <returns></returns>
-        public static Target FindParent<Target>(DependencyObject dependencyObject, string elementName) where Target : DependencyObject
+        public static Target FindParent<Target>(this DependencyObject dependencyObject, string elementName) where Target : DependencyObject
         {
             DependencyObject dobj = VisualTreeHelper.GetParent(dependencyObject);
             return dobj != null
-                ? dobj is Target && ((System.Windows.FrameworkElement)dobj).Name.Equals(elementName)
+                ? dobj is Target && ((FrameworkElement)dobj).Name.Equals(elementName)
                     ? (Target)dobj
                     : FindParent<Target>(dobj, elementName)
                 : null;

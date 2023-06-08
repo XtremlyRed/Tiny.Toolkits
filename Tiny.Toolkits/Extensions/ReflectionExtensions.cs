@@ -2,13 +2,14 @@
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Tiny.Toolkits
 {
     /// <summary>
     /// ref 
     /// </summary>
-    public static partial class TinyTools
+    public static partial class Extensions
     {
         /// <summary>
         /// get proprety name from expression
@@ -50,7 +51,9 @@ namespace Tiny.Toolkits
 
             UnaryExpression unaryExpression = propertySelector.Body as UnaryExpression;
 
-            return unaryExpression?.Operand is MemberExpression memberExpression2 ? memberExpression2.Member.Name : string.Empty;
+            return unaryExpression?.Operand is MemberExpression memberExpression2
+                ? memberExpression2.Member.Name
+                : string.Empty;
         }
 
 
@@ -99,7 +102,9 @@ namespace Tiny.Toolkits
         /// <Exception cref="ArgumentNullException"></Exception>
         public static object CreateInstance(this Type type, params object[] parameters)
         {
-            return type == null ? throw new ArgumentNullException(nameof(type)) : Activator.CreateInstance(type, parameters);
+            return type == null 
+                ? throw new ArgumentNullException(nameof(type)) 
+                : Activator.CreateInstance(type, parameters);
         }
 
 
@@ -140,5 +145,153 @@ namespace Tiny.Toolkits
             return typeName;
 
         }
+
+
+
+
+        /// <summary>
+        /// check  <paramref fieldName="baseType"/> <c>IsAssignableFrom</c> <paramref fieldName="type"/>
+        /// </summary>
+        /// <param fieldName="type"></param>
+        /// <param fieldName="baseType"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public static bool IsInheritFrom(this Type type, Type baseType)
+        {
+            return baseType.IsAssignableFrom(type);
+        }
+
+
+        /// <summary>
+        /// Used to set the property values of an object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="target">object</param>
+        /// <param name="expression">property selector</param>
+        /// <param name="value">value to be set</param>
+        /// <returns></returns>
+        public static bool SetPropertyValue<T, TValue>(this T target, Expression<Func<T, TValue>> expression, TValue value)
+        {
+            if (target is null || expression is null)
+            {
+                return false;
+            }
+
+            string propertyName = Extensions.GetPropertyName(expression);
+
+            System.Reflection.PropertyInfo propertyInfo = typeof(T).GetProperty(propertyName);
+            if (propertyInfo is null)
+            {
+                return false;
+            }
+
+            propertyInfo.SetValue(target, value);
+
+            return true;
+
+        }
+
+
+
+        /// <summary>
+        /// Used to set the field values of an object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="target">object</param>
+        /// <param name="expression">field selector</param>
+        /// <param name="value">value to be set</param>
+        /// <returns></returns>
+        public static bool SetFieldValue<T, TValue>(this T target, Expression<Func<T, TValue>> expression, TValue value)
+        {
+            if (target is null || expression is null)
+            {
+                return false;
+            }
+
+            string fieldName = Extensions.GetPropertyName(expression);
+
+            System.Reflection.FieldInfo fieldInfo = typeof(T).GetField(fieldName);
+
+            if (fieldInfo is null)
+            {
+                return false;
+            }
+
+            fieldInfo.SetValue(target, value);
+
+            return true;
+
+        }
+
+
+        /// <summary>
+        /// Used to set the property values of an object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="target">object</param>
+        /// <param name="propertyName">property</param>
+        /// <param name="value">value to be set</param>
+        /// <returns></returns>
+        public static bool SetPropertyValue<T, TValue>(this T target, string propertyName, TValue value)
+        {
+            if (target is null || string.IsNullOrWhiteSpace(propertyName))
+            {
+                return false;
+            }
+
+            System.Reflection.PropertyInfo propertyInfo = target.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (propertyInfo is null)
+            {
+                return false;
+            }
+            try
+            {
+                propertyInfo.SetValue(target, value);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Used to set the field values of an object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="target">object</param>
+        /// <param name="fieldName">field</param>
+        /// <param name="value">value to be set</param>
+        /// <returns></returns>
+        public static bool SetFieldValue<T, TValue>(this T target, string fieldName, TValue value)
+        {
+            if (target is null || string.IsNullOrWhiteSpace(fieldName))
+            {
+                return false;
+            }
+
+            System.Reflection.FieldInfo fieldInfo = typeof(T).GetField(fieldName);
+
+            if (fieldInfo is null)
+            {
+                return false;
+            }
+
+            try
+            {
+                fieldInfo.SetValue(target, value);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }

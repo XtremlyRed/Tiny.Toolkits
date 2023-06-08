@@ -186,6 +186,8 @@ namespace Tiny.Toolkits
 
             if (effectVisual == true)
             {
+                SelectedIndex = -1;
+
                 List<EnumInfo> validInfos = enumInfos.ToList();
 
                 if (HasEmptyValue)

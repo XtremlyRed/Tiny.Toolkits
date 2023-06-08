@@ -9,7 +9,7 @@ namespace Tiny.Toolkits
     /// <summary>
     /// simple string  extension
     /// </summary>
-    public static class StringExtensions
+    public static partial class Extensions
     {
         /// <summary>
         /// <c>@string</c> IsNullOrWhiteSpace

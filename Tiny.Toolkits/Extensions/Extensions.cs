@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,13 +13,13 @@ namespace Tiny.Toolkits
     /// <summary>
     /// simple invoke class
     /// </summary>
-    public static partial class TinyTools
+    public static partial class Extensions
     {
         /// <summary>
         /// run delegate and ignore exception
         /// </summary>
-        /// <param name="action">run body</param>
-        /// <param name="exceptionCallback">exception callback</param>
+        /// <param fieldName="action">run body</param>
+        /// <param fieldName="exceptionCallback">exception callback</param>
         public static void TryRun(Action action, Action<Exception> exceptionCallback = null!)
         {
             if (action is null)
@@ -38,9 +40,9 @@ namespace Tiny.Toolkits
         /// <summary>
         /// loop 
         /// </summary>
-        /// <param name="startIndex">startIndex</param>
-        /// <param name="count">count [ ? > 0]</param>
-        /// <param name="loopBody">loopBody</param>
+        /// <param fieldName="startIndex">startIndex</param>
+        /// <param fieldName="count">count [ ? > 0]</param>
+        /// <param fieldName="loopBody">loopBody</param>
         /// <Exception cref="ArgumentOutOfRangeException"></Exception>
         /// <Exception cref="ArgumentNullException"></Exception>
         public static void For(int startIndex, int count, Action<int> loopBody)
@@ -64,9 +66,9 @@ namespace Tiny.Toolkits
         /// <summary>
         /// loop 
         /// </summary>
-        /// <param name="startIndex">startIndex</param>
-        /// <param name="count">count [ ? > 0]</param>
-        /// <param name="loopBody">loopBody</param>
+        /// <param fieldName="startIndex">startIndex</param>
+        /// <param fieldName="count">count [ ? > 0]</param>
+        /// <param fieldName="loopBody">loopBody</param>
         /// <Exception cref="ArgumentOutOfRangeException"></Exception>
         /// <Exception cref="ArgumentNullException"></Exception>
         public static void For(int startIndex, int count, Action<int, int> loopBody)
@@ -91,9 +93,9 @@ namespace Tiny.Toolkits
         /// <summary>
         /// loop 
         /// </summary>
-        /// <param name="startIndex">startIndex</param>
-        /// <param name="count">count [ ? > 0]</param>
-        /// <param name="loopBody">loopBody</param>
+        /// <param fieldName="startIndex">startIndex</param>
+        /// <param fieldName="count">count [ ? > 0]</param>
+        /// <param fieldName="loopBody">loopBody</param>
         /// <Exception cref="ArgumentOutOfRangeException"></Exception>
         /// <Exception cref="ArgumentNullException"></Exception>
         public static void For(int startIndex, int count, Action loopBody)
@@ -113,38 +115,13 @@ namespace Tiny.Toolkits
                 loopBody();
             }
         }
-
-
-        /// <summary>
-        /// loop  
-        /// </summary>
-        /// <param name="loopCondition">condition</param>
-        /// <param name="loopBody">loopBody</param> 
-        /// <returns></returns>
-        /// <Exception cref="ArgumentNullException"></Exception>
-        public static void While(Func<bool> loopCondition, Action loopBody)
-        {
-            if (loopCondition is null)
-            {
-                throw new ArgumentNullException(nameof(loopCondition));
-            }
-            if (loopBody is null)
-            {
-                throw new ArgumentNullException(nameof(loopBody));
-            }
-
-            while (loopCondition.Invoke())
-            {
-                loopBody();
-            }
-        }
-
+         
         /// <summary>
         /// run delegate async
         /// </summary>
-        /// <param name="action">delegate body</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <param name="creationOptions"><see cref="TaskContinuationOptions"/></param>
+        /// <param fieldName="action">delegate body</param>
+        /// <param fieldName="token"><see cref="CancellationToken"/></param>
+        /// <param fieldName="creationOptions"><see cref="TaskContinuationOptions"/></param>
         /// <returns></returns>
         public static Task InvokeAsync(this Action action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
         {
@@ -156,10 +133,10 @@ namespace Tiny.Toolkits
         /// <summary>
         /// run delegate async
         /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="action">delegate body</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <param name="creationOptions"><see cref="TaskCreationOptions"/></param>
+        /// <typeparam fieldName="TResult"></typeparam>
+        /// <param fieldName="action">delegate body</param>
+        /// <param fieldName="token"><see cref="CancellationToken"/></param>
+        /// <param fieldName="creationOptions"><see cref="TaskCreationOptions"/></param>
         /// <returns></returns>
         public static Task<TResult> InvokeAsync<TResult>(this Func<TResult> action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
         {
@@ -171,11 +148,10 @@ namespace Tiny.Toolkits
         /// <summary>
         /// If the <see cref="IDisposable"/> is inherited, execute
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param fieldName="obj"></param>
         /// <returns></returns>
         public static object TryDispose(object obj)
-        {
-
+        { 
             if (obj is IEnumerable and)
             {
                 foreach (IDisposable item in and.OfType<IDisposable>())
@@ -196,9 +172,9 @@ namespace Tiny.Toolkits
         /// <summary>
         /// cast object value to target Type
         /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <param name="value">object value</param>
-        /// <param name="outValue">target value</param>
+        /// <typeparam fieldName="Target"></typeparam>
+        /// <param fieldName="value">object value</param>
+        /// <param fieldName="outValue">target value</param>
         /// <returns>cast success</returns>
         public static bool TryCast<Target>(object value, out Target outValue)
         {
@@ -225,8 +201,8 @@ namespace Tiny.Toolkits
         /// <summary>
         /// cast object value to target Type
         /// </summary>
-        /// <typeparam name="Target"></typeparam>
-        /// <param name="value">object value</param> 
+        /// <typeparam fieldName="Target"></typeparam>
+        /// <param fieldName="value">object value</param> 
         /// <returns>cast success</returns>
         public static Target CastTo<Target>(object value)
         {
@@ -258,11 +234,11 @@ namespace Tiny.Toolkits
         /// Invokes the given action only once with the specified token.
         /// If the same token is used again, the action will not be invoked.
         /// </summary>
-        /// <param name="token"> The token used to identify the action.</param>
-        /// <param name="action"> The action to be invoked.</param>
-        /// <param name="destroyTokenAfterInvoke">destroyTokenAfterInvoke If set to true, the token will be destroyed after the action is invoked.</param>
+        /// <param fieldName="token"> The token used to identify the action.</param>
+        /// <param fieldName="action"> The action to be invoked.</param>
+        /// <param fieldName="removeTokenAfterInvoke"><paramref name="removeTokenAfterInvoke"/> If set to true, the token will be destroyed after the action is invoked.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static void InvokeOnce(this Action action, object token, bool destroyTokenAfterInvoke = false)
+        public static void InvokeOnce(this Action action, object token, bool removeTokenAfterInvoke = false)
         {
             if (token is null)
             {
@@ -274,7 +250,7 @@ namespace Tiny.Toolkits
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var hashCode = token.GetHashCode();
+            int hashCode = token.GetHashCode();
 
             lock (invokeTokenCache)
             {
@@ -290,14 +266,14 @@ namespace Tiny.Toolkits
             {
                 action();
 
-                if (destroyTokenAfterInvoke == false)
+                if (removeTokenAfterInvoke == false)
                 {
                     invokeTokenCache[hashCode] = true;
                 }
             }
             finally
             {
-                if (destroyTokenAfterInvoke)
+                if (removeTokenAfterInvoke)
                 {
                     invokeTokenCache.TryRemove(hashCode, out _);
                 }
@@ -309,11 +285,11 @@ namespace Tiny.Toolkits
         /// Invokes the given action only once with the specified token.
         /// If the same token is used again, the action will not be invoked.
         /// </summary>
-        /// <param name="token"> The token used to identify the action.</param>
-        /// <param name="funCallback"> The action to be invoked.</param>
-        /// <param name="destroyTokenAfterInvoke">destroyTokenAfterInvoke If set to true, the token will be destroyed after the action is invoked.</param>
+        /// <param fieldName="token"> The token used to identify the action.</param>
+        /// <param fieldName="funCallback"> The action to be invoked.</param>
+        /// <param fieldName="removeTokenAfterInvoke">removeTokenAfterInvoke If set to true, the token will be destroyed after the action is invoked.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static async Task InvokeOnce(this Func<Task> funCallback, object token, bool destroyTokenAfterInvoke = false)
+        public static async Task InvokeOnceAsync(this Func<Task> funCallback, object token, bool removeTokenAfterInvoke = false)
         {
             if (token is null)
             {
@@ -325,7 +301,7 @@ namespace Tiny.Toolkits
                 throw new ArgumentNullException(nameof(funCallback));
             }
 
-            var hashCode = token.GetHashCode();
+            int hashCode = token.GetHashCode();
 
             lock (invokeTokenCache)
             {
@@ -341,14 +317,14 @@ namespace Tiny.Toolkits
             {
                 await funCallback();
 
-                if (destroyTokenAfterInvoke == false)
+                if (removeTokenAfterInvoke == false)
                 {
                     invokeTokenCache[hashCode] = true;
                 }
             }
             finally
             {
-                if (destroyTokenAfterInvoke)
+                if (removeTokenAfterInvoke)
                 {
                     invokeTokenCache.TryRemove(hashCode, out _);
                 }
@@ -362,8 +338,8 @@ namespace Tiny.Toolkits
         /// <summary>
         /// release a <see cref="SemaphoreSlim"/> when <see cref="SemaphoreSlim.CurrentCount"/> == 0
         /// </summary>
-        /// <param name="semaphoreSlim"></param>
-        /// <param name="releaseCount"></param>
+        /// <param fieldName="semaphoreSlim"></param>
+        /// <param fieldName="releaseCount"></param>
         public static void ReleaseWhenZero(this SemaphoreSlim semaphoreSlim, int releaseCount = 1)
         {
             if (semaphoreSlim is null)
@@ -382,21 +358,6 @@ namespace Tiny.Toolkits
                 semaphoreSlim.Release(releaseCount);
             }
         }
-
-
-        /// <summary>
-        /// check  <paramref name="baseType"/> <c>IsAssignableFrom</c> <paramref name="type"/>
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="baseType"></param>
-        /// <exception cref="ArgumentException"></exception>
-        public static bool IsInheritFrom(this Type type, Type baseType)
-        {
-            return baseType.IsAssignableFrom(type);
-        }
-
-
-
 
     }
 }

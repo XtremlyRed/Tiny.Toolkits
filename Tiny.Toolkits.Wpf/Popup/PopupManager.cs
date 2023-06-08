@@ -29,37 +29,49 @@ namespace Tiny.Toolkits
         private static readonly List<UIElement> uiElements = new();
 
 
-        ///// <summary>
-        /////  display tips with <paramref name="message"/>,<paramref name="title"/>, in container right
-        ///// </summary>
-        ///// <param name="message">the message content of the pop-up box</param>
-        ///// <param name="title">the title of the pop-up box</param>    /// <returns></returns>
-        //public async Task TipAsync(string message, string title, int displayTime_Ms = -1)
-        //{
-        //    PopupContainerCheck();
-        //    UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i) && GetContainerName(i) != null));
+        /// <summary>
+        ///  display tips with <paramref name="message"/>,<paramref name="title"/>, in container right
+        /// </summary>
+        /// <param name="message">the message content of the pop-up box</param>
+        /// <param name="title">the title of the pop-up box</param>    
+        /// <param name="parameters"></param>
+        /// <param name="displayTime_Ms"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task ToastAsync(string title,string message,  int displayTime_Ms = -1, params object[] parameters)
+        {
+            PopupContainerCheck();
+            UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetIsMainContainer(i) && GetContainerName(i) != null));
 
-        //    _ = uieleMent is null
-        //      ? throw new Exception("PopupManager: the main container was not found or the main container name is empty")
-        //      : await PopupManagerAssist.InnerTipPopup(uieleMent, message, title, displayTime_Ms);
-        //}
+            if (uieleMent is null)
+            {
+                throw new Exception("PopupManager: the main container was not found or the main container name is empty");
+            }
+
+            await PopupManagerAssist.InnerTipPopup(uieleMent,title, message,  displayTime_Ms, parameters);
+        }
 
 
-        ///// <summary>
-        ///// display tips with <paramref name="message"/>,<paramref name="title"/>, in  <paramref name="containerName"/> right
-        ///// </summary>
-        ///// <param name="containerName">popup <paramref name="containerName"/></param>
-        ///// <param name="message">the message content of the pop-up box</param>
-        ///// <param name="title">the title of the pop-up box</param> 
-        ///// <returns></returns>
-        //public async Task TipAsync(string containerName, string message, string title, int displayTime_Ms = -1)
-        //{
-        //    PopupContainerCheck();
-        //    UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetContainerName(i) == containerName));
-        //    _ = uieleMent is null
-        //          ? throw new Exception($"PopupManager: No popup container named:{containerName}")
-        //          : await PopupManagerAssist.InnerTipPopup(uieleMent, message, title, displayTime_Ms);
-        //}
+        /// <summary>
+        ///  display tips with <paramref name="message"/>,<paramref name="title"/>, in container right
+        /// </summary>
+        /// <param name="message">the message content of the pop-up box</param>
+        /// <param name="title">the title of the pop-up box</param>    
+        /// <param name="parameters"></param>
+        /// <param name="displayTime_Ms"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task ToastAsync(string containerName, string title,string message,  int displayTime_Ms = -1, params object[] parameters)
+        {
+            PopupContainerCheck();
+            UIElement uieleMent = await uiElements[0].Dispatcher.InvokeAsync(() => uiElements.FirstOrDefault(i => GetContainerName(i) == containerName));
+            if (uieleMent is null)
+            {
+                throw new Exception($"PopupManager: No popup container named:{containerName}");
+            }
+
+            await PopupManagerAssist.InnerTipPopup(uieleMent,title, message,  displayTime_Ms, parameters);
+        }
 
 
 
@@ -304,13 +316,10 @@ namespace Tiny.Toolkits
                         {
                             if (uiElements.Contains(element))
                             {
-                                if (PropertyAttache.GetProperty0(element) is PopupBridge popupBridge)
+                                if (GetPopupAdornerContainer(element) is PopupAdorner popupBridge)
                                 {
-                                    element.SizeChanged -= popupBridge.PopupAdornet.ContainerSizeChanged;
-
-                                    popupBridge.Release();
-
-                                    popupBridge.IsLoaded = false;
+                                    AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(element);
+                                    adornerLayer?.Remove(popupBridge);
                                 }
 
                                 uiElements.Remove(element);
@@ -327,7 +336,7 @@ namespace Tiny.Toolkits
                             {
                                 return;
                             }
-                            CreateAdorner(element, PopupManager.GetContainerName(element));
+                            CreateAdorner(element, GetContainerName(element));
                         }
                     }
 
@@ -341,43 +350,25 @@ namespace Tiny.Toolkits
                             return;
                         }
 
-
+                        Type toastContainerType = GetToastContainerType(element);
                         Type messageContainerType = GetMessageContainerType(element);
-                        Brush brush = GetMaskBrush(element);
+                        Brush maskBrush = GetMaskBrush(element);
 
-                        PopupAdorner popupAdorner = new(messageContainerType, element);
-                        popupAdorner.InitSize(element.RenderSize);
-                        element.SizeChanged += popupAdorner.ContainerSizeChanged;
+                        PopupAdorner popupAdorner = new(messageContainerType, toastContainerType, element, maskBrush);
 
+                        adornerLayer.Add(popupAdorner);
 
-                        popupAdorner.SetMaskBrush(brush);
-
-
-                        PopupBridge popupBridge = new();
-                        popupBridge.AdornerLayer = adornerLayer;
-                        popupBridge.PopupAdornet = popupAdorner;
-                        popupBridge.IsLoaded = true;
-
-                        popupBridge.Init();
-
-                        PropertyAttache.SetProperty0(element, popupBridge);
+                        SetPopupAdornerContainer(element, popupAdorner);
 
                     }
                 }));
-
-
-
-
-
-
-
 
         #endregion
 
         #region MaskBrush
 
         /// <summary>
-        /// get mask brush of popup container
+        /// get mask maskBrush of popup container
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
@@ -387,7 +378,7 @@ namespace Tiny.Toolkits
         }
 
         /// <summary>
-        /// set mask brush of popup container
+        /// set mask maskBrush of popup container
         /// </summary>
         /// <param name="element"></param>
         /// <param name="maskBrush"></param>
@@ -397,7 +388,7 @@ namespace Tiny.Toolkits
         }
 
         /// <summary>
-        /// mask brush of popup container
+        /// mask maskBrush of popup container
         /// </summary>
         public static readonly DependencyProperty MaskBrushProperty =
             DependencyProperty.RegisterAttached("MaskBrush", typeof(Brush), typeof(PopupManager),
@@ -444,7 +435,7 @@ namespace Tiny.Toolkits
 
         /// <summary>
         /// get message container type
-        /// This type must inherit <see cref="Tiny.Toolkits.PopupViewBase"/>
+        /// This type must inherit <see cref="Tiny.Toolkits.PopupMessageViewBase"/>
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
@@ -455,7 +446,7 @@ namespace Tiny.Toolkits
 
         /// <summary>
         /// set message container type 
-        /// This type must inherit <see cref="Tiny.Toolkits.PopupViewBase"/>
+        /// This type must inherit <see cref="Tiny.Toolkits.PopupMessageViewBase"/>
         /// and must contain an parameterless constructor
         /// </summary>
         /// <param name="element"></param>
@@ -467,7 +458,7 @@ namespace Tiny.Toolkits
                 throw new Exception("invalid message Container Type");
             }
 
-            Type baseType = typeof(Tiny.Toolkits.PopupViewBase);
+            Type baseType = typeof(Tiny.Toolkits.PopupMessageViewBase);
             if (baseType.IsAssignableFrom(messageContainerType) == false)
             {
                 throw new Exception($"PopupManager: {messageContainerType.FullName} must inherit {baseType.FullName}");
@@ -479,15 +470,63 @@ namespace Tiny.Toolkits
 
         /// <summary>
         /// message container type
-        /// This type must inherit <see cref="Tiny.Toolkits.PopupViewBase"/>
+        /// This type must inherit <see cref="Tiny.Toolkits.PopupMessageViewBase"/>
         /// </summary>
         public static readonly DependencyProperty MessageContainerTypeProperty =
             DependencyProperty.RegisterAttached("MessageContainerType", typeof(Type), typeof(PopupManager),
-                new PropertyMetadata(typeof(Tiny.Toolkits.Wpf.Popup.PopupView.ContainerView)));
+                new PropertyMetadata(typeof(MessageView)));
 
 
         #endregion
 
+
+        #region ToastContainerType
+
+        /// <summary>
+        /// get toast container type
+        /// This type must inherit <see cref="Tiny.Toolkits.PopupToastViewBase"/>
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public static Type GetToastContainerType(DependencyObject element)
+        {
+            return (Type)element.GetValue(ToastContainerTypeProperty);
+        }
+
+        /// <summary>
+        /// set toast container type 
+        /// This type must inherit <see cref="Tiny.Toolkits.PopupToastViewBase"/>
+        /// and must contain an parameterless constructor
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="toastContainerType"></param>
+        public static void SetToastContainerType(DependencyObject element, Type toastContainerType)
+        {
+            if (toastContainerType is null)
+            {
+                throw new Exception("invalid message Container Type");
+            }
+
+            Type baseType = typeof(Tiny.Toolkits.PopupToastViewBase);
+            if (baseType.IsAssignableFrom(toastContainerType) == false)
+            {
+                throw new Exception($"PopupManager: {toastContainerType.FullName} must inherit {baseType.FullName}");
+            }
+
+            element.SetValue(ToastContainerTypeProperty, toastContainerType);
+        }
+
+
+        /// <summary>
+        /// toast container type
+        /// This type must inherit <see cref="Tiny.Toolkits.PopupToastViewBase"/>
+        /// </summary>
+        public static readonly DependencyProperty ToastContainerTypeProperty =
+            DependencyProperty.RegisterAttached("ToastContainerType", typeof(Type), typeof(PopupManager),
+                new PropertyMetadata(typeof(ToastView)));
+
+
+        #endregion
 
 
         #region hide base function
@@ -525,6 +564,41 @@ namespace Tiny.Toolkits
 
 
         #endregion
+
+
+
+        #region MaskBrush
+
+        /// <summary>
+        /// get mask maskBrush of popup container
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        internal static PopupAdorner GetPopupAdornerContainer(DependencyObject element)
+        {
+            return (PopupAdorner)element.GetValue(PopupAdornerContainerProperty);
+        }
+
+        /// <summary>
+        /// set mask maskBrush of popup container
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="grid"></param>
+        internal static void SetPopupAdornerContainer(DependencyObject element, PopupAdorner grid)
+        {
+            element.SetValue(PopupAdornerContainerProperty, grid);
+        }
+
+        /// <summary>
+        /// mask maskBrush of popup container
+        /// </summary>
+        internal static readonly DependencyProperty PopupAdornerContainerProperty =
+            DependencyProperty.RegisterAttached("PopupAdornerContainer", typeof(PopupAdorner), typeof(PopupManager),
+                new PropertyMetadata(null));
+
+
+        #endregion
+
 
     }
 }

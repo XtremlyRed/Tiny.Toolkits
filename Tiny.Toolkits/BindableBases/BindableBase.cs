@@ -1,19 +1,29 @@
 ﻿
 using System;
+using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Tiny.Toolkits
 {
     /// <summary>
-    /// simple mvvm ViewModelBase
+    /// simple mvvm BindableBase
     /// </summary>
-    public abstract partial class ViewModelBase : INotifyPropertyChanged
+    public abstract partial class BindableBase : INotifyPropertyChanged, INotifyPropertyChanging
     {
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private ConcurrentDictionary<string, PropertyChangedEventArgs> propertyChangedEventArgsCache = new();
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private ConcurrentDictionary<string, PropertyChangingEventArgs> propertyChangingEventArgsCache = new();
+
         /// <summary>
         /// Property Changed Event
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// Property Changing Event
+        /// </summary>
+        public event PropertyChangingEventHandler PropertyChanging;
 
         /// <summary>
         /// Raise Property Changed
@@ -27,7 +37,22 @@ namespace Tiny.Toolkits
                 throw new ArgumentNullException(nameof(propertyName));
             }
 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, propertyChangedEventArgsCache.GetOrAdd(propertyName, i => new PropertyChangedEventArgs(i)));
+        }
+
+        /// <summary>
+        /// Raise Property Changing
+        /// </summary>
+        /// <param name="propertyName">propertyName</param>
+        /// <Exception cref="ArgumentNullException"></Exception>
+        protected virtual void RaisePropertyChanging([CallerMemberName] string propertyName = null)
+        {
+            if (propertyName is null)
+            {
+                throw new ArgumentNullException(nameof(propertyName));
+            }
+            PropertyChanging?.Invoke(this, propertyChangingEventArgsCache.GetOrAdd(propertyName, i => new PropertyChangingEventArgs(i)));
+
         }
 
         /// <summary>
@@ -49,7 +74,9 @@ namespace Tiny.Toolkits
                 {
                     continue;
                 }
-                propertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+                PropertyChanged?.Invoke(this, propertyChangedEventArgsCache.GetOrAdd(propertyName, i => new PropertyChangedEventArgs(i)));
+                 
             }
         }
 
@@ -57,9 +84,16 @@ namespace Tiny.Toolkits
         /// <summary>
         /// dispose viewModel
         /// </summary>
-        ~ViewModelBase()
+        ~BindableBase()
         {
             PropertyValueMapper?.Clear();
+            PropertyValueMapper = null;
+
+            propertyChangedEventArgsCache?.Clear();
+            propertyChangedEventArgsCache = null;
+
+            propertyChangingEventArgsCache?.Clear();
+            propertyChangingEventArgsCache = null;
         }
 
 

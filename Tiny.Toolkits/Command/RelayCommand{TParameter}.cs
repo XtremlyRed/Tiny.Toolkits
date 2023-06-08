@@ -55,10 +55,7 @@ namespace Tiny.Toolkits
     /// <typeparam name="TParameter"></typeparam>
     public class RelayCommand<TParameter> : ICommand, IRelayCommand<TParameter>
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly SynchronizationContext synchronizationContext = SynchronizationContext.Current;
-
+      
         /// <summary>
         /// can execute changed event
         /// </summary>

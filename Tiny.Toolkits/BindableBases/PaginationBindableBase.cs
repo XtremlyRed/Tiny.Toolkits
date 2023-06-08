@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -7,18 +6,18 @@ namespace Tiny.Toolkits
 {
 
     /// <summary>
-    ///  create new instance of the <see cref="PaginationViewModelBase"/>
+    ///  create new instance of the <see cref="PaginationBindableBase"/>
     /// </summary>
-    public abstract class PaginationViewModelBase : ViewModelBase
+    public abstract class PaginationBindableBase : BindableBase
     {
 
-        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private string oldSearchCondition = string.Empty;
-        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync searchCommand;
-        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync gotoCommand;
-        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync nextPageCommand;
-        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync lastPageCommand;
-        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync previousPageCommand;
-        [EditorBrowsable(EditorBrowsableState.Never), DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync firstPageCommand;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private string oldSearchCondition = string.Empty;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync searchCommand;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync gotoCommand;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync nextPageCommand;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync lastPageCommand;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync previousPageCommand;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private RelayCommandAsync firstPageCommand;
         /// <summary>
         /// total page
         /// </summary>

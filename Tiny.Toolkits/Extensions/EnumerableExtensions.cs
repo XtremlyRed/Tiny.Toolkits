@@ -29,6 +29,22 @@ namespace Tiny.Toolkits
         }
 
 
+        /// <summary>
+        /// as read only collection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sources"></param>
+        /// <returns></returns>
+        public static IReadOnlyCollection<T> ToReadOnly<T>(this IEnumerable<T> sources)
+        {
+            return sources is null
+                   ? new ReadOnlyCollection<T>(EmptyImpls<T>.Array)
+                   : sources is IList<T> list
+                   ? new ReadOnlyCollection<T>(list)
+                   : new ReadOnlyCollection<T>(sources.ToArray());
+
+        }
+
 
         /// <summary>
         ///  collection is  null  or empty
@@ -202,7 +218,7 @@ namespace Tiny.Toolkits
         /// <param name="items">items</param>
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static void AddItems<TSource, TItem>(this ICollection<TSource> collection, IEnumerable<TItem> items) where TItem : TSource
+        public static void AddItems<TSource, TItem>(this Collection<TSource> collection, IEnumerable<TItem> items) where TItem : TSource
         {
             if (collection is null || items is null)
             {
@@ -224,7 +240,7 @@ namespace Tiny.Toolkits
         /// <param name="items">items coll</param>
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
-        public static void AddItems<TSource, TItem>(this ICollection<TSource> collection, params TItem[] items) where TItem : TSource
+        public static void AddItems<TSource, TItem>(this Collection<TSource> collection, params TItem[] items) where TItem : TSource
         {
             if (collection is null || items is null || items.Length == 0)
             {
@@ -287,27 +303,29 @@ namespace Tiny.Toolkits
             where TComparable : IComparable<TComparable>
             where TSource : notnull
         {
-            if (collection is null || maxComparer == null || collection.Any() == false)
+            if (collection is null || maxComparer == null)
             {
                 return default;
             }
 
-            TSource first = collection.First();
-            TComparable firstCompa = maxComparer(first);
+            TComparable max = default;
+            TSource source = default;
+            bool isSeted = false;
 
-            foreach (TSource item in collection.Skip(1))
+            foreach (TSource item in collection)
             {
                 TComparable current = maxComparer(item);
 
-                int com = current.CompareTo(firstCompa);
-                if (com > 0)
+                if (!isSeted || max.CompareTo(current) < 0)
                 {
-                    firstCompa = current;
-                    first = item;
+                    max = current;
+                    source = item;
+                    isSeted = true;
                 }
             }
 
-            return first;
+            return source;
+
         }
 
 
@@ -322,30 +340,31 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
         public static TSource MinBy<TSource, TComparable>(this IEnumerable<TSource> collection, Func<TSource, TComparable> minComparer)
-            where TComparable : IComparable<TComparable>
+            where TComparable : IComparable
             where TSource : notnull
         {
-            if (collection is null || minComparer == null || collection.Any() == false)
+            if (collection is null || minComparer == null)
             {
                 return default;
             }
 
-
-            TSource first = collection.First();
-            TComparable firstCompa = minComparer(first);
-            foreach (TSource item in collection.Skip(1))
+            TComparable min = default;
+            TSource source = default;
+            bool isSeted = false;
+            foreach (TSource item in collection)
             {
                 TComparable current = minComparer(item);
 
-                int com = current.CompareTo(firstCompa);
-                if (com < 0)
+                if (!isSeted || min.CompareTo(current) > 0)
                 {
-                    firstCompa = current;
-                    first = item;
+                    isSeted = true;
+                    min = current;
+                    source = item;
                 }
             }
 
-            return first;
+            return source;
+
         }
 
 
@@ -400,8 +419,6 @@ namespace Tiny.Toolkits
                 return target;
             }
 
-            Random disorderRandom = new();
-
             int currentIndex, targetIndex;
             object tempValue;
             int maxIndex = target.Count - 1;
@@ -418,6 +435,20 @@ namespace Tiny.Toolkits
             return target;
         }
 
+        [ThreadStatic]
+        private static readonly Random disorderRandom = new();
+        /// <summary>
+        /// Disrupt the order of a  collection
+        /// </summary> 
+        /// <param name="target"></param>
+        public static IEnumerable<TSource> Disorder<TSource>(this IEnumerable<TSource> collection)
+        {
+            return collection is null
+                ? collection
+                : collection.OrderBy(_ => disorderRandom
+
+                .Next());
+        }
 
         /// <summary>
         /// remove elements that meet the condition from the IEnumerable collection

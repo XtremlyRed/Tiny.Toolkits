@@ -14,13 +14,14 @@
 	</ItemGroup>
 
 	<PropertyGroup> 
-		<Version>4.2.2</Version>
-		<AssemblyVersion>4.2.2</AssemblyVersion>
+		<Version>4.3.0</Version>
+		<AssemblyVersion>4.3.0</AssemblyVersion>
 		<LangVersion>11.0</LangVersion>
 		<PackageProjectUrl>https://github.com/xtremlyred/tiny.toolkits</PackageProjectUrl>
 	</PropertyGroup>
  
 	<PropertyGroup>
+		<AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
 		<OutputPath>$(SolutionDir)\src\..\bin\$(Platform)\$(Configuration)</OutputPath> 
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks> 
 	</PropertyGroup>

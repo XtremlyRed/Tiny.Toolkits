@@ -32,9 +32,19 @@ namespace Tiny.Toolkits
         /// ref value
         /// </summary>
         /// <param name="value"></param>
-        public void Modify(TRef value)
+        public void SetValue(TRef value)
         {
             this.value = value;
+        }
+
+        /// <summary>
+        /// get current value
+        /// </summary>
+        /// <param name="value"></param>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public TRef GetValue()
+        {
+            return value;
         }
 
         /// <summary>

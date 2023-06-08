@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Tiny.Toolkits
 {
-    public abstract partial class ViewModelBase
+    public abstract partial class BindableBase
     {
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never), EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly Dictionary<string, object> PropertyValueMapper = new();
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private Dictionary<string, object> PropertyValueMapper = new();
 
         /// <summary>
         /// set value with Ref  by propertyName
@@ -32,7 +31,7 @@ namespace Tiny.Toolkits
             {
                 return false;
             }
-
+            RaisePropertyChanging(propertyName);
             field = newValue;
             RaisePropertyChanged(propertyName);
             return true;
@@ -61,7 +60,7 @@ namespace Tiny.Toolkits
                     return false;
                 }
             }
-
+            RaisePropertyChanging(propertyName);
             PropertyValueMapper[propertyName] = newValue;
             RaisePropertyChanged(propertyName);
             return true;
@@ -97,7 +96,7 @@ namespace Tiny.Toolkits
                     return false;
                 }
             }
-
+            RaisePropertyChanging(propertyName);
             PropertyValueMapper[propertyName] = newValue;
             RaisePropertyChanged(propertyName);
             return true;

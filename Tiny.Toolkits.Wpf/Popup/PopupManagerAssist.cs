@@ -2,9 +2,9 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Tiny.Toolkits.Popup.Assist
 {
@@ -12,30 +12,34 @@ namespace Tiny.Toolkits.Popup.Assist
     [EditorBrowsable(EditorBrowsableState.Never)]
     internal static class PopupManagerAssist
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] private static readonly TimeSpan waitTimeSpan = TimeSpan.FromMilliseconds(300);
-
+        private static readonly TimeSpan waitTimeSpan = TimeSpan.FromMilliseconds(350);
+        internal const int MessageIndex = 2;
+        internal const int ContentIndex = 1;
+        internal const int ToastIndex = 0;
         internal static async Task<string> InnerMessagePopup(UIElement uIElement, string message, string title, string[] buttonContents)
         {
 
             return await await uIElement.Dispatcher.InvokeAsync(async () =>
             {
-                PopupBridge popupBridge = await PopupInitializeAsync(uIElement);
+                PopupAdorner popupAdorner = PopupManager.GetPopupAdornerContainer(uIElement);
 
-                await popupBridge.messageSemaphoreSlim.WaitAsync();
+                popupAdorner.messageCounter++;
 
-                popupBridge.PopupAdornet?.SetMessage(message, title, buttonContents);
+                await popupAdorner.DisplaysemaphoreSlims[MessageIndex].WaitAsync();
 
-                string popupResult = await popupBridge.PopupAdornet?.WaitMessageResultAsync(waitTimeSpan, async () =>
+                popupAdorner.ShowContainer(popupAdorner.messageContainer, MessageIndex, waitTimeSpan);
+
+
+                popupAdorner.messageView.SetMessageInfo(message, title, buttonContents);
+
+                string popupResult = await popupAdorner.WaitMessageResultAsync(MessageIndex);
+
+                popupAdorner.HideContainer(popupAdorner.messageContainer, MessageIndex, waitTimeSpan, () =>
                 {
-                    await popupBridge.CloseVisualAsync(() => popupBridge.messageCloseSemaphoreSlim.ReleaseWhenZero());
-
-                    popupBridge.messageSemaphoreSlim.ReleaseWhenZero();
+                    popupAdorner.DisplaysemaphoreSlims[MessageIndex].Release(1);
                 });
 
-                await popupBridge.messageCloseSemaphoreSlim.WaitAsync();
-
                 return popupResult;
-
             });
 
         }
@@ -46,21 +50,23 @@ namespace Tiny.Toolkits.Popup.Assist
         {
             return await await uIElement.Dispatcher.InvokeAsync(async () =>
             {
-                PopupBridge popupBridge = await PopupInitializeAsync(uIElement);
+                PopupAdorner popupAdorner = PopupManager.GetPopupAdornerContainer(uIElement);
 
-                await popupBridge.contentSemaphoreSlim.WaitAsync();
+                popupAdorner.contentCounter++;
 
-                popupBridge.PopupAdornet?.SetContent(popupContent, parameters);
+                await popupAdorner.DisplaysemaphoreSlims[ContentIndex].WaitAsync();
 
-                object popupResult = await popupBridge.PopupAdornet?.WaitContentResultAsync(waitTimeSpan, async () =>
+                popupAdorner.ShowContainer(popupAdorner.contentContainer, ContentIndex, waitTimeSpan);
+
+                Action action = popupAdorner.SetContent(ContentIndex, popupContent, parameters);
+
+                object popupResult = await popupAdorner.WaitContentReaultAsync(ContentIndex);
+
+                popupAdorner.HideContainer(popupAdorner.contentContainer, ContentIndex, waitTimeSpan, () =>
                 {
-                    await popupBridge.CloseVisualAsync(() => popupBridge.contentCloseSemaphoreSlim.ReleaseWhenZero());
-
-                    popupBridge.contentSemaphoreSlim.ReleaseWhenZero();
-
+                    action?.Invoke();
+                    popupAdorner.DisplaysemaphoreSlims[ContentIndex].Release(1);
                 });
-
-                await popupBridge.contentCloseSemaphoreSlim.WaitAsync();
 
                 return popupResult;
 
@@ -68,35 +74,53 @@ namespace Tiny.Toolkits.Popup.Assist
 
         }
 
-        private static async Task<PopupBridge> PopupInitializeAsync(UIElement uIElement)
+
+
+        internal static async Task InnerTipPopup(UIElement uieleMent, string title, string message, int displayTimeSpan_Ms, object[] parameters)
         {
-            PopupBridge popupBridge = PropertyAttache.GetProperty0(uIElement) as PopupBridge;
-
-            if (popupBridge.IsLoaded == false)
+            await await uieleMent.Dispatcher.InvokeAsync(async () =>
             {
-                string containerName = PopupManager.GetContainerName(uIElement);
+                PopupAdorner popupAdorner = PopupManager.GetPopupAdornerContainer(uieleMent);
 
-                throw new Exception($"the popup:{containerName} not loaded");
-            }
+                popupAdorner.toastCounter++;
 
-            await popupBridge.DisplayVisualAsync();
+                await popupAdorner.DisplaysemaphoreSlims[ToastIndex].WaitAsync();
 
-            return popupBridge;
-        }
+                popupAdorner.ShowContainer(popupAdorner.toastContainer, ToastIndex, waitTimeSpan);
+
+                PopupToastViewBase toastView = popupAdorner.toastContainerTypeConstructor.Invoke(null) as PopupToastViewBase;
+
+                if (toastView != null)
+                {
+                    toastView.ResetSize();
+                    toastView.HorizontalAlignment = HorizontalAlignment.Left;
+                    toastView.SetToastContent(title, message, displayTimeSpan_Ms, parameters);
+
+                    if (popupAdorner.toastContainer.Width is double.NaN || popupAdorner.toastContainer.Width < 1)
+                    { 
+                        double totalWidth = toastView.Margin.Left + toastView.Margin.Right + toastView.Width;
+
+                        popupAdorner.toastContainer.Width = totalWidth * 2 + 50;
+
+                        popupAdorner.toastContainer.Margin = new Thickness(0, 0,-(totalWidth  + 50) , 0);
+                         
+                    }
+                     
+                    popupAdorner.toastContainer.Children.Add(toastView);
+
+                    toastView.CloseCallback = () =>
+                    {
+                        popupAdorner.toastContainer.Children.Remove(toastView);
+                        popupAdorner.DisplaysemaphoreSlims[ToastIndex].Release();
+                        popupAdorner.HideContainer(popupAdorner.toastContainer, ToastIndex, waitTimeSpan, null);
+                    };
+
+                    return;
+                }
+
+                popupAdorner.DisplaysemaphoreSlims[ToastIndex].Release(1);
 
 
-
-        internal static async Task<int> InnerTipPopup(UIElement uieleMent, string message, string title, int displayTimeSpan_Ms)
-        {
-            return await await uieleMent.Dispatcher.InvokeAsync(async () =>
-            {
-                PopupBridge popupBridge = await PopupInitializeAsync(uieleMent);
-
-                TimeSpan timeSpan = displayTimeSpan_Ms < 0 ? TimeSpan.Zero : TimeSpan.FromMilliseconds(displayTimeSpan_Ms);
-
-                popupBridge.PopupAdornet?.SetTipContent(message, title, waitTimeSpan, timeSpan);
-
-                return 1;
 
             });
         }

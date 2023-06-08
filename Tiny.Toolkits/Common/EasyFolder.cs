@@ -222,7 +222,7 @@ namespace Tiny.Toolkits
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override string ToString()
         {
-            return this;
+            return folder;
         }
 
         /// <summary>
@@ -253,6 +253,8 @@ namespace Tiny.Toolkits
         /// <summary>
         ///  Create Directory If Not Exists
         /// </summary>
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public EasyFolder TryCreateFolder()
         {
             string dir = Path.GetDirectoryName(folder);

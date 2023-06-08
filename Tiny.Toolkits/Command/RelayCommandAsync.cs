@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -29,11 +28,8 @@ namespace Tiny.Toolkits
     /// <summary>
     /// <see cref="RelayCommandAsync"/>
     /// </summary>
-    public class RelayCommandAsync : ICommand, IRelayCommandAsync
+    public class RelayCommandAsync : IRelayCommandAsync
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly SynchronizationContext synchronizationContext = SynchronizationContext.Current;
         /// <summary>
         /// can execute changed event
         /// </summary>
@@ -64,7 +60,7 @@ namespace Tiny.Toolkits
 
         bool ICommand.CanExecute(object parameter)
         {
-            return isExecuting ? false : CanExecute();
+            return !isExecuting && CanExecute();
         }
 
         async void ICommand.Execute(object parameter)
@@ -85,22 +81,28 @@ namespace Tiny.Toolkits
         /// execute command async
         /// </summary>
         /// <returns></returns>
-        public Task ExecuteAsync()
+        public async Task ExecuteAsync()
         {
             if (executeCallback is null)
             {
-                return Task.FromResult(false);
+                await Task.FromResult(false);
             }
 
             isExecuting = true;
             RaiseCanExecuteChanged();
-            return executeCallback
+            await executeCallback
                    .Invoke()
                    .ContinueWith(y =>
                    {
-                       isExecuting = false;
-                       RaiseCanExecuteChanged();
-                       y.Wait();
+                       try
+                       {
+                           y.Wait();
+                       }
+                       finally
+                       {
+                           isExecuting = false;
+                           RaiseCanExecuteChanged();
+                       }
                    });
 
         }

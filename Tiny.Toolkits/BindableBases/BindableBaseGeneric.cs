@@ -11,7 +11,7 @@ namespace Tiny.Toolkits
     /// create a new instance of the  <typeparamref name="TViewModel"/> class
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
-    public abstract class ViewModelBase<TViewModel> : ViewModelBase where TViewModel : ViewModelBase<TViewModel>, new()
+    public abstract class ViewModelBase<TViewModel> : BindableBase where TViewModel : ViewModelBase<TViewModel>, new()
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -36,7 +36,7 @@ namespace Tiny.Toolkits
                 throw new ArgumentException($"{nameof(propertyExpression)} is Null");
             }
 
-            string propertyName = TinyTools.GetPropertyName(propertyExpression);
+            string propertyName = Extensions.GetPropertyName(propertyExpression);
 
             RaisePropertyChanged(propertyName);
         }
@@ -52,7 +52,7 @@ namespace Tiny.Toolkits
                 return;
             }
 
-            string[] propertyNames = propertyExpressions.Where(i => i != null).Select(TinyTools.GetPropertyName).ToArray();
+            string[] propertyNames = propertyExpressions.Where(i => i != null).Select(Extensions.GetPropertyName).ToArray();
 
             RaisePropertyChanged(propertyNames);
         }

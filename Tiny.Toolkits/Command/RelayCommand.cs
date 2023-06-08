@@ -28,16 +28,13 @@ namespace Tiny.Toolkits
     /// </summary>
     public class RelayCommand : IRelayCommand, ICommand
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] 
         private readonly Action executeCallback;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] 
         private readonly Func<bool> canExecuteCallback = null;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] 
         private bool isExecuting;
 
         /// <summary>

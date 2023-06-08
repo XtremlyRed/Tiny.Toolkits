@@ -9,7 +9,7 @@ namespace Tiny.Toolkits
     /// </summary>
     public class Parameters : IDisposable
     {
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [EditorBrowsable(EditorBrowsableState.Never)] 
         private readonly Dictionary<string, object> parametersMapper = new();
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace Tiny.Toolkits
         /// <param name="parameterValue">parameterValue</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public Parameters SetValues(string parameterKey, string parameterValue)
+        public Parameters SetValue(string parameterKey, string parameterValue)
         {
             if (string.IsNullOrWhiteSpace(parameterKey))
             {

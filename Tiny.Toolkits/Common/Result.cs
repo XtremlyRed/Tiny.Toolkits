@@ -1,5 +1,7 @@
 ﻿ 
 using System;
+using System.Runtime.InteropServices;
+
 namespace Tiny.Toolkits
 {
     /// <summary>
@@ -45,6 +47,7 @@ namespace Tiny.Toolkits
             IsValid = isValid;
             Value = value;
             Exception = null;
+             
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace Tiny.Toolkits
         {
             return value is Exception ? throw new InvalidOperationException() : new Result<TResult>(value);
         }
-
+         
         /// <summary>
         /// <see cref="object.ToString"/>
         /// </summary>

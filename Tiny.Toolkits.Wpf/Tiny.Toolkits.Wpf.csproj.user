@@ -2,15 +2,15 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
-    <Compile Update="Popup\PopupView\TipView.xaml.cs">
+    <Compile Update="Popup\PopupView\ToastView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Popup\PopupView\ContainerView.xaml">
+    <Page Update="Popup\PopupView\MessageView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Popup\PopupView\TipView.xaml">
+    <Page Update="Popup\PopupView\ToastView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

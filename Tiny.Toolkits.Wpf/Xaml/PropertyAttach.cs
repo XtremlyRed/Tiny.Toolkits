@@ -5132,17 +5132,8 @@ namespace Tiny.Toolkits
         {
             return element.GetValue(Property255Property);
         }
+ 
 
-
-        internal static DependencyProperty Property256Property = DependencyProperty.RegisterAttached("Property256", typeof(object), typeof(PropertyAttache), new PropertyMetadata(null));
-        internal static void SetProperty256(DependencyObject element, object value)
-        {
-            element.SetValue(Property256Property, value);
-        }
-        internal static object GetProperty256(DependencyObject element)
-        {
-            return element.GetValue(Property256Property);
-        }
 
         private static readonly IReadOnlyDictionary<int, DependencyProperty> propertyMapper;
 
@@ -5150,9 +5141,9 @@ namespace Tiny.Toolkits
         {
             FieldInfo[] dependencyFields = typeof(PropertyAttache).GetFields(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public);
 
-            propertyMapper = dependencyFields.ToDictionary(i => 
+            propertyMapper = dependencyFields.ToDictionary(i =>
             {
-                var value=(i.Name.Replace("Property", ""));
+                var value = (i.Name.Replace("Property", ""));
 
                 if (int.TryParse(value, out var result))
                 {
@@ -5175,11 +5166,11 @@ namespace Tiny.Toolkits
         /// <param name="index">must be in range 0-255</param>
         public static void SetBinding(DependencyObject target, Binding binding, int index)
         {
-            if(propertyMapper.TryGetValue(index,out var par) == false)
+            if (propertyMapper.TryGetValue(index, out var par) == false)
             {
                 throw new System.IndexOutOfRangeException($"{nameof(index)} within the range of 0 to 255 (inclusive)");
             }
-             
+
             BindingOperations.SetBinding(target, par, binding);
         }
 

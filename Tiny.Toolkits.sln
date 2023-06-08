@@ -12,7 +12,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Toolkits", "Tiny.Toolk
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Toolkits.Wpf", "Tiny.Toolkits.Wpf\Tiny.Toolkits.Wpf.csproj", "{7D27AA2E-FFF6-401B-A187-48B100E76CDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1.Test", "WpfApp1.Test\WpfApp1.Test.csproj", "{5F93F74A-450C-41EE-B1C1-268F593C3C04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp1.Test", "WpfApp1.Test\WpfApp1.Test.csproj", "{5F93F74A-450C-41EE-B1C1-268F593C3C04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{6CE5E333-39BF-4780-A4AE-39AEE55E3050}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,10 @@ Global
 		{5F93F74A-450C-41EE-B1C1-268F593C3C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F93F74A-450C-41EE-B1C1-268F593C3C04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F93F74A-450C-41EE-B1C1-268F593C3C04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CE5E333-39BF-4780-A4AE-39AEE55E3050}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CE5E333-39BF-4780-A4AE-39AEE55E3050}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CE5E333-39BF-4780-A4AE-39AEE55E3050}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CE5E333-39BF-4780-A4AE-39AEE55E3050}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
