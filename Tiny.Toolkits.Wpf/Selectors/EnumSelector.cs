@@ -182,8 +182,7 @@ namespace Tiny.Toolkits
             {
                 return;
             }
-
-
+             
             if (effectVisual == true)
             {
                 SelectedIndex = -1;

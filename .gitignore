@@ -12,3 +12,8 @@
 /WpfApp1.Test
 /ConsoleApp1/obj
 /ConsoleApp1
+/Tiny.Toolkits.WpfTests/bin
+/Tiny.Toolkits.WpfTests/obj
+/Tiny.ToolkitsTests/bin/Debug/net451
+/Tiny.ToolkitsTests/obj
+/Tiny.ToolkitsTests/bin/Release/net451
