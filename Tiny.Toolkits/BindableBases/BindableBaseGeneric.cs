@@ -36,7 +36,7 @@ namespace Tiny.Toolkits
                 throw new ArgumentException($"{nameof(propertyExpression)} is Null");
             }
 
-            string propertyName = Extensions.GetPropertyName(propertyExpression);
+            string propertyName = ReflectionExtensions.GetPropertyName(propertyExpression);
 
             RaisePropertyChanged(propertyName);
         }
@@ -52,7 +52,7 @@ namespace Tiny.Toolkits
                 return;
             }
 
-            string[] propertyNames = propertyExpressions.Where(i => i != null).Select(Extensions.GetPropertyName).ToArray();
+            string[] propertyNames = propertyExpressions.Where(i => i != null).Select(ReflectionExtensions.GetPropertyName).ToArray();
 
             RaisePropertyChanged(propertyNames);
         }

@@ -1,62 +1,76 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Tiny.Toolkits
 {
+
+    /// <summary>
+    /// <see cref="IRelayCommandAsync{TParameter}"/>
+    /// </summary>
+    /// <typeparam name="TParameter"></typeparam>
+    public interface IRelayCommandAsync<TParameter> : ICommand
+    {
+        /// <summary>
+        /// can execute command
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        bool CanExecute(TParameter parameter);
+
+        /// <summary>
+        /// execute command async
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        Task ExecuteAsync(TParameter parameter);
+    }
+
     /// <summary>
     /// <see cref="RelayCommandAsync{TParameter}"/>
     /// </summary>
     /// <typeparam name="TParameter"></typeparam>
-    public class RelayCommandAsync<TParameter> : ICommand, IRelayCommandAsync<TParameter>
+    public class RelayCommandAsync<TParameter> : CommandBase, ICommand, IRelayCommandAsync<TParameter>
     {
-        /// <summary>
-        /// can execute changed event
-        /// </summary>
-        public event EventHandler CanExecuteChanged;
 
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly Func<TParameter, Task> executeCallback;
+        private readonly Func<TParameter, Task> execute;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly Func<TParameter, bool> canExecuteCallback = null;
+        private readonly Func<TParameter, bool> canExecute = null;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private bool isExecuting;
 
         /// <summary>
         /// create a new command
         /// </summary>
-        /// <param name="executeCallback"></param>
-        /// <param name="canExecuteCallback"></param>
-        public RelayCommandAsync(Func<TParameter, Task> executeCallback, Func<TParameter, bool> canExecuteCallback = null)
+        /// <param name="execute"></param>
+        /// <param name="canExecute"></param>
+        public RelayCommandAsync(Func<TParameter, Task> execute, Func<TParameter, bool> canExecute = null)
         {
-            this.executeCallback = executeCallback;
-            this.canExecuteCallback = canExecuteCallback;
+            this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            this.canExecute = canExecute ??= i => true;
         }
 
         bool ICommand.CanExecute(object parameter)
         {
-            return isExecuting ? false : parameter is TParameter parameter1 ? CanExecute(parameter1) : true;
+            if (IsExecuting || parameter is not TParameter parameter1)
+            {
+                return false;
+            }
+
+            return CanExecute(parameter1);
         }
 
         async void ICommand.Execute(object parameter)
         {
-            TParameter p = default;
-
             if (parameter is TParameter parameter1)
             {
-                p = parameter1;
+                await ExecuteAsync(parameter1);
             }
-
-            await ExecuteAsync(p);
         }
 
         /// <summary>
@@ -66,7 +80,7 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public bool CanExecute(TParameter parameter)
         {
-            return canExecuteCallback?.Invoke(parameter) ?? true;
+            return canExecute(parameter);
         }
 
         /// <summary>
@@ -76,36 +90,22 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public async Task ExecuteAsync(TParameter parameter)
         {
-            if (executeCallback is null)
-            {
-                await Task.FromResult(false);
-            }
-
-            isExecuting = true;
+            IsExecuting = true;
             RaiseCanExecuteChanged();
-            await executeCallback
-                .Invoke(parameter)
-                .ContinueWith(t =>
+            await execute(parameter)
+                .ContinueWith(executeTask =>
                 {
-                    try
+                    IsExecuting = false;
+                    RaiseCanExecuteChanged();
+
+                    if (executeTask.Exception != null)
                     {
-                        t.Wait();
+                        throw executeTask.Exception.InnerException ?? executeTask.Exception.InnerExceptions.FirstOrDefault();
                     }
-                    finally
-                    {
-                        RaiseCanExecuteChanged();
-                        isExecuting = false;
-                    } 
                 });
 
         }
-        /// <summary>
-        /// raise can execute changed
-        /// </summary>
-        public virtual void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
+
 
         /// <summary>
         /// 
@@ -115,6 +115,9 @@ namespace Tiny.Toolkits
         {
             return new RelayCommandAsync<TParameter>(commandAction);
         }
+
+
+
         #region hide base function
 
         /// <summary>

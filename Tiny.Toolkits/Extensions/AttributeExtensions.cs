@@ -15,7 +15,7 @@ namespace Tiny.Toolkits
         /// all exist attribute map
         /// </summary>
         private static readonly ConcurrentDictionary<string, Attribute[]> attributeMapper = new();
-         
+
         /// <summary>
         /// get  <typeparamref name="TAttribute"/>  from <see cref="MemberInfo"/>
         /// </summary>
@@ -31,14 +31,16 @@ namespace Tiny.Toolkits
                 throw new ArgumentNullException(nameof(member));
             }
 
-            string key = $"{member.DeclaringType.Namespace}.{member.DeclaringType.Name}";
+            return member.GetCustomAttribute<TAttribute>();
 
-            if (attributeMapper.TryGetValue(key, out Attribute[] attributes) == false)
-            { 
-                attributeMapper[key] = attributes = member.GetCustomAttributes().OfType<Attribute>().ToArray();
-            }
+            //string key = $"{member.DeclaringType.Namespace}.{member.DeclaringType.Name}";
 
-            return attributes.OfType<TAttribute>().FirstOrDefault();
+            //if (attributeMapper.TryGetValue(key, out Attribute[] attributes) == false)
+            //{ 
+            //    attributeMapper[key] = attributes = member.GetCustomAttributes().OfType<Attribute>().ToArray();
+            //}
+
+            //return attributes.OfType<TAttribute>().FirstOrDefault();
         }
 
 
@@ -60,8 +62,8 @@ namespace Tiny.Toolkits
             return attributes?.OfType<TAttribute>().FirstOrDefault()!;
         }
 
-     
-         
+
+
 
         /// <summary>
         /// get all attributes from  <typeparamref name="TEnum"/>
@@ -71,7 +73,7 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         /// <Exception cref="ArgumentNullException"></Exception>
         public static Attribute[] GetAttributes<TEnum>(this TEnum enumValue) where TEnum : struct, Enum
-        { 
+        {
             Type type = enumValue.GetType();
 
             string enumName = Enum.GetName(type, enumValue);
@@ -87,6 +89,5 @@ namespace Tiny.Toolkits
 
             return attributes;
         }
-         
     }
 }

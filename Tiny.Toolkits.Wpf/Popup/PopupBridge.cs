@@ -36,7 +36,7 @@ namespace Tiny.Toolkits.Popup.Assist
             if (IsPopup == false)
             {
                 IsPopup = true;
-                 
+
                 PopupAdornet.Opacity = 0.001;
                 AdornerLayer.Add(PopupAdornet);
 
@@ -126,6 +126,25 @@ namespace Tiny.Toolkits.Popup.Assist
             contentSemaphoreSlim = new(1, 1);
             messageCloseSemaphoreSlim = new(0, 1);
             contentCloseSemaphoreSlim = new(0, 1);
+        }
+    }
+
+    internal static class extensions
+    {
+        /// <summary>
+        /// release a <see cref="SemaphoreSlim"/> when <see cref="SemaphoreSlim.CurrentCount"/> == 0
+        /// </summary>
+        /// <param fieldName="semaphoreSlim"></param>
+        /// <param fieldName="releaseCount"></param>
+        public static void ReleaseWhenZero(this SemaphoreSlim semaphoreSlim, int releaseCount = 1)
+        {
+            if (semaphoreSlim is null || releaseCount < 1 || semaphoreSlim.CurrentCount != 0)
+            {
+                return;
+            }
+ 
+            semaphoreSlim.Release(releaseCount);
+
         }
     }
 }

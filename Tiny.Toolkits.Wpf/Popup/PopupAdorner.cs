@@ -18,7 +18,7 @@ namespace Tiny.Toolkits.Popup.Assist
         internal readonly Grid contentContainer = new() { Visibility = Visibility.Collapsed };
         internal readonly StackPanel toastContainer = new() {  Visibility = Visibility.Collapsed, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top };
         internal readonly PopupMessageViewBase messageView;
-        internal readonly PopupToastViewBase toastView;
+       // internal readonly PopupToastViewBase toastView;
 
         internal readonly bool[] shown = new[] { false, false, false };
         internal readonly SemaphoreSlim[] DisplaysemaphoreSlims = new[] { new SemaphoreSlim(10, 10), new SemaphoreSlim(1, 1), new SemaphoreSlim(1, 1) };

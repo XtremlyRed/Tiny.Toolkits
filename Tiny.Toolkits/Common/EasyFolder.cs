@@ -9,7 +9,7 @@ namespace Tiny.Toolkits
     /// <summary>
     /// <see cref="EasyFolder"/>
     /// </summary> 
-    public readonly struct EasyFolder
+    public readonly struct EasyFolder : IEquatable<object>, IEquatable<EasyFolder>
     {
         /// <summary>
         /// <see cref="Environment.SpecialFolder.Desktop"/> folder
@@ -213,17 +213,9 @@ namespace Tiny.Toolkits
         /// share a new <see cref="EasyFolder"/> folder
         /// </summary> 
         public EasyFolder(string folder) { this.folder = folder; }
-        [DebuggerBrowsable(DebuggerBrowsableState.Never), EditorBrowsable(EditorBrowsableState.Never)]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private readonly string folder;
-        /// <summary>
-        /// to string
-        /// </summary>
-        /// <returns>folder path</returns>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override string ToString()
-        {
-            return folder;
-        }
+
 
         /// <summary>
         /// combines four strings into a path. 
@@ -293,7 +285,39 @@ namespace Tiny.Toolkits
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override bool Equals(object obj)
         {
-            return obj != null && obj is EasyFolder easyFolder && easyFolder.GetHashCode() == GetHashCode();
+            return obj is EasyFolder easyFolder && string.Compare(easyFolder.folder, folder, true) == 0;
+        }
+
+        /// <summary>
+        /// compare two objects for equality
+        /// </summary>
+        /// <param name="obj">compare object</param>
+        /// <returns>compare result</returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public bool Equals(EasyFolder obj)
+        {
+            return string.Compare(obj.folder, folder, true) == 0;
+        }
+
+        /// <summary>
+        /// compare two objects for equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator ==(EasyFolder left, EasyFolder right)
+        {
+            return string.Compare(left.folder, right.folder, true) == 0;
+        }
+        /// <summary>
+        /// compare two objects for not equality
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool operator !=(EasyFolder left, EasyFolder right)
+        {
+            return string.Compare(left.folder, right.folder, true) != 0;
         }
     }
 }

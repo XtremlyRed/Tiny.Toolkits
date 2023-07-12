@@ -11,7 +11,7 @@ namespace Tiny.Toolkits
     /// <summary>
     ///  dependency property attach
     /// </summary>
-    public static class PropertyAttache
+    internal static class PropertyAttache
     {
         /// <summary>
         /// dependency property Property0 Property

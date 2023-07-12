@@ -26,36 +26,29 @@ namespace Tiny.Toolkits
     /// <summary>
     /// RelayCommand
     /// </summary>
-    public class RelayCommand : IRelayCommand, ICommand
+    public class RelayCommand : CommandBase, IRelayCommand, ICommand
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] 
-        private readonly Action executeCallback;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly Func<bool> canExecute;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] 
-        private readonly Func<bool> canExecuteCallback = null;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)] 
-        private bool isExecuting;
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly Action execute;
 
         /// <summary>
         /// create a new command  
         /// </summary>
-        /// <param name="executeCallback"></param>
-        /// <param name="canExecuteCallback"></param>
-        public RelayCommand(Action executeCallback, Func<bool> canExecuteCallback = null)
+        /// <param name="execute"></param>
+        /// <param name="canExecute"></param>
+        public RelayCommand(Action execute, Func<bool> canExecute = null)
         {
-            this.executeCallback = executeCallback;
-            this.canExecuteCallback = canExecuteCallback;
+            this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            this.canExecute = canExecute ??= () => true;
         }
 
-        /// <summary>
-        /// can execute changed event
-        /// </summary>
-        public event EventHandler CanExecuteChanged;
 
         bool ICommand.CanExecute(object parameter)
         {
-            return isExecuting ? false : CanExecute();
+            return CanExecute();
         }
 
         void ICommand.Execute(object parameter)
@@ -68,40 +61,26 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public bool CanExecute()
         {
-            return canExecuteCallback?.Invoke() ?? true;
+            return base.IsExecuting ? false : canExecute();
         }
         /// <summary>
         /// execute sync command
         /// </summary>
         public void Execute()
         {
-            if (executeCallback is null)
-            {
-                return;
-            }
             try
             {
-                isExecuting = true;
+                base.IsExecuting = true;
 
                 RaiseCanExecuteChanged();
-                executeCallback.Invoke();
+                execute.Invoke();
             }
             finally
             {
-                isExecuting = false;
+                IsExecuting = false;
                 RaiseCanExecuteChanged();
             }
         }
-
-        /// <summary>
-        /// raise event
-        /// </summary>
-        public virtual void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-
 
         /// <summary>
         /// create relaycommand from  <see cref="Action"/> <paramref name="commandAction"/>

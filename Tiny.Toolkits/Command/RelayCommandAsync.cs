@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -28,39 +29,29 @@ namespace Tiny.Toolkits
     /// <summary>
     /// <see cref="RelayCommandAsync"/>
     /// </summary>
-    public class RelayCommandAsync : IRelayCommandAsync
-    {
-        /// <summary>
-        /// can execute changed event
-        /// </summary>
-        public event EventHandler CanExecuteChanged;
+    public class RelayCommandAsync : CommandBase, IRelayCommandAsync
+    { 
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private readonly Func<Task> execute;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly Func<Task> executeCallback;
+        private readonly Func<bool> canExecute = null;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly Func<bool> canExecuteCallback = null;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private bool isExecuting;
 
         /// <summary>
         /// create a new command
         /// </summary>
-        /// <param name="executeCallback"></param>
-        /// <param name="canExecuteCallback"></param>
-        public RelayCommandAsync(Func<Task> executeCallback, Func<bool> canExecuteCallback = null)
+        /// <param name="execute"></param>
+        /// <param name="canExecute"></param>
+        public RelayCommandAsync(Func<Task> execute, Func<bool> canExecute = null)
         {
-            this.executeCallback = executeCallback;
-            this.canExecuteCallback = canExecuteCallback;
+            this.execute = execute ?? throw new Exception(nameof(execute));
+            this.canExecute = canExecute ??= () => true;
         }
 
         bool ICommand.CanExecute(object parameter)
         {
-            return !isExecuting && CanExecute();
+            return CanExecute();
         }
 
         async void ICommand.Execute(object parameter)
@@ -74,7 +65,7 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public bool CanExecute()
         {
-            return canExecuteCallback?.Invoke() ?? true;
+            return IsExecuting ? false : canExecute();
         }
 
         /// <summary>
@@ -83,37 +74,23 @@ namespace Tiny.Toolkits
         /// <returns></returns>
         public async Task ExecuteAsync()
         {
-            if (executeCallback is null)
-            {
-                await Task.FromResult(false);
-            }
-
-            isExecuting = true;
+            IsExecuting = true;
             RaiseCanExecuteChanged();
-            await executeCallback
-                   .Invoke()
-                   .ContinueWith(y =>
+            await execute()
+                   .ContinueWith(executeTask =>
                    {
-                       try
+                       IsExecuting = false;
+                       RaiseCanExecuteChanged();
+
+                       if (executeTask.Exception != null)
                        {
-                           y.Wait();
-                       }
-                       finally
-                       {
-                           isExecuting = false;
-                           RaiseCanExecuteChanged();
+                           throw executeTask.Exception.InnerException ?? executeTask.Exception.InnerExceptions.FirstOrDefault();
                        }
                    });
 
         }
 
-        /// <summary>
-        /// raise can execute changed
-        /// </summary>
-        public virtual void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
+
 
         /// <summary>
         /// 
@@ -123,6 +100,8 @@ namespace Tiny.Toolkits
         {
             return new RelayCommandAsync(commandAction);
         }
+
+
         #region hide base function
 
         /// <summary>

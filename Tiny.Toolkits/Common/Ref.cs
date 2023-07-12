@@ -8,7 +8,7 @@ namespace Tiny.Toolkits
     /// </summary>
     /// <typeparam name="TRef"></typeparam>
 
-    [DebuggerDisplay("{value}")]
+    [DebuggerDisplay("{Value}")]
     public partial struct Ref<TRef>
     {
         /// <summary>
@@ -17,41 +17,19 @@ namespace Tiny.Toolkits
         /// <param name="value"></param>
         public Ref(TRef value)
         {
-            this.value = value;
+            Value = value;
         }
 
         /// <summary>
         /// current value
         /// </summary>
-        public TRef Value => value;
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never), EditorBrowsable(EditorBrowsableState.Never)]
-        private TRef value;
-
-        /// <summary>
-        /// ref value
-        /// </summary>
-        /// <param name="value"></param>
-        public void SetValue(TRef value)
-        {
-            this.value = value;
-        }
-
-        /// <summary>
-        /// get current value
-        /// </summary>
-        /// <param name="value"></param>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public TRef GetValue()
-        {
-            return value;
-        }
+        public TRef Value;
 
         /// <summary>
         /// explicit ref value
         /// </summary>
         /// <param name="ref"></param>
-        public static explicit operator TRef(Ref<TRef> @ref)
+        public static implicit operator TRef(Ref<TRef> @ref)
         {
             return @ref.Value;
         }
@@ -61,7 +39,7 @@ namespace Tiny.Toolkits
         /// explicit ref value
         /// </summary>
         /// <param name="ref"></param>
-        public static explicit operator Ref<TRef>(TRef @ref)
+        public static implicit operator Ref<TRef>(TRef @ref)
         {
             return new Ref<TRef>(@ref);
         }

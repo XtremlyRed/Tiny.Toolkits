@@ -308,19 +308,17 @@ namespace Tiny.Toolkits
                 return default;
             }
 
-            TComparable max = default;
-            TSource source = default;
-            bool isSeted = false;
+            TSource source = collection.First();
+            TComparable max = maxComparer(source);
 
-            foreach (TSource item in collection)
+            foreach (TSource item in collection.Skip(1))
             {
                 TComparable current = maxComparer(item);
 
-                if (!isSeted || max.CompareTo(current) < 0)
+                if (max.CompareTo(current) < 0)
                 {
                     max = current;
                     source = item;
-                    isSeted = true;
                 }
             }
 
@@ -347,17 +345,15 @@ namespace Tiny.Toolkits
             {
                 return default;
             }
+            TSource source = collection.First();
+            TComparable min = minComparer(source);
 
-            TComparable min = default;
-            TSource source = default;
-            bool isSeted = false;
-            foreach (TSource item in collection)
+            foreach (TSource item in collection.Skip(1))
             {
                 TComparable current = minComparer(item);
 
-                if (!isSeted || min.CompareTo(current) > 0)
+                if (min.CompareTo(current) > 0)
                 {
-                    isSeted = true;
                     min = current;
                     source = item;
                 }
@@ -387,22 +383,26 @@ namespace Tiny.Toolkits
                 yield break;
             }
 
-            int totalCount = targets.Count();
+            using IEnumerator<TSource> enumerator = targets.GetEnumerator();
 
-            int segmentCount = totalCount / segmentCapacity;
-
-            int segmentCounter = segmentCount * segmentCapacity;
-
-            int remainingCount = totalCount - segmentCounter;
-
-            for (int i = 0; i < segmentCount; i++)
+            int currentIndex = 0;
+            TSource[] ARRAY = new TSource[segmentCapacity];
+            while (enumerator.MoveNext())
             {
-                yield return targets.Skip(i * segmentCapacity).Take(segmentCapacity);
+                ARRAY[currentIndex] = enumerator.Current;
+                if (++currentIndex == segmentCapacity)
+                {
+                    yield return ARRAY;
+
+                    ARRAY = new TSource[segmentCapacity];
+                    currentIndex = 0;
+
+                }
             }
 
-            if (remainingCount > 0)
+            if (currentIndex > 0)
             {
-                yield return targets.Skip(segmentCounter).Take(remainingCount);
+                yield return ARRAY.Take(currentIndex);
             }
         }
 
@@ -445,9 +445,7 @@ namespace Tiny.Toolkits
         {
             return collection is null
                 ? collection
-                : collection.OrderBy(_ => disorderRandom
-
-                .Next());
+                : collection.OrderBy(_ => disorderRandom.NextDouble());
         }
 
         /// <summary>

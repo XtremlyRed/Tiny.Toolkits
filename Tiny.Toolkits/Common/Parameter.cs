@@ -9,13 +9,11 @@ namespace Tiny.Toolkits
     /// </summary>
     public class Parameters : IDisposable
     {
-        [EditorBrowsable(EditorBrowsableState.Never)] 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         private readonly Dictionary<string, object> parametersMapper = new();
 
-        /// <summary>
-        /// dispose 
-        /// </summary>
-        public void Dispose()
+
+        void IDisposable.Dispose()
         {
             parametersMapper?.Clear();
         }

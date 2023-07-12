@@ -22,12 +22,10 @@ namespace Tiny.Toolkits
     /// </summary> 
     public class FileNameSelector : UserControl
     {
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] 
         private readonly System.Windows.Forms.SaveFileDialog saveFileDialog = new();
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)] 
         private const FrameworkPropertyMetadataOptions defaultOptions = FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Inherits;
 
         static FileNameSelector()

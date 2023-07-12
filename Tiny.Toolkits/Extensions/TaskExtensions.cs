@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 using static System.Runtime.CompilerServices.ConfiguredTaskAwaitable;
@@ -18,9 +17,9 @@ namespace Tiny.Toolkits
         /// </summary>
         /// <param name="timeSpan"></param>
         /// <returns></returns>
-        public static ConfiguredTaskAwaiter GetAwaiter(this TimeSpan timeSpan)
+        public static Task GetAwaiter(this TimeSpan timeSpan)
         {
-            return Task.Delay(timeSpan).ConfigureAwait(false).GetAwaiter();
+            return Task.Delay(timeSpan) ;
         }
 
         /// <summary>
@@ -37,6 +36,5 @@ namespace Tiny.Toolkits
         public static void NoAwaiter<TType>(this Task<TType> task)
         {
         }
-          
     }
 }

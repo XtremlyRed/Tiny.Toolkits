@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -122,11 +120,11 @@ namespace Tiny.Toolkits
         /// <param fieldName="token"><see cref="CancellationToken"/></param>
         /// <param fieldName="creationOptions"><see cref="TaskContinuationOptions"/></param>
         /// <returns></returns>
-        public static Task InvokeAsync(this Action action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
+        public static Task InvokeAsync(this Action action, CancellationToken token = default)
         {
             return action is null
                 ? Task.FromResult(false)
-                : Task.Factory.StartNew(action, token, creationOptions, TaskScheduler.Default);
+                : Task.Run(action, token);
         }
 
         /// <summary>
@@ -137,158 +135,19 @@ namespace Tiny.Toolkits
         /// <param fieldName="token"><see cref="CancellationToken"/></param>
         /// <param fieldName="creationOptions"><see cref="TaskCreationOptions"/></param>
         /// <returns></returns>
-        public static Task<TResult> InvokeAsync<TResult>(this Func<TResult> action, CancellationToken token = default, TaskCreationOptions creationOptions = TaskCreationOptions.DenyChildAttach)
+        public static Task<TResult> InvokeAsync<TResult>(this Func<TResult> action, CancellationToken token = default)
         {
             return action is null
                 ? Task.FromResult<TResult>(default!)
-                : Task.Factory.StartNew(action, token, creationOptions, TaskScheduler.Default);
-        }
-
-        /// <summary>
-        /// If the <see cref="IDisposable"/> is inherited, execute
-        /// </summary>
-        /// <param fieldName="obj"></param>
-        /// <returns></returns>
-        public static object TryDispose(object obj)
-        {
-            if (obj is IEnumerable and)
-            {
-                foreach (IDisposable item in and.OfType<IDisposable>())
-                {
-                    item?.Dispose();
-                }
-                return obj;
-            }
-
-            if (obj is IDisposable and1)
-            {
-                and1?.Dispose();
-            }
-
-            return obj;
-        }
-
-        /// <summary>
-        /// cast object value to target Type
-        /// </summary>
-        /// <typeparam fieldName="To"></typeparam>
-        /// <param fieldName="value">object value</param>
-        /// <param fieldName="outValue">target value</param>
-        /// <returns>cast success</returns>
-        public static bool TryCast<Target>(object value, out Target outValue)
-        {
-            if (value != null)
-            {
-                try
-                {
-                    if (value is Target target)
-                    {
-                        outValue = target;
-                        return true;
-                    }
-                    outValue = (Target)Convert.ChangeType(value, typeof(Target));
-                    return true;
-                }
-                catch
-                {
-                }
-            }
-            outValue = default!;
-            return false;
-        }
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private static readonly ConcurrentDictionary<Type, TypeConverter> typeConverters = new();
-         
-        /// <summary>
-        /// cast object value to target Type
-        /// </summary>
-        /// <typeparam fieldName="To"></typeparam>
-        /// <param fieldName="value">object value</param> 
-        /// <returns>cast success</returns>
-        public static To To<To>(this object value, TypeConverter converter = null)
-        {
-            if (value is null)
-            {
-                return default!;
-            }
-
-            if (value is To target)
-            {
-                return target;
-            }
-
-            Type targetType = typeof(To);
-            Type currentType = value.GetType();
-
-            converter ??= typeConverters.GetOrAdd(targetType, static i => TypeDescriptor.GetConverter(i));
-
-            if (converter.CanConvertFrom(currentType))
-            {
-                object convertValue = converter.ConvertFrom(value);
-
-                if (convertValue is To targetValue)
-                {
-                    return targetValue;
-                }
-            }
-
-            throw new System.InvalidCastException($"Can not convert {currentType} to {targetType},Please pass in a valid type converter");
-
+                : Task.Run(action, token);
         }
 
 
 
-        /// <summary>
-        /// cast object value to target Type
-        /// </summary>
-        /// <typeparam fieldName="To"></typeparam>
-        /// <param fieldName="value">object value</param> 
-        /// <returns>cast success</returns>
-        public static To To<From, To>(this From value, Func<From, To> lambdaConverter)
-        {
-            if (value is null)
-            {
-                return default!;
-            }
-
-            if (value is To target)
-            {
-                return target;
-            }
-
-            Type targetType = typeof(To);
-            Type currentType = value.GetType();
-
-            TypeConverter converter = typeConverters.GetOrAdd(targetType, i =>
-            {
-                TypeConverter cvt = TypeDescriptor.GetConverter(i);
-
-                if ((cvt is null || cvt.CanConvertFrom(currentType) == false) && lambdaConverter != null)
-                {
-                    cvt = new CommonTypeConverter<From, To>(lambdaConverter);
-                }
-
-                return cvt;
-            });
-
-            object convertValue = converter.ConvertFrom(value);
-
-            if (convertValue is To targetValue)
-            {
-                return targetValue;
-            }
-
-            if (lambdaConverter is null)
-            {
-                throw new System.InvalidCastException($"Can not convert {currentType} to {targetType},Please pass in a valid lambda converter");
-            }
-
-            return lambdaConverter(value);
-        }
 
 
-        #region InvokeOnce
+
+        #region NotReentrant
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private static readonly ConcurrentDictionary<int, bool> invokeTokenCache = new();
@@ -301,7 +160,7 @@ namespace Tiny.Toolkits
         /// <param fieldName="action"> The action to be invoked.</param>
         /// <param fieldName="removeTokenAfterInvoke"><paramref name="removeTokenAfterInvoke"/> If set to true, the token will be destroyed after the action is invoked.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static void InvokeOnce(this Action action, object token, bool removeTokenAfterInvoke = false)
+        public static void NotReentrant(this Action action, object token, bool removeTokenAfterInvoke = false)
         {
             if (token is null)
             {
@@ -329,10 +188,7 @@ namespace Tiny.Toolkits
             {
                 action();
 
-                if (removeTokenAfterInvoke == false)
-                {
-                    invokeTokenCache[hashCode] = true;
-                }
+                invokeTokenCache[hashCode] = true; // set to true after invoke
             }
             finally
             {
@@ -352,7 +208,7 @@ namespace Tiny.Toolkits
         /// <param fieldName="funCallback"> The action to be invoked.</param>
         /// <param fieldName="removeTokenAfterInvoke">removeTokenAfterInvoke If set to true, the token will be destroyed after the action is invoked.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static async Task InvokeOnceAsync(this Func<Task> funCallback, object token, bool removeTokenAfterInvoke = false)
+        public static async Task NotReentrantAsync(this Func<Task> funCallback, object token, bool removeTokenAfterInvoke = false)
         {
             if (token is null)
             {
@@ -376,50 +232,31 @@ namespace Tiny.Toolkits
                 invokeTokenCache[hashCode] = false;
             }
 
-            try
+            await funCallback().ContinueWith(task =>
             {
-                await funCallback();
-
-                if (removeTokenAfterInvoke == false)
+                lock (invokeTokenCache)
                 {
                     invokeTokenCache[hashCode] = true;
+
+                    if (removeTokenAfterInvoke)
+                    {
+                        invokeTokenCache.TryRemove(hashCode, out _);
+                    }
                 }
-            }
-            finally
-            {
-                if (removeTokenAfterInvoke)
+
+                if (task.Exception != null)
                 {
-                    invokeTokenCache.TryRemove(hashCode, out _);
+                    throw task.Exception.InnerException ?? task.Exception.InnerExceptions.FirstOrDefault();
                 }
-            }
+            });
+
+
+
         }
 
         #endregion
 
 
 
-        /// <summary>
-        /// release a <see cref="SemaphoreSlim"/> when <see cref="SemaphoreSlim.CurrentCount"/> == 0
-        /// </summary>
-        /// <param fieldName="semaphoreSlim"></param>
-        /// <param fieldName="releaseCount"></param>
-        public static void ReleaseWhenZero(this SemaphoreSlim semaphoreSlim, int releaseCount = 1)
-        {
-            if (semaphoreSlim is null)
-            {
-                return;
-            }
-
-
-            if (releaseCount < 1)
-            {
-                return;
-            }
-
-            if (semaphoreSlim.CurrentCount == 0)
-            {
-                semaphoreSlim.Release(releaseCount);
-            }
-        }
     }
 }

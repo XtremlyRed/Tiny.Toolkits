@@ -17,3 +17,6 @@
 /Tiny.ToolkitsTests/bin/Debug/net451
 /Tiny.ToolkitsTests/obj
 /Tiny.ToolkitsTests/bin/Release/net451
+/Tiny.Toolkits.Android/bin/Debug/net7.0-android
+/Tiny.Toolkits.Android/obj
+/Tiny.Toolkits.Android/bin/Release/net7.0-android

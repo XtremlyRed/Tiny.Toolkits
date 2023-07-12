@@ -6,11 +6,11 @@ using System.Diagnostics;
 namespace Tiny.Toolkits
 {
     /// <summary>
-    /// <para> class of  <see cref="TinyChrono"/></para>
+    /// <para> class of  <see cref="Chrono"/></para>
     /// <para> a chrono helper class of the execute time</para>
     /// </summary>
     [DebuggerDisplay("{GetTimeSpan()}")]
-    public sealed class TinyChrono : IDisposable
+    public sealed class Chrono : IDisposable
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private long currentTickCount;
@@ -18,7 +18,7 @@ namespace Tiny.Toolkits
         /// <summary>
         /// carete a new chrono 
         /// </summary>
-        public TinyChrono()
+        public Chrono()
         {
             currentTickCount = Environment.TickCount;
         }
@@ -36,9 +36,9 @@ namespace Tiny.Toolkits
         /// create a new chrono and start
         /// </summary>
         /// <returns></returns>
-        public static TinyChrono BeginTimer()
+        public static Chrono BeginTimer()
         {
-            return new TinyChrono();
+            return new Chrono();
         }
                    
 
@@ -70,8 +70,7 @@ namespace Tiny.Toolkits
         {
             currentTickCount = Environment.TickCount;
         }
-
-
+         
         #region hide base function
 
         /// <summary>

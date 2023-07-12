@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Controls;
 
-namespace Tiny.Toolkits.Wpf.Xaml
+namespace Tiny.Toolkits
 {
-    public abstract class PasswordAttach
+    /// <summary>
+    ///  a class of <see cref="PasswordAttach"/>
+    /// </summary>
+    public class PasswordAttach : DependencyObject
     {
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -80,6 +78,5 @@ namespace Tiny.Toolkits.Wpf.Xaml
                 SetPassword(passwordBox, passwordBox.Password);
             }
         }
-
     }
 }

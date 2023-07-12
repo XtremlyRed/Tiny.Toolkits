@@ -25,13 +25,28 @@ namespace Tiny.Toolkits.Tests
         [TestMethod()]
         public void ToTest3()
         {
-            Assert.IsTrue("123,456".To(value =>
+            Assert.IsTrue("123,456".To<string,PointF>(value =>
             {
                 string[] values = value.Split(',');
                 PointF valuef = new(values[0].To<float>(), values[1].To<float>());
                 return valuef;
             }).X == 123);
 
+        }
+
+
+
+        [TestMethod()]
+        public void ToTest4()
+        {
+ 
+            TypeConvertFactory<string, int> typeConvertFactory = new((s) => int.Parse(s), i => i.ToString());
+
+            object value1 = typeConvertFactory.ConvertFrom("123");
+
+            object value = typeConvertFactory.ConvertTo(123, typeof(int));
+
+            Assert.IsTrue(true);
         }
     }
 }

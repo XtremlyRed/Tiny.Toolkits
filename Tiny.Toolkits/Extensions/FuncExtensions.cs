@@ -16,6 +16,11 @@ namespace Tiny.Toolkits
                 throw new ArgumentNullException(nameof(thisFunc));
             }
 
+            if (function is null)
+            {
+                throw new ArgumentNullException(nameof(function));
+            }
+
             return input => function(thisFunc(input));
         }
 
@@ -26,7 +31,10 @@ namespace Tiny.Toolkits
             {
                 throw new ArgumentNullException(nameof(thisFunc));
             }
-
+            if (function is null)
+            {
+                throw new ArgumentNullException(nameof(function));
+            }
             return async input =>
             {
                 cancellationToken.ThrowIfCancellationRequested();

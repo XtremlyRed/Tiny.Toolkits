@@ -192,7 +192,7 @@ namespace Tiny.Toolkits
 
             Storyboard.SetTarget(timeline, dependencyObject);
 
-            string propertyName = Extensions.GetPropertyName(propertySelector);
+            string propertyName = ReflectionExtensions.GetPropertyName(propertySelector);
 
             Storyboard.SetTargetProperty(timeline, new PropertyPath(propertyName));
 

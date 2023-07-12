@@ -9,7 +9,7 @@ namespace Tiny.Toolkits
     /// <summary>
     /// ref 
     /// </summary>
-    public static partial class Extensions
+    public static partial class ReflectionExtensions
     {
         /// <summary>
         /// get proprety name from expression
@@ -102,8 +102,8 @@ namespace Tiny.Toolkits
         /// <Exception cref="ArgumentNullException"></Exception>
         public static object CreateInstance(this Type type, params object[] parameters)
         {
-            return type == null 
-                ? throw new ArgumentNullException(nameof(type)) 
+            return type == null
+                ? throw new ArgumentNullException(nameof(type))
                 : Activator.CreateInstance(type, parameters);
         }
 
@@ -115,7 +115,7 @@ namespace Tiny.Toolkits
         /// <typeparam name="Target"></typeparam>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static Target SafeRead<Target>(ref Target target) where Target : class
+        public static Target SafeRef<Target>(ref Target target) where Target : class
         {
             return System.Threading.Volatile.Read(ref target);
         }
@@ -161,87 +161,26 @@ namespace Tiny.Toolkits
         }
 
 
-        /// <summary>
-        /// Used to set the property values of an object
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="target">object</param>
-        /// <param name="expression">property selector</param>
-        /// <param name="value">value to be set</param>
-        /// <returns></returns>
-        public static bool SetPropertyValue<T, TValue>(this T target, Expression<Func<T, TValue>> expression, TValue value)
-        {
-            if (target is null || expression is null)
-            {
-                return false;
-            }
-
-            string propertyName = Extensions.GetPropertyName(expression);
-
-            System.Reflection.PropertyInfo propertyInfo = typeof(T).GetProperty(propertyName);
-            if (propertyInfo is null)
-            {
-                return false;
-            }
-
-            propertyInfo.SetValue(target, value);
-
-            return true;
-
-        }
 
 
-
-        /// <summary>
-        /// Used to set the field values of an object
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TValue"></typeparam>
-        /// <param name="target">object</param>
-        /// <param name="expression">field selector</param>
-        /// <param name="value">value to be set</param>
-        /// <returns></returns>
-        public static bool SetFieldValue<T, TValue>(this T target, Expression<Func<T, TValue>> expression, TValue value)
-        {
-            if (target is null || expression is null)
-            {
-                return false;
-            }
-
-            string fieldName = Extensions.GetPropertyName(expression);
-
-            System.Reflection.FieldInfo fieldInfo = typeof(T).GetField(fieldName);
-
-            if (fieldInfo is null)
-            {
-                return false;
-            }
-
-            fieldInfo.SetValue(target, value);
-
-            return true;
-
-        }
 
 
         /// <summary>
         /// Used to set the property values of an object
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// </summary> 
         /// <typeparam name="TValue"></typeparam>
         /// <param name="target">object</param>
         /// <param name="propertyName">property</param>
         /// <param name="value">value to be set</param>
         /// <returns></returns>
-        public static bool SetPropertyValue<T, TValue>(this T target, string propertyName, TValue value)
+        public static bool TrySetPropertyValue<TValue>(this object target, string propertyName, TValue value)
         {
             if (target is null || string.IsNullOrWhiteSpace(propertyName))
             {
                 return false;
             }
 
-            System.Reflection.PropertyInfo propertyInfo = target.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            System.Reflection.PropertyInfo propertyInfo = target.GetType().GetProperty(propertyName);
             if (propertyInfo is null)
             {
                 return false;
@@ -268,14 +207,14 @@ namespace Tiny.Toolkits
         /// <param name="fieldName">field</param>
         /// <param name="value">value to be set</param>
         /// <returns></returns>
-        public static bool SetFieldValue<T, TValue>(this T target, string fieldName, TValue value)
+        public static bool TrySetFieldValue<TValue>(this object target, string fieldName, TValue value)
         {
             if (target is null || string.IsNullOrWhiteSpace(fieldName))
             {
                 return false;
             }
 
-            System.Reflection.FieldInfo fieldInfo = typeof(T).GetField(fieldName);
+            System.Reflection.FieldInfo fieldInfo = target.GetType().GetField(fieldName);
 
             if (fieldInfo is null)
             {
@@ -293,5 +232,76 @@ namespace Tiny.Toolkits
             }
         }
 
+
+
+        /// <summary>
+        /// Used to set the property values of an object
+        /// </summary> 
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="target">object</param>
+        /// <param name="propertyName">property</param>
+        /// <param name="value">value to get</param>
+        /// <returns></returns>
+        public static bool TryGetPropertyValue<TValue>(this object target, string propertyName, out TValue value)
+        {
+            value = default;
+            if (target is null || string.IsNullOrWhiteSpace(propertyName))
+            {
+                return false;
+            }
+
+            System.Reflection.PropertyInfo propertyInfo = target.GetType().GetProperty(propertyName);
+            if (propertyInfo is null)
+            {
+                return false;
+            }
+
+            if (propertyInfo.GetValue(target) is TValue tValue)
+            {
+                value = tValue;
+                return true;
+            }
+
+
+            return false;
+        }
+
+
+
+        /// <summary>
+        /// Used to set the field values of an object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="target">object</param>
+        /// <param name="fieldName">field</param>
+        /// <param name="value">value to get</param>
+        /// <returns></returns>
+        public static bool TryGetFieldValue<TValue>(this object target, string fieldName, out TValue value)
+        {
+            value = default;
+
+            if (target is null || string.IsNullOrWhiteSpace(fieldName))
+            {
+                return false;
+            }
+
+            FieldInfo fieldInfo = target.GetType().GetField(fieldName);
+
+            if (fieldInfo is null)
+            {
+                return false;
+            }
+
+
+            if (fieldInfo.GetValue(target) is TValue tValue)
+            {
+                value = tValue;
+                return true;
+            }
+
+            return false;
+
+        }
     }
 }

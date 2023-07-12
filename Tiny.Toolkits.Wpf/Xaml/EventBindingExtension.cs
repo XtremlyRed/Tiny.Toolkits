@@ -36,6 +36,7 @@ namespace Tiny.Toolkits
         private readonly object[] @objects;
 
 
+        public RelativeSource RelativeSource { get; set; }
 
         /// <summary>
         /// ProvideValue
@@ -49,10 +50,21 @@ namespace Tiny.Toolkits
             {
                 throw new InvalidOperationException();
             }
+  
             if (targetProvider.TargetObject is not DependencyObject targetObject)
             {
                 string msg = $"The bound element must be derived from the {typeof(DependencyObject).FullName}.";
                 throw new ArgumentException(msg);
+            }
+
+            DependencyObject dataContextOwner = targetObject;
+
+            if (RelativeSource != null)
+            { 
+                for (int i = 0; i < RelativeSource.AncestorLevel; i++)
+                {
+                    dataContextOwner = WpfAssist.FindParent(dataContextOwner, RelativeSource.AncestorType); 
+                }
             }
 
             if (targetProvider.TargetProperty is not EventInfo eventInfo)
@@ -63,6 +75,7 @@ namespace Tiny.Toolkits
             Delegate @delegate = CreateDelegate(eventInfo, token: out string token);
 
             PropertyAttache.SetProperty0(targetObject, @objects);
+            PropertyAttache.SetProperty1(targetObject, dataContextOwner);
 
             // EventBindingExtensionInvoker.tokenParameters.Add();
 
@@ -335,6 +348,9 @@ namespace Tiny.Toolkits
                 return;
             }
 
+
+            var dataContextOwner = PropertyAttache.GetProperty1(dependencyObject) as DependencyObject;
+
             object[] @objects = PropertyAttache.GetProperty0(dependencyObject) as object[];
 
             @objects.ForEach((item, index) =>
@@ -346,7 +362,7 @@ namespace Tiny.Toolkits
                 }
             });
 
-            if (dependencyObject is not FrameworkElement frameworkElement)
+            if (dataContextOwner is not FrameworkElement frameworkElement)
             {
                 frameworkElement = WpfAssist.FindParent<FrameworkElement>(dependencyObject);
             }
@@ -375,7 +391,7 @@ namespace Tiny.Toolkits
                 typeMethods[dataContextType] = methods = dataContext
                     .GetType()
                     .GetMethods(BF.Instance | BF.Public | BF.NonPublic)
-                    .Where(i => i.GetAttribute<CommandBindingAttribute>() != null)
+                    .Where(i => i.GetCustomAttribute<CommandBindingAttribute>() != null)
                     .Select(i => new MethodMapper { Method = i, ParameterTypes = i.GetParameters().Select(i => i.ParameterType).ToArray() })
                     .ToArray();
             }

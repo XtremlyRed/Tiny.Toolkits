@@ -64,7 +64,7 @@ namespace Tiny.Toolkits
                 }
             }
         }
-         
+
         /// <summary>
         /// find visual parent from <paramref name="dependencyObject"/>
         /// </summary>
@@ -89,6 +89,34 @@ namespace Tiny.Toolkits
                 dependencyObject = dobj;
             }
         }
+
+        /// <summary>
+        /// find visual parent from <paramref name="dependencyObject"/>
+        /// </summary>
+        /// <typeparam name="Target"></typeparam>
+        /// <param name="dependencyObject"></param>
+        /// <returns></returns>
+        public static DependencyObject FindParent(this DependencyObject dependencyObject, Type parentType)
+        {
+            while (true)
+            {
+                DependencyObject dobj = VisualTreeHelper.GetParent(dependencyObject);
+                if (dobj is null)
+                {
+                    return default;
+                }
+
+                var currentType = dobj.GetType();
+
+                if (currentType == parentType || currentType.BaseType == parentType)
+                {
+                    return dobj;
+                }
+
+                dependencyObject = dobj;
+            }
+        }
+
 
         /// <summary>
         /// find visual parent from <paramref name="dependencyObject"/>

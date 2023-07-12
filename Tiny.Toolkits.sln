@@ -16,9 +16,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp1.Test", "WpfApp1.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{6CE5E333-39BF-4780-A4AE-39AEE55E3050}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiny.Toolkits.WpfTests", "Tiny.Toolkits.WpfTests\Tiny.Toolkits.WpfTests.csproj", "{A775315D-3A40-4E08-8C8E-E556533C861B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Toolkits.WpfTests", "Tiny.Toolkits.WpfTests\Tiny.Toolkits.WpfTests.csproj", "{A775315D-3A40-4E08-8C8E-E556533C861B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tiny.ToolkitsTests", "Tiny.ToolkitsTests\Tiny.ToolkitsTests.csproj", "{7BE8EF2D-3E19-457F-943C-157AE88E990F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.ToolkitsTests", "Tiny.ToolkitsTests\Tiny.ToolkitsTests.csproj", "{7BE8EF2D-3E19-457F-943C-157AE88E990F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tiny.Toolkits.Android", "Tiny.Toolkits.Android\Tiny.Toolkits.Android.csproj", "{7C2C572E-05B9-4F6A-AB94-266FC00BA4B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{7BE8EF2D-3E19-457F-943C-157AE88E990F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BE8EF2D-3E19-457F-943C-157AE88E990F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BE8EF2D-3E19-457F-943C-157AE88E990F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C2C572E-05B9-4F6A-AB94-266FC00BA4B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C2C572E-05B9-4F6A-AB94-266FC00BA4B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C2C572E-05B9-4F6A-AB94-266FC00BA4B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C2C572E-05B9-4F6A-AB94-266FC00BA4B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

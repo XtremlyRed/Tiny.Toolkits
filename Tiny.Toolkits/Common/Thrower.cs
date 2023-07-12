@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace Tiny.Toolkits
 {
+    /// <summary>
+    /// exception thrower
+    /// </summary>
     public static class Thrower
     {
         private const string positionInfo = "{0}, On line {1} of file {2}";
